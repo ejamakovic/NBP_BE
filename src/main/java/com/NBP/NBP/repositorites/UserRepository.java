@@ -3,6 +3,7 @@ package com.NBP.NBP.repositorites;
 import org.springframework.stereotype.Repository;
 
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.enums.UserType;
 
 import java.util.List;
 
@@ -17,9 +18,13 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    private final RowMapper<User> userRowMapper = (rs, rowNum) -> new User(
-            rs.getInt("id"),
-            rs.getString("name"));
+    private final RowMapper<User> userRowMapper = (resultSet, rowNum) -> new User(
+            resultSet.getInt("id"),
+            resultSet.getInt("userId"),
+            resultSet.getString("name"),
+            resultSet.getInt("departmentId"),
+            resultSet.getInt("year"),
+            UserType.valueOf(resultSet.getString("userType")));
 
     public List<User> findAll() {
         return jdbcTemplate.query("SELECT * FROM users", userRowMapper);
