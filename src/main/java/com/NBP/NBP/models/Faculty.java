@@ -9,7 +9,7 @@ public class Faculty {
     private String name;
     private List<Department> departments;
 
-    public Faculty() {
+    public Faculty(int id, String name) {
         this.departments = new ArrayList<>();
     }
 

@@ -1,7 +1,5 @@
 package com.NBP.NBP.models;
 
-import java.time.LocalDateTime;
-
 import com.NBP.NBP.models.enums.UserType;
 
 public class User {

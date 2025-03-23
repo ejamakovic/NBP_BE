@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.NBP.NBP.models.User;
-import com.NBP.NBP.repositorites.UserRepository;
+import com.NBP.NBP.repositories.UserRepository;
 
 @Service
 public class UserService {

@@ -1,4 +1,4 @@
-package com.NBP.NBP.repositorites;
+package com.NBP.NBP.repositories;
 
 import org.springframework.stereotype.Repository;
 

@@ -1,42 +1,24 @@
 package com.NBP.NBP.models;
 
 public class Laboratory {
-
-    private Long id;
+    private int id;
     private String name;
-    private Department department;
+    private int departmentId;
 
-    public Laboratory() {
+    public Laboratory() {}
 
-    }
-
-    public Laboratory(Long id, String name, Department department) {
+    public Laboratory(int id, String name, int departmentId) {
         this.id = id;
         this.name = name;
-        this.department = department;
+        this.departmentId = departmentId;
     }
 
-    public Long getId() {
-        return id;
-    }
+    public int getId() { return id; }
+    public void setId(int id) { this.id = id; }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Department getDepartment() {
-        return department;
-    }
-
-    public void setDepartment(Department department) {
-        this.department = department;
-    }
+    public int getDepartmentId() { return departmentId; }
+    public void setDepartmentId(int departmentId) { this.departmentId = departmentId; }
 }

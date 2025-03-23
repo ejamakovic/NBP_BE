@@ -5,27 +5,27 @@ import java.util.List;
 
 public class Department {
 
-    private Long id;
+    private int id;
     private String name;
-    private Faculty faculty;
+    private int facultyId;
     private List<Laboratory> laboratories;
 
-    public Department(){
+    public Department(int id, String name, int facultyId){
 
     }
 
-    public Department(Long id, String name, Faculty faculty) {
+    public Department(int id, String name, int facultyId, List<Laboratory> laboratories) {
         this.id = id;
         this.name = name;
-        this.faculty = faculty;
+        this.facultyId = facultyId;
         this.laboratories = new ArrayList<Laboratory>();
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -37,12 +37,12 @@ public class Department {
         this.name = name;
     }
 
-    public Faculty getFaculty() {
-        return faculty;
+    public int getFacultyId() {
+        return facultyId;
     }
 
-    public void setFaculty(Faculty faculty) {
-        this.faculty = faculty;
+    public void setFaculty(int facultyId) {
+        this.facultyId = facultyId;
     }
 
     public List<Laboratory> getLaboratorys() {
