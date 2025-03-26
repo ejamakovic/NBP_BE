@@ -5,25 +5,31 @@ import java.util.List;
 
 public class Faculty {
 
-    private Long id;
+    private int id;
     private String name;
     private List<Department> departments;
 
-    public Faculty(int id, String name) {
+    public Faculty() {
         this.departments = new ArrayList<>();
     }
 
-    public Faculty(Long id, String name, List<Department> departments, List<Laboratory> laboratories) {
+    public Faculty(int id, String name) {
+        this.id = id;
+        this.name = name;
+        this.departments = new ArrayList<>();
+    }
+
+    public Faculty(int id, String name, List<Department> departments) {
         this.id = id;
         this.name = name;
         this.departments = departments;
     }
 
-    public Long getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(int id) {
         this.id = id;
     }
 

@@ -10,8 +10,15 @@ public class Department {
     private int facultyId;
     private List<Laboratory> laboratories;
 
-    public Department(int id, String name, int facultyId){
+    public Department(){
+        laboratories = new ArrayList<>();
+    }
 
+    public Department(int id, String name, int facultyId){
+        this.id = id;
+        this.name = name;
+        this.facultyId = facultyId;
+        this.laboratories = new ArrayList<Laboratory>();
     }
 
     public Department(int id, String name, int facultyId, List<Laboratory> laboratories) {
