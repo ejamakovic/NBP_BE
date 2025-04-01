@@ -2,6 +2,7 @@ package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.Department;
 import com.NBP.NBP.repositories.DepartmentRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,7 @@ import java.util.List;
 public class DepartmentService {
     private final DepartmentRepository departmentRepository;
 
+    @Autowired
     public DepartmentService(DepartmentRepository departmentRepository) {
         this.departmentRepository = departmentRepository;
     }
@@ -22,15 +24,15 @@ public class DepartmentService {
         return departmentRepository.findById(id);
     }
 
-    public void createDepartment(Department department) {
-        departmentRepository.save(department);
+    public int saveDepartment(Department department) {
+        return departmentRepository.save(department);
     }
 
-    public void updateDepartment(Department department) {
-        departmentRepository.update(department);
+    public int updateDepartment(Department department) {
+        return departmentRepository.update(department);
     }
 
-    public void deleteDepartment(int id) {
-        departmentRepository.delete(id);
+    public int deleteDepartment(int id) {
+        return departmentRepository.delete(id);
     }
 }
