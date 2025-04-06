@@ -1,6 +1,5 @@
 package com.NBP.NBP.repositories;
 
-import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -132,11 +131,10 @@ public class UserRepository {
             String sql = String.format("SELECT * FROM %s WHERE username = ?", TABLE_NAME);
             return jdbcTemplate.queryForObject(
                     sql,
-                    userRowMapper,  // Use the correct RowMapper here
+                    userRowMapper,
                     username
             );
         } catch (Exception e) {
-            // Handle no user found (e.g., return null or throw custom exception)
             return null;
         }
     }
@@ -148,6 +146,30 @@ public class UserRepository {
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
+    }
+
+    public boolean existsByUsername(String username) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE username = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username);
+        return count != null && count > 0;
+    }
+
+    public boolean existsByEmail(String email) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE email = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email);
+        return count != null && count > 0;
+    }
+
+    public boolean existsByUsernameExcludingId(String username, int id) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE username = ? AND id != ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, username, id);
+        return count != null && count > 0;
+    }
+
+    public boolean existsByEmailExcludingId(String email, int id) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE email = ? AND id != ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email, id);
+        return count != null && count > 0;
     }
 
 

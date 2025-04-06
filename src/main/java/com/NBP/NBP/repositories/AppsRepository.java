@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public class AppsRepository {
+
+    private static final String TABLE_NAME = "nbp.nbp_apps";
     private final JdbcTemplate jdbcTemplate;
 
     public AppsRepository(JdbcTemplate jdbcTemplate) {
@@ -23,24 +25,24 @@ public class AppsRepository {
     );
 
     public List<Apps> findAll() {
-        return jdbcTemplate.query("SELECT * FROM apps", appsRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, appsRowMapper);
     }
 
     public Apps findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM apps WHERE id = ?", appsRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", appsRowMapper, id);
     }
 
     public int save(Apps app) {
-        return jdbcTemplate.update("INSERT INTO apps (app_id, manager_id, expiry_date) VALUES (?, ?, ?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (app_id, manager_id, expiry_date) VALUES (?, ?, ?)",
                 app.getAppId(), app.getManagerId(), app.getExpiryDate());
     }
 
     public int update(Apps app) {
-        return jdbcTemplate.update("UPDATE apps SET app_id = ?, manager_id = ?, expiry_date = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET app_id = ?, manager_id = ?, expiry_date = ? WHERE id = ?",
                 app.getAppId(), app.getManagerId(), app.getExpiryDate(), app.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM apps WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 }
