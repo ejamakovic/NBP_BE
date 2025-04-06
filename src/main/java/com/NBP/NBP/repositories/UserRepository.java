@@ -1,11 +1,13 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.CustomUser;
 import org.springframework.stereotype.Repository;
 
 import com.NBP.NBP.models.User;
 import com.NBP.NBP.models.enums.UserType;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
