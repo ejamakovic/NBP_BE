@@ -141,4 +141,14 @@ public class UserRepository {
         }
     }
 
+    public User findByEmail(String email) {
+        try {
+            String sql = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
+            return jdbcTemplate.queryForObject(sql, userRowMapper, email);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+
 }
