@@ -8,6 +8,10 @@ public class Apps {
     private Integer managerId;
     private Date expiryDate;
 
+    public Apps(){
+
+    }
+
     public Apps(int id, String appId, Integer managerId, Date expiryDate) {
         this.id = id;
         this.appId = appId;
