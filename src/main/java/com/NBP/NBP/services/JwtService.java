@@ -1,6 +1,7 @@
 package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.CustomUser;
+import com.NBP.NBP.models.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -39,12 +40,15 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
-        if (userDetails instanceof CustomUser) {
-            CustomUser user = (CustomUser) userDetails;
+        if (userDetails instanceof User) {
+            User user = (User) userDetails;
             claims.put("userId", user.getId());
         }
-        return buildToken(claims, userDetails);
+        String token = buildToken(claims, userDetails);
+        logger.debug("Generated token in jwtService: {}", token); // Check token generation here
+        return token;
     }
+
 
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
         logger.info("Building token for user: {}", userDetails.getUsername());
