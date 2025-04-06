@@ -1,4 +1,3 @@
-
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Role;
@@ -10,36 +9,57 @@ import java.util.List;
 
 @Repository
 public class RoleRepository {
+    private static final String TABLE_NAME = "nbp.nbp_role";
+
     private final JdbcTemplate jdbcTemplate;
 
     public RoleRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    // Pomoćna metoda za mapiranje rezultata
     private final RowMapper<Role> roleRowMapper = (rs, rowNum) -> new Role(
             rs.getInt("id"),
             rs.getString("name")
     );
 
+    // Generalizovane metode za SQL upite
+    private String getSelectQuery() {
+        return "SELECT * FROM " + TABLE_NAME;
+    }
+
+    private String getInsertQuery() {
+        return "INSERT INTO " + TABLE_NAME + " (name) VALUES (?)";
+    }
+
+    private String getUpdateQuery() {
+        return "UPDATE " + TABLE_NAME + " SET name = ? WHERE id = ?";
+    }
+
+    private String getDeleteQuery() {
+        return "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+    }
+
     public List<Role> findAll() {
-        return jdbcTemplate.query("SELECT * FROM role", roleRowMapper);
+        return jdbcTemplate.query(getSelectQuery(), roleRowMapper);
     }
 
     public Role findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM role WHERE id = ?", roleRowMapper, id);
+        String sql = getSelectQuery() + " WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, roleRowMapper, id);
     }
 
     public int save(Role role) {
-        return jdbcTemplate.update("INSERT INTO role (name) VALUES (?)",
+        return jdbcTemplate.update(getInsertQuery(),
                 role.getName());
     }
 
     public int update(Role role) {
-        return jdbcTemplate.update("UPDATE role SET name = ? WHERE id = ?",
+        return jdbcTemplate.update(getUpdateQuery(),
                 role.getName(), role.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM role WHERE id = ?", id);
+        return jdbcTemplate.update(getDeleteQuery(), id);
     }
 }

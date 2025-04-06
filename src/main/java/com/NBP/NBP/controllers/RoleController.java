@@ -31,6 +31,8 @@ public class RoleController {
 
     @PostMapping
     public ResponseEntity<String> createRole(@RequestBody Role role) {
+        System.out.println("POST request received with body: " + role); // Dodatno logovanje
+        System.out.println("Received Role: " + role.getName());  // Debug log
         int result = roleService.saveRole(role);
         return result > 0 ? ResponseEntity.ok("Role created successfully") : ResponseEntity.badRequest().build();
     }

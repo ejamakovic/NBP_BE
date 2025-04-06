@@ -1,28 +1,34 @@
 package com.NBP.NBP.models;
-
-import com.NBP.NBP.models.enums.UserType;
+import java.time.LocalDate;
 
 public class User {
     private int id;
-    private int userId;
-    private String name;
-    private int departmentId;
-    private int year;
-    private UserType userType;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private String username;
+    private String phoneNumber;
+    private LocalDate birthDate;
+    private Integer addressId;
+    private int roleId;
 
     public User() {
     }
 
-    public User(int id, int userId, String name, int departmentId, int year, UserType userType) {
+    public User(int id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, int roleId) {
         this.id = id;
-        this.userId = userId;
-        this.name = name;
-        this.departmentId = departmentId;
-        this.year = year;
-        this.userType = userType;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.username = username;
+        this.birthDate = birthDate;
+        this.phoneNumber = phoneNumber;
+        this.addressId = addressId;
+        this.roleId = roleId;
     }
 
-    // Getters and Setters
     public int getId() {
         return id;
     }
@@ -31,43 +37,75 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getFirstName() {
+        return firstName;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
     }
 
-    public int getUserId() {
-        return userId;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUserId(int userId) {
-        this.userId = userId;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
-    public int getDepartmentId() {
-        return departmentId;
+    public String getLastName() {
+        return lastName;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
     }
 
-    public int getYear() {
-        return year;
+    public int getRoleId() {
+        return roleId;
     }
 
-    public void setYear(int year) {
-        this.year = year;
+    public void setRoleId(int roleId) {
+        this.roleId = roleId;
     }
 
-    public UserType getUserType() {
-        return userType;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserType(UserType userType) {
-        this.userType = userType;
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Integer getAddressId() {
+        return addressId;
+    }
+
+    public void setAddressId(Integer addressId) {
+        this.addressId = addressId;
     }
 }
