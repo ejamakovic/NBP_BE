@@ -35,7 +35,7 @@ public class AuthenticationService {
 
         // Retrieve user and verify password (as you already did)
         User user = userRepository.findByUsername(loginDto.getUsername());
-        if (user != null && loginDto.getPassword().equals(user.getPassword())) {
+        if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             logger.info("Password verification succeeded for username: {}", loginDto.getUsername());
 
             // Generate token
