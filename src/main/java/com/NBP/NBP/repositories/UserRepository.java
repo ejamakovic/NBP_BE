@@ -1,5 +1,6 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -125,4 +126,19 @@ public class UserRepository {
             super(message);
         }
     }
+
+    public User findByUsername(String username) {
+        try {
+            String sql = String.format("SELECT * FROM %s WHERE username = ?", TABLE_NAME);
+            return jdbcTemplate.queryForObject(
+                    sql,
+                    userRowMapper,  // Use the correct RowMapper here
+                    username
+            );
+        } catch (Exception e) {
+            // Handle no user found (e.g., return null or throw custom exception)
+            return null;
+        }
+    }
+
 }
