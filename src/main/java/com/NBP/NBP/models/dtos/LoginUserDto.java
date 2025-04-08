@@ -1,26 +1,24 @@
 package com.NBP.NBP.models.dtos;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 public class LoginUserDto {
 
-    private String username;
+    private String email;
     private String password;
 
     public LoginUserDto() {
     }
 
-    public LoginUserDto(String username, String password) {
-        this.username = username;
+    public LoginUserDto(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUsername(String email) {
+        this.email = email;
     }
 
     public String getPassword() {
