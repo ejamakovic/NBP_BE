@@ -13,6 +13,11 @@ public class Laboratory {
         this.departmentId = departmentId;
     }
 
+    public Laboratory(String name, int departmentId) {
+        this.departmentId = departmentId;
+        this.name = name;
+    }
+
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 

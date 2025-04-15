@@ -11,6 +11,11 @@ public class Supplier {
         this.name = name;
     }
 
+    public Supplier(String name, int equipmentId) {
+        this.name = name;
+        this.equipmentId = equipmentId;
+    }
+
     public int getId() {
         return id;
     }

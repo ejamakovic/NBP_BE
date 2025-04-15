@@ -1,11 +1,13 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Category;
+import com.NBP.NBP.models.Department;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class CategoryRepository {
@@ -41,5 +43,18 @@ public class CategoryRepository {
 
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM category WHERE id = ?", id);
+    }
+
+    public Optional<Category> findByName(String name) {
+        try {
+            Category category = jdbcTemplate.queryForObject(
+                    "SELECT * FROM category WHERE name = ?",
+                    categoryRowMapper,
+                    name
+            );
+            return Optional.of(category);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

@@ -1,11 +1,13 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.Laboratory;
 import com.NBP.NBP.models.Role;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class RoleRepository {
@@ -61,5 +63,18 @@ public class RoleRepository {
 
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
+    }
+
+    public Optional<Role> findByName(String name) {
+        try {
+            Role role = jdbcTemplate.queryForObject(
+                    "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
+                    roleRowMapper,
+                    name
+            );
+            return Optional.of(role);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

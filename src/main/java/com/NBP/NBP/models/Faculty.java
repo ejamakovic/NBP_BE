@@ -13,6 +13,11 @@ public class Faculty {
         this.departments = new ArrayList<>();
     }
 
+    public Faculty(String name) {
+        this.name = name;
+        this.departments = new ArrayList<>();
+    }
+
     public Faculty(int id, String name) {
         this.id = id;
         this.name = name;

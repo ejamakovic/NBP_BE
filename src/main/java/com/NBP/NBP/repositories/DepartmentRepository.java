@@ -6,6 +6,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class DepartmentRepository {
@@ -41,4 +42,18 @@ public class DepartmentRepository {
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM department WHERE id = ?", id);
     }
+
+    public Optional<Department> findByName(String name) {
+        try {
+            Department department = jdbcTemplate.queryForObject(
+                    "SELECT * FROM department WHERE name = ?",
+                    departmentRowMapper,
+                    name
+            );
+            return Optional.of(department);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
+    }
 }
+

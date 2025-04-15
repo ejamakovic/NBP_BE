@@ -1,11 +1,13 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.Laboratory;
 import com.NBP.NBP.models.Supplier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class SupplierRepository {
@@ -41,5 +43,18 @@ public class SupplierRepository {
 
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM supplier WHERE id = ?", id);
+    }
+
+    public Optional<Supplier> findByName(String name) {
+        try {
+            Supplier supplier = jdbcTemplate.queryForObject(
+                    "SELECT * FROM supplier WHERE name = ?",
+                    supplierRowMapper,
+                    name
+            );
+            return Optional.of(supplier);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

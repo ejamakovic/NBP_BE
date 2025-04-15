@@ -1,11 +1,13 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.Faculty;
 import com.NBP.NBP.models.Laboratory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class LaboratoryRepository {
@@ -40,5 +42,18 @@ public class LaboratoryRepository {
 
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM laboratory WHERE id = ?", id);
+    }
+
+    public Optional<Laboratory> findByName(String name) {
+        try {
+            Laboratory laboratory = jdbcTemplate.queryForObject(
+                    "SELECT * FROM laboratory WHERE name = ?",
+                    labRowMapper,
+                    name
+            );
+            return Optional.of(laboratory);
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 }

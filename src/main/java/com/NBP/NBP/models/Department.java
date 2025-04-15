@@ -14,6 +14,16 @@ public class Department {
         laboratories = new ArrayList<>();
     }
 
+    public Department(String name, int facultyId) {
+        this.name = name;
+        this.facultyId = facultyId;
+    }
+
+    public Department(String name){
+        this.name = name;
+        laboratories = new ArrayList<>();
+    }
+
     public Department(int id, String name, int facultyId){
         this.id = id;
         this.name = name;

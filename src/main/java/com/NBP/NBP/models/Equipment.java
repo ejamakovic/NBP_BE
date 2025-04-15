@@ -20,6 +20,13 @@ public class Equipment {
         this.status = status;
     }
 
+    public Equipment(String name, int categoryId, int laboratoryId, EquipmentStatus status) {
+        this.name = name;
+        this.categoryId = categoryId;
+        this.laboratoryId = laboratoryId;
+        this.status = status;
+    }
+
     public int getId() {
         return id;
     }
