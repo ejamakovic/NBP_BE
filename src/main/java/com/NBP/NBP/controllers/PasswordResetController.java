@@ -1,5 +1,6 @@
 package com.NBP.NBP.controllers;
 
+import com.NBP.NBP.models.dtos.PasswordResetDTO;
 import com.NBP.NBP.services.PasswordResetService;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -21,15 +22,16 @@ public class PasswordResetController {
     }
 
     @PostMapping("/reset-password")
-    public ResponseEntity<String> resetPassword(@RequestParam String email) {
-        boolean success = passwordResetService.resetPasswordAndSendEmail(email);
-
+    public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO request) {
+        boolean success = passwordResetService.resetPasswordAndSendEmail(request.getEmail());
+    
         if (success) {
             return ResponseEntity.ok("New password has been sent to your email.");
         } else {
             return ResponseEntity.badRequest().body("Email not found or failed to send.");
         }
     }
+    
     @PostMapping("/send")
     public boolean sendTestEmail(@RequestParam String toEmail) {
         try {

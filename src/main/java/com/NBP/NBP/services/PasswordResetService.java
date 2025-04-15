@@ -3,7 +3,6 @@ package com.NBP.NBP.services;
 import com.NBP.NBP.models.User;
 import com.NBP.NBP.repositories.UserRepository;
 import org.apache.commons.text.RandomStringGenerator;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
