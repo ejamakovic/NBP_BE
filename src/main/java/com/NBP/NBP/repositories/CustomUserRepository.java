@@ -11,6 +11,8 @@ import java.util.List;
 @Repository
 public class CustomUserRepository {
 
+    private static final String TABLE_NAME = "NBP08.CUSTOM_USERS";
+
     private final JdbcTemplate jdbcTemplate;
 
     public CustomUserRepository(JdbcTemplate jdbcTemplate) {
@@ -29,16 +31,16 @@ public class CustomUserRepository {
     );
 
     public List<CustomUser> findAll() {
-        return jdbcTemplate.query("SELECT * FROM custom_users", rowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, rowMapper);
     }
 
     public CustomUser findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM custom_users WHERE id = ?", rowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", rowMapper, id);
     }
 
     public int save(CustomUser user) {
         return jdbcTemplate.update(
-                "INSERT INTO custom_users (user_id, user_type, year, department_id, email, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                "INSERT INTO " + TABLE_NAME + " (user_id, user_type, year, department_id, email, username, password) VALUES (?, ?, ?, ?, ?, ?, ?)",
                 user.getUserId(), user.getUserType().name(), user.getYear(), user.getDepartmentId(),
                 user.getEmail(), user.getUsername(), user.getPassword()
         );
@@ -46,19 +48,19 @@ public class CustomUserRepository {
 
     public int update(CustomUser user) {
         return jdbcTemplate.update(
-                "UPDATE custom_users SET user_id = ?, user_type = ?, year = ?, department_id = ?, email = ?, username = ?, password = ? WHERE id = ?",
+                "UPDATE " + TABLE_NAME + " SET user_id = ?, user_type = ?, year = ?, department_id = ?, email = ?, username = ?, password = ? WHERE id = ?",
                 user.getUserId(), user.getUserType().name(), user.getYear(), user.getDepartmentId(),
                 user.getEmail(), user.getUsername(), user.getPassword(), user.getId()
         );
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM custom_users WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public CustomUser findByUsernameAndPassword(String username, String password) {
         return jdbcTemplate.queryForObject(
-                "SELECT * FROM custom_users WHERE username = ? AND password = ?",
+                "SELECT * FROM " + TABLE_NAME + " WHERE username = ? AND password = ?",
                 rowMapper,
                 username, password
         );
@@ -67,12 +69,11 @@ public class CustomUserRepository {
     public CustomUser findByUsername(String username) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT * FROM custom_users WHERE username = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE username = ?",
                     rowMapper,
                     username
             );
         } catch (Exception e) {
-            // Handle no user found (e.g., return null or throw custom exception)
             return null;
         }
     }
@@ -80,12 +81,11 @@ public class CustomUserRepository {
     public CustomUser findByEmail(String email) {
         try {
             return jdbcTemplate.queryForObject(
-                    "SELECT * FROM custom_users WHERE email = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE email = ?",
                     rowMapper,
                     email
             );
         } catch (Exception e) {
-            // Handle no user found (e.g., return null or throw custom exception)
             return null;
         }
     }

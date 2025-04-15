@@ -11,6 +11,8 @@ import java.util.Optional;
 
 @Repository
 public class SupplierRepository {
+    private static final String TABLE_NAME = "NBP08.SUPPLIER";
+
     private final JdbcTemplate jdbcTemplate;
 
     public SupplierRepository(JdbcTemplate jdbcTemplate) {
@@ -24,31 +26,31 @@ public class SupplierRepository {
     );
 
     public List<Supplier> findAll() {
-        return jdbcTemplate.query("SELECT * FROM supplier", supplierRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, supplierRowMapper);
     }
 
     public Supplier findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM supplier WHERE id = ?", supplierRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", supplierRowMapper, id);
     }
 
     public int save(Supplier supplier) {
-        return jdbcTemplate.update("INSERT INTO supplier (equipment_id, name) VALUES (?, ?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (equipment_id, name) VALUES (?, ?)",
                 supplier.getEquipmentId(), supplier.getName());
     }
 
     public int update(Supplier supplier) {
-        return jdbcTemplate.update("UPDATE supplier SET equipment_id = ?, name = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET equipment_id = ?, name = ? WHERE id = ?",
                 supplier.getEquipmentId(), supplier.getName(), supplier.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM supplier WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public Optional<Supplier> findByName(String name) {
         try {
             Supplier supplier = jdbcTemplate.queryForObject(
-                    "SELECT * FROM supplier WHERE name = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     supplierRowMapper,
                     name
             );

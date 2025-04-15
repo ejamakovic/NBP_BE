@@ -2,7 +2,6 @@ package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.Order;
-import com.NBP.NBP.models.Role;
 import com.NBP.NBP.models.enums.OrderStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -13,6 +12,8 @@ import java.util.Optional;
 
 @Repository
 public class OrderRepository {
+
+    private static final String TABLE_NAME = "NBP08.ORDERS";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -31,35 +32,35 @@ public class OrderRepository {
     );
 
     public List<Order> findAll() {
-        return jdbcTemplate.query("SELECT * FROM orders", orderRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, orderRowMapper);
     }
 
     public Order findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM orders WHERE id = ?", orderRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", orderRowMapper, id);
     }
 
     public int save(Order order) {
         return jdbcTemplate.update(
-                "INSERT INTO orders (custom_user_id, equipment_id, price, supplier_id, invoice_number, order_status) VALUES (?, ?, ?, ?, ?, ?)",
+                "INSERT INTO " + TABLE_NAME + " (custom_user_id, equipment_id, price, supplier_id, invoice_number, order_status) VALUES (?, ?, ?, ?, ?, ?)",
                 order.getCustomUserId(), order.getEquipmentId(), order.getPrice(),
                 order.getSupplierId(), order.getInvoiceNumber(), order.getOrderStatus().name());
     }
 
     public int update(Order order) {
         return jdbcTemplate.update(
-                "UPDATE orders SET custom_user_id = ?, equipment_id = ?, price = ?, supplier_id = ?, invoice_number = ?, order_status = ? WHERE id = ?",
+                "UPDATE " + TABLE_NAME + " SET custom_user_id = ?, equipment_id = ?, price = ?, supplier_id = ?, invoice_number = ?, order_status = ? WHERE id = ?",
                 order.getCustomUserId(), order.getEquipmentId(), order.getPrice(),
                 order.getSupplierId(), order.getInvoiceNumber(), order.getOrderStatus().name(), order.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM orders WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public Optional<Order> findByEquipment(Equipment equipment) {
         try {
             Order order = jdbcTemplate.queryForObject(
-                    "SELECT * FROM orders WHERE equipment_id = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?",
                     orderRowMapper,
                     equipment.getId()
             );

@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public class FacultyRepository {
+    private static final String TABLE_NAME = "NBP08.FACULTY";
+
     private final JdbcTemplate jdbcTemplate;
 
     public FacultyRepository(JdbcTemplate jdbcTemplate) {
@@ -21,31 +23,31 @@ public class FacultyRepository {
             rs.getString("name"));
 
     public List<Faculty> findAll() {
-        return jdbcTemplate.query("SELECT * FROM faculty", facultyRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, facultyRowMapper);
     }
 
     public Faculty findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM faculty WHERE id = ?", facultyRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", facultyRowMapper, id);
     }
 
     public int save(Faculty faculty) {
-        return jdbcTemplate.update("INSERT INTO faculty (name) VALUES (?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (name) VALUES (?)",
                 faculty.getName());
     }
 
     public int update(Faculty faculty) {
-        return jdbcTemplate.update("UPDATE faculty SET name = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE "+ TABLE_NAME + " SET name = ? WHERE id = ?",
                 faculty.getName(), faculty.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM faculty WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public Optional<Faculty> findByName(String name) {
         try {
             Faculty faculty = jdbcTemplate.queryForObject(
-                    "SELECT * FROM faculty WHERE name = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     facultyRowMapper,
                     name
             );

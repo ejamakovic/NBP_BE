@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @Repository
 public class DepartmentRepository {
+    private static final String TABLE_NAME = "NBP08.DEPARTMENT";
+
     private final JdbcTemplate jdbcTemplate;
 
     public DepartmentRepository(JdbcTemplate jdbcTemplate) {
@@ -22,31 +24,31 @@ public class DepartmentRepository {
             rs.getInt("faculty_id"));
 
     public List<Department> findAll() {
-        return jdbcTemplate.query("SELECT * FROM department", departmentRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, departmentRowMapper);
     }
 
     public Department findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM department WHERE id = ?", departmentRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", departmentRowMapper, id);
     }
 
     public int save(Department department) {
-        return jdbcTemplate.update("INSERT INTO department (name, faculty_id) VALUES (?, ?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (name, faculty_id) VALUES (?, ?)",
                 department.getName(), department.getFacultyId());
     }
 
     public int update(Department department) {
-        return jdbcTemplate.update("UPDATE department SET name = ?, faculty_id = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET name = ?, faculty_id = ? WHERE id = ?",
                 department.getName(), department.getFacultyId(), department.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM department WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public Optional<Department> findByName(String name) {
         try {
             Department department = jdbcTemplate.queryForObject(
-                    "SELECT * FROM department WHERE name = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     departmentRowMapper,
                     name
             );
@@ -56,4 +58,3 @@ public class DepartmentRepository {
         }
     }
 }
-

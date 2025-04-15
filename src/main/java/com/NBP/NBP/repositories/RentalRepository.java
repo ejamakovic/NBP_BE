@@ -5,11 +5,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Date;
 import java.util.List;
 
 @Repository
 public class RentalRepository {
+    private static final String TABLE_NAME = "NBP08.RENTAL";
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -25,26 +25,27 @@ public class RentalRepository {
     );
 
     public List<Rental> findAll() {
-        return jdbcTemplate.query("SELECT * FROM rental", rentalRowMapper);
+        String sql = "SELECT * FROM " + TABLE_NAME;
+        return jdbcTemplate.query(sql, rentalRowMapper);
     }
 
     public Rental findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM rental WHERE id = ?", rentalRowMapper, id);
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, rentalRowMapper, id);
     }
 
     public int save(Rental rental) {
-        return jdbcTemplate.update(
-                "INSERT INTO rental (equipment_id, rent_date, return_date) VALUES (?, ?, ?)",
-                rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate());
+        String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, rent_date, return_date) VALUES (?, ?, ?)";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate());
     }
 
     public int update(Rental rental) {
-        return jdbcTemplate.update(
-                "UPDATE rental SET equipment_id = ?, rent_date = ?, return_date = ? WHERE id = ?",
-                rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate(), rental.getId());
+        String sql = "UPDATE " + TABLE_NAME + " SET equipment_id = ?, rent_date = ?, return_date = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate(), rental.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM rental WHERE id = ?", id);
+        String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
+        return jdbcTemplate.update(sql, id);
     }
 }

@@ -2,10 +2,13 @@ package com.NBP.NBP.configs;
 
 import com.NBP.NBP.models.*;
 import com.NBP.NBP.models.enums.EquipmentStatus;
-import com.NBP.NBP.repositories.*;
+import com.NBP.NBP.services.*;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+
+import java.time.LocalDate;
+import java.util.Optional;
 
 @Configuration
 public class DatabaseSeeder {
@@ -26,86 +29,77 @@ public class DatabaseSeeder {
 
     @Bean
     CommandLineRunner seedDatabase(
-            CategoryRepository categoryRepository,
-            DepartmentRepository departmentRepository,
-            EquipmentRepository equipmentRepository,
-            FacultyRepository facultyRepository,
-            LaboratoryRepository laboratoryRepository,
-            OrderRepository orderRepository,
-            RentalRepository rentalRepository,
-            ServiceRepository serviceRepository,
-            SupplierRepository supplierRepository,
-            UserRepository userRepository,
-            RoleRepository roleRepository
+            CategoryService categoryService,
+            DepartmentService departmentService,
+            EquipmentService equipmentService,
+            FacultyService facultyService,
+            LaboratoryService laboratoryService,
+            OrderService orderService,
+            RentalService rentalService,
+            ServiceService serviceService,
+            SupplierService supplierService,
+            UserService userService,
+            RoleService roleService
     ) {
         return args -> {
-            Faculty faculty = facultyRepository.findByName(FACULTY_NAME)
-                    .orElseGet(() -> {
-                        facultyRepository.save(new Faculty(FACULTY_NAME));
-                        return facultyRepository.findByName(FACULTY_NAME).get();
-                    });
+            Faculty faculty = facultyService.findByName(FACULTY_NAME)
+                    .orElseGet(() -> facultyService.create(new Faculty(FACULTY_NAME)));
 
-            Department department = departmentRepository.findByName(DEPARTMENT_NAME)
-                    .orElseGet(() -> {
-                        departmentRepository.save(new Department(DEPARTMENT_NAME, faculty.getId()));
-                        return departmentRepository.findByName(DEPARTMENT_NAME).get();
-                    });
+            Department department = departmentService.findByName(DEPARTMENT_NAME)
+                    .orElseGet(() -> departmentService.create(new Department(DEPARTMENT_NAME, faculty.getId())));
 
-            Category category = categoryRepository.findByName(CATEGORY_NAME)
-                    .orElseGet(() -> {
-                        categoryRepository.save(new Category(CATEGORY_NAME));
-                        return categoryRepository.findByName(CATEGORY_NAME).get();
-                    });
+            Category category = categoryService.findByName(CATEGORY_NAME)
+                    .orElseGet(() -> categoryService.create(new Category(CATEGORY_NAME)));
 
-            Laboratory lab = laboratoryRepository.findByName(LAB_NAME)
-                    .orElseGet(() -> {
-                        laboratoryRepository.save(new Laboratory(LAB_NAME, department.getId()));
-                        return laboratoryRepository.findByName(LAB_NAME).get();
-                    });
+            Laboratory lab = laboratoryService.findByName(LAB_NAME)
+                    .orElseGet(() -> laboratoryService.create(new Laboratory(LAB_NAME, department.getId())));
 
-            Equipment equipment = equipmentRepository.findByName(EQUIPMENT_NAME)
-                    .orElseGet(() -> {
-                        equipmentRepository.save(new Equipment(EQUIPMENT_NAME, category.getId(), lab.getId(), EquipmentStatus.LABORATORY));
-                        return equipmentRepository.findByName(EQUIPMENT_NAME).get();
-                    });
+            Equipment equipment = equipmentService.findByName(EQUIPMENT_NAME)
+                    .orElseGet(() -> equipmentService.create(new Equipment(
+                            EQUIPMENT_NAME, category.getId(), lab.getId(), EquipmentStatus.LABORATORY)));
 
-            Supplier supplier = supplierRepository.findByName(SUPPLIER_NAME)
-                    .orElseGet(() -> {
-                        supplierRepository.save(new Supplier(SUPPLIER_NAME, equipment.getId()));
-                        return supplierRepository.findByName(SUPPLIER_NAME).get();
-                    });
+            Supplier supplier = supplierService.findByName(SUPPLIER_NAME)
+                    .orElseGet(() -> supplierService.create(new Supplier(SUPPLIER_NAME, equipment.getId())));
 
-            Role role = roleRepository.findByName(ROLE_NAME)
-                    .orElseGet(() -> {
-                        roleRepository.save(new Role(ROLE_NAME));
-                        return roleRepository.findByName(ROLE_NAME).get();
-                    });
+            Role role = roleService.findByName(ROLE_NAME)
+                    .orElseGet(() -> roleService.create(new Role(ROLE_NAME)));
 
-            User user = userRepository.findByEmail(USER_EMAIL);
-            if (user == null) {
-                user = new User(
-                        USER_FIRST_NAME,
-                        USER_LAST_NAME,
-                        USER_EMAIL,
-                        USER_PASSWORD,
-                        USER_USERNAME,
-                        role.getId()
-                );
-                userRepository.save(user);
-                user = userRepository.findByEmail(USER_EMAIL);
+            User user = userService.findByEmail(USER_EMAIL)
+                    .orElseGet(() -> userService.create(new User(
+                            USER_FIRST_NAME,
+                            USER_LAST_NAME,
+                            USER_EMAIL,
+                            USER_PASSWORD,
+                            USER_USERNAME,
+                            role.getId()
+                    )));
+
+            if (orderService.findByEquipment(equipment).isEmpty()) {
+                orderService.create(new Order(
+                        equipment.getId(),
+                        user.getId(),
+                        1000.00,
+                        supplier.getId(),
+                        "NEW",
+                        "INV-001"
+                ));
             }
 
-//            orderRepository.findByEquipment(equipment).orElseGet(() ->
-//                    orderRepository.save(new Order(equipment, supplier, LocalDate.now(), 1000.00))
-//            );
-//
-//            rentalRepository.findByEquipment(equipment).orElseGet(() ->
-//                    rentalRepository.save(new Rental(equipment, user, LocalDate.now(), LocalDate.now().plusDays(7)))
-//            );
-//
-//            serviceRepository.findByEquipment(equipment).orElseGet(() ->
-//                    serviceRepository.save(new Service(equipment, SERVICE_DESCRIPTION, LocalDate.now()))
-//            );
+            if (rentalService.findByEquipment(equipment).isEmpty()) {
+                rentalService.create(new Rental(
+                        equipment.getId(),
+                        LocalDate.now(),
+                        LocalDate.now().plusDays(7)
+                ));
+            }
+
+            if (serviceService.findByEquipment(equipment).isEmpty()) {
+                serviceService.create(new Service(
+                        equipment.getId(),
+                        LocalDate.now(),
+                        SERVICE_DESCRIPTION
+                ));
+            }
         };
     }
 }

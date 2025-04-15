@@ -1,7 +1,6 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Category;
-import com.NBP.NBP.models.Department;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -11,6 +10,9 @@ import java.util.Optional;
 
 @Repository
 public class CategoryRepository {
+
+    private static final String TABLE_NAME = "NBP08.CATEGORY";
+
     private final JdbcTemplate jdbcTemplate;
 
     public CategoryRepository(JdbcTemplate jdbcTemplate) {
@@ -24,31 +26,31 @@ public class CategoryRepository {
     );
 
     public List<Category> findAll() {
-        return jdbcTemplate.query("SELECT * FROM category", categoryRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, categoryRowMapper);
     }
 
     public Category findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM category WHERE id = ?", categoryRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", categoryRowMapper, id);
     }
 
     public int save(Category category) {
-        return jdbcTemplate.update("INSERT INTO category (description, name) VALUES (?, ?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (description, name) VALUES (?, ?)",
                 category.getDescription(), category.getName());
     }
 
     public int update(Category category) {
-        return jdbcTemplate.update("UPDATE category SET description = ?, name = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET description = ?, name = ? WHERE id = ?",
                 category.getDescription(), category.getName(), category.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM category WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
     public Optional<Category> findByName(String name) {
         try {
             Category category = jdbcTemplate.queryForObject(
-                    "SELECT * FROM category WHERE name = ?",
+                    "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     categoryRowMapper,
                     name
             );

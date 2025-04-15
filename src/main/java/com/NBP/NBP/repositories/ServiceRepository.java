@@ -9,6 +9,8 @@ import java.util.List;
 
 @Repository
 public class ServiceRepository {
+    private static final String TABLE_NAME = "NBP08.SERVICE";
+
     private final JdbcTemplate jdbcTemplate;
 
     public ServiceRepository(JdbcTemplate jdbcTemplate) {
@@ -22,24 +24,24 @@ public class ServiceRepository {
     );
 
     public List<Service> findAll() {
-        return jdbcTemplate.query("SELECT * FROM service", serviceRowMapper);
+        return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, serviceRowMapper);
     }
 
     public Service findById(int id) {
-        return jdbcTemplate.queryForObject("SELECT * FROM service WHERE id = ?", serviceRowMapper, id);
+        return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", serviceRowMapper, id);
     }
 
     public int save(Service service) {
-        return jdbcTemplate.update("INSERT INTO service (equipment_id, description) VALUES (?, ?)",
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (equipment_id, description) VALUES (?, ?)",
                 service.getEquipementId(), service.getDescription());
     }
 
     public int update(Service service) {
-        return jdbcTemplate.update("UPDATE service SET equipment_id = ?, description = ? WHERE id = ?",
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET equipment_id = ?, description = ? WHERE id = ?",
                 service.getEquipementId(), service.getDescription(), service.getId());
     }
 
     public int delete(int id) {
-        return jdbcTemplate.update("DELETE FROM service WHERE id = ?", id);
+        return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 }

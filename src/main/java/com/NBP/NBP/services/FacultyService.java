@@ -5,6 +5,7 @@ import com.NBP.NBP.repositories.FacultyRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class FacultyService {
@@ -32,5 +33,9 @@ public class FacultyService {
 
     public void deleteFaculty(int id) {
         facultyRepository.delete(id);
+    }
+
+    public Optional<Faculty> findByName(String name) {
+        return facultyRepository.findByName(name);
     }
 }
