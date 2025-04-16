@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SupplierService {
@@ -34,5 +35,9 @@ public class SupplierService {
 
     public int deleteSupplier(int id) {
         return supplierRepository.delete(id);
+    }
+
+    public Optional<Supplier> findByName(String name) {
+        return supplierRepository.findByName(name);
     }
 }

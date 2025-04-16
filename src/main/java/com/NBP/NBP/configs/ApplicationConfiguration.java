@@ -15,9 +15,9 @@ import com.NBP.NBP.repositories.UserRepository;
 
 @Configuration
 public class ApplicationConfiguration {
-    private final CustomUserRepository userRepository;
+    private final UserRepository userRepository;
 
-    public ApplicationConfiguration(CustomUserRepository userRepository) {
+    public ApplicationConfiguration(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 

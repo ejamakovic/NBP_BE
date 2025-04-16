@@ -23,7 +23,7 @@ public class FacultyService {
         return facultyRepository.findById(id);
     }
 
-    public void createFaculty(Faculty faculty) {
+    public void saveFaculty(Faculty faculty) {
         facultyRepository.save(faculty);
     }
 

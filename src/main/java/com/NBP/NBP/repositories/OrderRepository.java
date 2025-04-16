@@ -7,6 +7,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -57,16 +58,16 @@ public class OrderRepository {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
-    public Optional<Order> findByEquipment(Equipment equipment) {
+    public List<Order> findByEquipment(Equipment equipment) {
         try {
-            Order order = jdbcTemplate.queryForObject(
+            return jdbcTemplate.query(
                     "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?",
                     orderRowMapper,
                     equipment.getId()
             );
-            return Optional.of(order);
         } catch (Exception e) {
-            return Optional.empty();
+            return Collections.emptyList();
         }
     }
+
 }

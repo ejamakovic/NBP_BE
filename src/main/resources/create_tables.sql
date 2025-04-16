@@ -20,7 +20,8 @@ CREATE TABLE NBP08.CUSTOM_USER (
                                    year NUMBER NOT NULL,
                                    department_id NUMBER NOT NULL,
                                    CONSTRAINT fk_customUser_user FOREIGN KEY (user_id) REFERENCES NBP.NBP_USER(id),
-                                   CONSTRAINT fk_customUser_department FOREIGN KEY (department_id) REFERENCES NBP08.DEPARTMENT(id)
+                                   CONSTRAINT fk_customUser_department FOREIGN KEY (department_id) REFERENCES NBP08.DEPARTMENT(id),
+                                   CONSTRAINT unique_user_id UNIQUE (user_id)
 );
 
 CREATE TABLE NBP08.LABORATORY (

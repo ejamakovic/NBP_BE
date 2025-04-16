@@ -1,8 +1,12 @@
 package com.NBP.NBP.services;
 
+import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.Rental;
 import com.NBP.NBP.models.Service;
 import com.NBP.NBP.repositories.ServiceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collection;
 import java.util.List;
 
 @org.springframework.stereotype.Service
@@ -32,5 +36,9 @@ public class ServiceService {
 
     public int deleteService(int id) {
         return serviceRepository.delete(id);
+    }
+
+    public List<Service> findByEquipment(Equipment equipment) {
+        return serviceRepository.findByEquipment(equipment);
     }
 }

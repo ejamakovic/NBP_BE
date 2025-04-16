@@ -1,10 +1,13 @@
 package com.NBP.NBP.services;
 
+import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.Order;
 import com.NBP.NBP.models.Rental;
 import com.NBP.NBP.repositories.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
 import java.util.List;
 
 @Service
@@ -34,5 +37,9 @@ public class RentalService {
 
     public int deleteRental(int id) {
         return rentalRepository.delete(id);
+    }
+
+    public List<Rental> findByEquipment(Equipment equipment) {
+        return rentalRepository.findByEquipment(equipment);
     }
 }

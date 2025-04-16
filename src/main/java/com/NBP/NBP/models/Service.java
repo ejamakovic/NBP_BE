@@ -1,18 +1,29 @@
 package com.NBP.NBP.models;
 
+import java.time.LocalDate;
+
 public class Service {
 
     private int id;
-    private int equipementId;
+    private int equipmentId;
     private String description;
+    private LocalDate serviceDate;
 
     public Service() {
+        // Default constructor
     }
 
-    public Service(int id, int equipementId, String description) {
-        this.id = id;
-        this.equipementId = equipementId;
+    public Service(int equipmentId, String description, LocalDate serviceDate) {
+        this.equipmentId = equipmentId;
         this.description = description;
+        this.serviceDate = serviceDate;
+    }
+
+    public Service(int id, int equipmentId, String description, LocalDate serviceDate) {
+        this.id = id;
+        this.equipmentId = equipmentId;
+        this.description = description;
+        this.serviceDate = serviceDate;
     }
 
     public int getId() {
@@ -23,12 +34,12 @@ public class Service {
         this.id = id;
     }
 
-    public int getEquipementId() {
-        return equipementId;
+    public int getEquipmentId() {
+        return equipmentId;
     }
 
-    public void setEquipementId(int equipementId) {
-        this.equipementId = equipementId;
+    public void setEquipmentId(int equipmentId) {
+        this.equipmentId = equipmentId;
     }
 
     public String getDescription() {
@@ -37,5 +48,13 @@ public class Service {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public LocalDate getServiceDate() {
+        return serviceDate;
+    }
+
+    public void setServiceDate(LocalDate serviceDate) {
+        this.serviceDate = serviceDate;
     }
 }

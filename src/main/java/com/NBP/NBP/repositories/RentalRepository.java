@@ -1,10 +1,14 @@
 package com.NBP.NBP.repositories;
 
+import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.Order;
 import com.NBP.NBP.models.Rental;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -47,5 +51,17 @@ public class RentalRepository {
     public int delete(int id) {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
         return jdbcTemplate.update(sql, id);
+    }
+
+    public List<Rental> findByEquipment(Equipment equipment) {
+        try {
+            return jdbcTemplate.query(
+                    "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?",
+                    rentalRowMapper,
+                    equipment.getId()
+            );
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
     }
 }

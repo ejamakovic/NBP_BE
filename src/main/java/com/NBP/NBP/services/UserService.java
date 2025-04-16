@@ -1,9 +1,9 @@
 package com.NBP.NBP.services;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.regex.Pattern;
 
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,11 +24,11 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    public User getUserById(int id) {
+    public User findById(int id) {
         return userRepository.findById(id);
     }
 
-    public void createUser(User user) throws IllegalArgumentException {
+    public void saveUser(User user) throws IllegalArgumentException {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -71,8 +71,13 @@ public class UserService {
         userRepository.delete(id);
     }
 
-    private boolean isValidPassword(String password) {
+    public boolean isValidPassword(String password) {
         String regex = "^(?=.*[0-9])(?=.*[a-zA-Z]).{8,}$";
         return Pattern.matches(regex, password);
     }
+
+    public Optional<User> findByEmail(String email) {
+        return Optional.ofNullable(userRepository.findByEmail(email));
+    }
+
 }

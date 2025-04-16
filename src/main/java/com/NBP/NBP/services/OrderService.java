@@ -1,10 +1,13 @@
 package com.NBP.NBP.services;
 
+import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.Order;
 import com.NBP.NBP.repositories.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -35,4 +38,9 @@ public class OrderService {
     public int deleteOrder(int id) {
         return orderRepository.delete(id);
     }
+
+    public List<Order> findByEquipment(Equipment equipment) {
+        return orderRepository.findByEquipment(equipment);
+    }
+
 }

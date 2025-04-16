@@ -9,22 +9,23 @@ public class CustomUser {
     private UserType userType;
     private int year;
     private int departmentId;
-    private String email;
-    private String username;
-    private String password;
 
     public CustomUser() {
     }
 
-    public CustomUser(int id, int userId, UserType userType, int year, int departmentId, String email, String username, String password) {
+    public CustomUser(int userId, UserType userType, int year, int departmentId) {
+        this.userId = userId;
+        this.userType = userType;
+        this.year = year;
+        this.departmentId = departmentId;
+    }
+
+    public CustomUser(int id, int userId, UserType userType, int year, int departmentId) {
         this.id = id;
         this.userId = userId;
         this.userType = userType;
         this.year = year;
         this.departmentId = departmentId;
-        this.email = email;
-        this.username = username;
-        this.password = password;
     }
 
     public int getId() {
@@ -65,29 +66,5 @@ public class CustomUser {
 
     public void setDepartmentId(int departmentId) {
         this.departmentId = departmentId;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = username;
     }
 }

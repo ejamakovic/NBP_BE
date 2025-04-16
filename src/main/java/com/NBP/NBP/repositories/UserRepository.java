@@ -19,7 +19,6 @@ public class UserRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    // RowMapper to map result set to User
     private final RowMapper<User> userRowMapper = (resultSet, rowNum) -> {
         User user = new User();
         user.setId(resultSet.getInt("id"));
@@ -40,7 +39,6 @@ public class UserRepository {
         return user;
     };
 
-    // SQL queries as formatted strings
     private String getSelectQuery() {
         return String.format("SELECT * FROM %s", TABLE_NAME);
     }
@@ -65,12 +63,10 @@ public class UserRepository {
         return String.format("DELETE FROM %s WHERE id = ?", TABLE_NAME);
     }
 
-    // Retrieve all users
     public List<User> findAll() {
         return jdbcTemplate.query(getSelectQuery(), userRowMapper);
     }
 
-    // Find a user by ID with error handling
     public User findById(int id) {
         try {
             String sql = getSelectQuery() + " WHERE id = ?";
@@ -80,7 +76,6 @@ public class UserRepository {
         }
     }
 
-    // Save a new user
     public int save(User user) {
         return jdbcTemplate.update(getInsertQuery(),
                 user.getFirstName(),
@@ -95,7 +90,6 @@ public class UserRepository {
         );
     }
 
-    // Update an existing user
     public int update(User user) {
         return jdbcTemplate.update(getUpdateQuery(),
                 user.getFirstName(),
@@ -111,12 +105,10 @@ public class UserRepository {
         );
     }
 
-    // Delete a user by ID
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
     }
 
-    // Custom exception class for user not found scenario
     public static class UserNotFoundException extends RuntimeException {
         public UserNotFoundException(String message) {
             super(message);

@@ -30,12 +30,12 @@ public class UserController {
 
     @GetMapping("/{id}")
     public User getUserById(@PathVariable int id) {
-        return userService.getUserById(id);
+        return userService.findById(id);
     }
 
     @PostMapping
     public void createUser(@RequestBody User user) {
-        userService.createUser(user);
+        userService.saveUser(user);
     }
 
     @PutMapping("/{id}")

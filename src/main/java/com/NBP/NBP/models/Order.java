@@ -22,6 +22,15 @@ public class Order {
         this.orderStatus = orderStatus;
     }
 
+    public Order(int customUserId, int equipmentId, int price, int supplierId, OrderStatus orderStatus, String invoiceNumber) {
+        this.customUserId = customUserId;
+        this.equipmentId = equipmentId;
+        this.price = price;
+        this.supplierId = supplierId;
+        this.orderStatus = orderStatus;
+        this.invoiceNumber = invoiceNumber;
+    }
+
     public int getId() {
         return id;
     }

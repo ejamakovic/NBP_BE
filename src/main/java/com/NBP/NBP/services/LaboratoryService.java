@@ -5,6 +5,7 @@ import com.NBP.NBP.repositories.LaboratoryRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class LaboratoryService {
@@ -22,7 +23,7 @@ public class LaboratoryService {
         return laboratoryRepository.findById(id);
     }
 
-    public void createLaboratory(Laboratory laboratory) {
+    public void saveLaboratory(Laboratory laboratory) {
         laboratoryRepository.save(laboratory);
     }
 
@@ -32,5 +33,9 @@ public class LaboratoryService {
 
     public void deleteLaboratory(int id) {
         laboratoryRepository.delete(id);
+    }
+
+    public Optional<Laboratory> findByName(String name) {
+        return laboratoryRepository.findByName(name);
     }
 }

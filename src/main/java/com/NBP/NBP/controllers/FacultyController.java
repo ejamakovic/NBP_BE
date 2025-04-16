@@ -27,7 +27,7 @@ public class FacultyController {
 
     @PostMapping
     public void createFaculty(@RequestBody Faculty faculty) {
-        facultyService.createFaculty(faculty);
+        facultyService.saveFaculty(faculty);
     }
 
     @PutMapping("/{id}")

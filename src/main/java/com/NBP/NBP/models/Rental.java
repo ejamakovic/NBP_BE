@@ -1,6 +1,7 @@
 package com.NBP.NBP.models;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 public class Rental {
     private int id;
@@ -13,6 +14,12 @@ public class Rental {
         this.equipmentId = equipmentId;
         this.rentDate = rentDate;
         this.returnDate = returnDate;
+    }
+
+    public Rental(int equipmentId, LocalDate rentDate, LocalDate returnDate) {
+        this.equipmentId = equipmentId;
+        this.rentDate = Date.valueOf(rentDate);
+        this.returnDate = Date.valueOf(returnDate);
     }
 
     public int getId() {

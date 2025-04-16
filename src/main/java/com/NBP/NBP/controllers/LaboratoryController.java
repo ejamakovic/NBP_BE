@@ -27,7 +27,7 @@ public class LaboratoryController {
 
     @PostMapping
     public void createLaboratory(@RequestBody Laboratory laboratory) {
-        laboratoryService.createLaboratory(laboratory);
+        laboratoryService.saveLaboratory(laboratory);
     }
 
     @PutMapping("/{id}")

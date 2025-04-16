@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class DepartmentService {
@@ -34,5 +35,9 @@ public class DepartmentService {
 
     public int deleteDepartment(int id) {
         return departmentRepository.delete(id);
+    }
+
+    public Optional<Department> findByName(String name) {
+        return departmentRepository.findByName(name);
     }
 }
