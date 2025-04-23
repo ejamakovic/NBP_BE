@@ -6,6 +6,7 @@ import com.NBP.NBP.models.Service;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -36,16 +37,19 @@ public class ServiceRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", serviceRowMapper, id);
     }
 
+    @Transactional
     public int save(Service service) {
         return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (equipment_id, service_date, description) VALUES (?, ?, ?)",
                 service.getEquipmentId(), service.getServiceDate(), service.getDescription());
     }
 
+    @Transactional
     public int update(Service service) {
         return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET equipment_id = ?, service_date = ?, description = ? WHERE id = ?",
                 service.getEquipmentId(), service.getServiceDate(), service.getDescription(), service.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }

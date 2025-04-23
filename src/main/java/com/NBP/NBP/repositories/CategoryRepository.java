@@ -4,6 +4,7 @@ import com.NBP.NBP.models.Category;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,16 +34,19 @@ public class CategoryRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", categoryRowMapper, id);
     }
 
+    @Transactional
     public int save(Category category) {
         return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (description, name) VALUES (?, ?)",
                 category.getDescription(), category.getName());
     }
 
+    @Transactional
     public int update(Category category) {
         return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET description = ?, name = ? WHERE id = ?",
                 category.getDescription(), category.getName(), category.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }

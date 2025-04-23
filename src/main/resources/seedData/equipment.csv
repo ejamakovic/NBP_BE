@@ -1,0 +1,41 @@
+name,categoryName,labName,status
+Dell Inspiron,Računarska oprema,Laboratorij za programiranje,LABORATORY
+HP Pavilion,Mjerne naprave,Laboratorij za elektroniku,LABORATORY
+Lenovo ThinkPad,Elektroničke komponente,Laboratorij za električne mreže,STORAGE
+Acer Aspire,Mikroskopi,Laboratorij za biomedicinu,LABORATORY
+Canon EOS,Hemijska oprema,Laboratorij za hemijsku analizu,LABORATORY
+Apple MacBook,Zaštitna oprema,Laboratorij za radiološku dijagnostiku,LABORATORY
+3D Printer,3D štampači,Laboratorij za mikrobiologiju,RENTED
+Raspberry Pi,Robotski setovi,Laboratorij za sestrinstvo,RENTED
+Sony Projector,Multimedijalna oprema,Laboratorij za prehranu,RENTED
+Fujifilm Biometric Scanner,Biometrijska oprema,Laboratorij za jezike,LABORATORY
+Makita Power Tools,Alati za obradu materijala,Laboratorij za filozofsku analizu,STORAGE
+Philips ECG,Medicinska oprema,Laboratorij za historijska istraživanja,RENTED
+Autodesk AutoCAD,Softverski alati,Laboratorij za pedagogiju,LABORATORY
+Garmin GPS,Geodetska oprema,Laboratorij za psihologijska ispitivanja,STORAGE
+JBL Speakers,Audiovizuelna oprema,Laboratorij za fiziku čestica,RENTED
+Chemistry Lab Set,Eksperimentalni setovi,Laboratorij za molekularnu biologiju,RENTED
+Nikon DSLR,Fotografska oprema,Laboratorij za GIS tehnologije,LABORATORY
+Air Conditioner,Uređaji za klimatizaciju,Laboratorij za političke studije,LABORATORY
+Anatomical Models,Edukativni modeli,Laboratorij za kriminološka istraživanja,STORAGE
+Autoclave,Oprema za sterilizaciju,Laboratorij za programiranje,LABORATORY
+Dell Latitude,Računarska oprema,Laboratorij za računarske sisteme,SERVICE
+HP Envy,Mjerne naprave,Laboratorij za mjerne tehnologije,SERVICE
+Acer Swift,Elektroničke komponente,Laboratorij za analizu signala,SERVICE
+Asus ZenBook,Mikroskopi,Laboratorij za genetiku,SERVICE
+Canon DSLR Plus,Hemijska oprema,Laboratorij za analizu materijala,SERVICE
+MacBook Pro,Zaštitna oprema,Laboratorij za sigurnost,SERVICE
+Epson 3D Printer,3D štampači,Laboratorij za prototipiranje,SERVICE
+Arduino Set,Robotski setovi,Laboratorij za automatiku,SERVICE
+BenQ Projector,Multimedijalna oprema,Laboratorij za vizualne medije,SERVICE
+Panasonic Biometric Scanner,Biometrijska oprema,Laboratorij za biometriju,SERVICE
+Bosch Power Tools,Alati za obradu materijala,Laboratorij za industrijsku obradu,SERVICE
+GE Healthcare ECG,Medicinska oprema,Laboratorij za kardiologiju,SERVICE
+AutoCAD Software,Softverski alati,Laboratorij za CAD dizajn,SERVICE
+Topcon GPS,Geodetska oprema,Laboratorij za precizna mjerenja,SERVICE
+Logitech Speakers,Audiovizuelna oprema,Laboratorij za zvučnu tehnologiju,SERVICE
+Lab Set Chemistry,Eksperimentalni setovi,Laboratorij za hemijske eksperimente,SERVICE
+Leica DSLR,Fotografska oprema,Laboratorij za digitalnu fotografiju,SERVICE
+Daikin AC,Uređaji za klimatizaciju,Laboratorij za energetsku efikasnost,SERVICE
+K-12 Models,Edukativni modeli,Laboratorij za biološke studije,SERVICE
+Sterilization Unit,Oprema za sterilizaciju,Laboratorij za mikrobiologiju,SERVICE

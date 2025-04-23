@@ -40,4 +40,8 @@ public class RoleService {
     public Optional<Role> findByName(String name) {
         return roleRepository.findByName(name);
     }
+
+    public Optional<Role> findByRoleName(String name) {
+        return roleRepository.findByName(name);
+    }
 }

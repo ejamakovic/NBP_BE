@@ -5,6 +5,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -76,6 +77,7 @@ public class UserRepository {
         }
     }
 
+    @Transactional
     public int save(User user) {
         return jdbcTemplate.update(getInsertQuery(),
                 user.getFirstName(),
@@ -90,6 +92,7 @@ public class UserRepository {
         );
     }
 
+    @Transactional
     public int update(User user) {
         return jdbcTemplate.update(getUpdateQuery(),
                 user.getFirstName(),
@@ -105,6 +108,7 @@ public class UserRepository {
         );
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
     }

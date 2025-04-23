@@ -5,6 +5,7 @@ import com.NBP.NBP.models.enums.EquipmentStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,16 +37,19 @@ public class EquipmentRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", equipmentRowMapper, id);
     }
 
+    @Transactional
     public int save(Equipment equipment) {
         return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (description, name, category_id, laboratory_id, status) VALUES (?, ?, ?, ?, ?)",
                 equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(), equipment.getStatus().name());
     }
 
+    @Transactional
     public int update(Equipment equipment) {
         return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET description = ?, name = ?, category_id = ?, laboratory_id = ?, status = ? WHERE id = ?",
                 equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(), equipment.getStatus().name(), equipment.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }

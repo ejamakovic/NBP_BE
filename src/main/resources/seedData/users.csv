@@ -1,0 +1,21 @@
+firstName,lastName,email,password123!,username,roleName
+Amin,Hasanovic,amin.hasanovic@email.com,password123!,aminhasanovic,Administrator
+Selma,Alispahić,selma.alispahic@email.com,password123!,selmaalispahic,Laboratorijski Tehničar
+Marko,Petrović,marko.petrovic@email.com,password123!,markopetrovic,Menadžer Laboratorije
+Amra,Begović,amra.begovic@email.com,password123!,amrabegovic,Dobavljač Opreme
+Nedim,Čaušević,nedim.causevic@email.com,password123!,nedimcausevic,Korisnik Opreme
+Lejla,Muhić,lejla.muhic@email.com,password123!,lejlauhuc,Supervizor Laboratorije
+Mirza,Mehmedović,mirza.mehmedovic@email.com,password123!,mirzamehmedovic,Tehnička Podrška
+Dženana,Avdić,dzenana.avdic@email.com,password123!,dzenanaavdic,Koordinator Projekta
+Kemal,Karalić,kemal.karalic@email.com,password123!,kemalkaralic,Izvršni Direktor
+Emina,Bešić,emina.besic@email.com,password123!,eminabesic,Korisnik Softvera
+Enes,Hasić,enes.hasic@email.com,password123!,eneshasic,Pristupnik Podacima
+Alma,Dedić,alma.dedic@email.com,password123!,almadedic,Tehnički Stručnjak
+Elma,Huremović,elma.huremovic@email.com,password123!,elmahuremovic,Sigurnosni Koordinator
+Tarik,Beglerović,tarik.beglerovic@email.com,password123!,tarikbeglerovic,Istraživač
+Saida,Bajramović,saida.bajramovic@email.com,password123!,saidabajramovic,Koordinator Nabavke
+Mirsad,Kadić,mirsad.kadic@email.com,password123!,mirsadkadic,Računovodstveni Stručnjak
+Jasmina,Šahinović,jasmina.sahinovic@email.com,password123!,jasminasahinovic,Pravni Savetnik
+Faruk,Hadžič,faruk.hadzic@email.com,password123!,farukhadzic,Izvršni Menadžer
+Lejla,Kurtović,lejla.kurtovic@email.com,password123!,lejlakurtovic,Koordinator Zaštite Okoline
+Edin,Pešić,edin.pesic@email.com,password123!,edinpesic,Trener za Korišćenje Opreme

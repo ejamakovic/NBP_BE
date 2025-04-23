@@ -6,6 +6,7 @@ import com.NBP.NBP.models.Rental;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -38,16 +39,19 @@ public class RentalRepository {
         return jdbcTemplate.queryForObject(sql, rentalRowMapper, id);
     }
 
+    @Transactional
     public int save(Rental rental) {
         String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, rent_date, return_date) VALUES (?, ?, ?)";
         return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate());
     }
 
+    @Transactional
     public int update(Rental rental) {
         String sql = "UPDATE " + TABLE_NAME + " SET equipment_id = ?, rent_date = ?, return_date = ? WHERE id = ?";
         return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate(), rental.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
         return jdbcTemplate.update(sql, id);

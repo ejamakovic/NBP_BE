@@ -5,6 +5,7 @@ import com.NBP.NBP.models.Role;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -51,16 +52,19 @@ public class RoleRepository {
         return jdbcTemplate.queryForObject(sql, roleRowMapper, id);
     }
 
+    @Transactional
     public int save(Role role) {
         return jdbcTemplate.update(getInsertQuery(),
                 role.getName());
     }
 
+    @Transactional
     public int update(Role role) {
         return jdbcTemplate.update(getUpdateQuery(),
                 role.getName(), role.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
     }

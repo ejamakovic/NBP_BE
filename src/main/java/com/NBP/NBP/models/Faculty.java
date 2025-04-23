@@ -1,33 +1,23 @@
 package com.NBP.NBP.models;
 
-import java.util.ArrayList;
-import java.util.List;
-
 public class Faculty {
 
     private int id;
+    private String abbreviation;
     private String name;
-    private List<Department> departments;
 
     public Faculty() {
-        this.departments = new ArrayList<>();
     }
 
-    public Faculty(String name) {
+    public Faculty(String abbreviation, String name) {
+        this.abbreviation = abbreviation;
         this.name = name;
-        this.departments = new ArrayList<>();
     }
 
-    public Faculty(int id, String name) {
+    public Faculty(int id, String abbreviation, String name) {
         this.id = id;
+        this.abbreviation = abbreviation;
         this.name = name;
-        this.departments = new ArrayList<>();
-    }
-
-    public Faculty(int id, String name, List<Department> departments) {
-        this.id = id;
-        this.name = name;
-        this.departments = departments;
     }
 
     public int getId() {
@@ -38,6 +28,14 @@ public class Faculty {
         this.id = id;
     }
 
+    public String getAbbreviation() {
+        return abbreviation;
+    }
+
+    public void setAbbreviation(String abbreviation) {
+        this.abbreviation = abbreviation;
+    }
+
     public String getName() {
         return name;
     }
@@ -45,13 +43,4 @@ public class Faculty {
     public void setName(String name) {
         this.name = name;
     }
-
-    public List<Department> getDepartments() {
-        return departments;
-    }
-
-    public void setDepartments(List<Department> departments) {
-        this.departments = departments;
-    }
-
 }

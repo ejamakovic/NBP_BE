@@ -7,6 +7,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -88,6 +89,7 @@ public class CustomUserRepository {
         return null;
     }
 
+    @Transactional
     public int save(CustomUser user) {
         return jdbcTemplate.update(getInsertQuery(),
                 user.getUserId(),
@@ -97,6 +99,7 @@ public class CustomUserRepository {
         );
     }
 
+    @Transactional
     public int update(CustomUser user) {
         return jdbcTemplate.update(getUpdateQuery(),
                 user.getUserId(),
@@ -107,6 +110,7 @@ public class CustomUserRepository {
         );
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
     }

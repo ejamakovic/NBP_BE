@@ -5,6 +5,7 @@ import com.NBP.NBP.models.Supplier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -33,16 +34,19 @@ public class SupplierRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", supplierRowMapper, id);
     }
 
+    @Transactional
     public int save(Supplier supplier) {
         return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (equipment_id, name) VALUES (?, ?)",
                 supplier.getEquipmentId(), supplier.getName());
     }
 
+    @Transactional
     public int update(Supplier supplier) {
         return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET equipment_id = ?, name = ? WHERE id = ?",
                 supplier.getEquipmentId(), supplier.getName(), supplier.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }

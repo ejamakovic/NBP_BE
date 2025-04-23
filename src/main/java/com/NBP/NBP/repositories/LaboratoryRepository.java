@@ -4,6 +4,7 @@ import com.NBP.NBP.models.Laboratory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,15 +37,18 @@ public class LaboratoryRepository {
                 lab.getName(), lab.getDepartmentId());
     }
 
+    @Transactional
     public int update(Laboratory lab) {
         return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET name = ?, department_id = ? WHERE id = ?",
                 lab.getName(), lab.getDepartmentId(), lab.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
+    @Transactional
     public Optional<Laboratory> findByName(String name) {
         try {
             Laboratory laboratory = jdbcTemplate.queryForObject(

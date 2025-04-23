@@ -1,0 +1,21 @@
+customUsername,equipmentName,price,supplierName,status,invoice
+aminhasanovic,Dell Inspiron,1084,TechNova d.o.o.,APPROVED,INV-100
+selmaalispahic,HP Pavilion,756,CompWorld BH,NEW,INV-101
+markopetrovic,Lenovo ThinkPad,1119,BitCentar,APPROVED,INV-102
+amrabegovic,Acer Aspire,684,IT Planet,DECLINED,INV-103
+nedimcausevic,Canon EOS,1321,FotoExpert,COMPLETED,INV-104
+lejlauhuc,Apple MacBook,1252,MacLine Sarajevo,APPROVED,INV-105
+mirzamehmedovic,3D Printer,880,PrintLab Technologies,NEW,INV-106
+dzenanaavdic,Raspberry Pi,1136,MicroTech Solutions,IN_PROGRESS,INV-107
+kemalkaralic,Sony Projector,1060,AV Centar,APPROVED,INV-108
+eminabesic,Fujifilm Biometric Scanner,860,BioScan Systems,IN_PROGRESS,INV-109
+eneshasic,Makita Power Tools,774,Elektro-Alati d.o.o.,APPROVED,INV-110
+almadedic,Philips ECG,542,MedikoLine,COMPLETED,INV-111
+elmahuremovic,Autodesk AutoCAD,772,CAD Soft Solutions,DECLINED,INV-112
+tarikbeglerovic,Garmin GPS,846,GeoPoint BH,DECLINED,INV-113
+saidabajramovic,JBL Speakers,1155,SoundTech,APPROVED,INV-114
+mirsadkadic,Chemistry Lab Set,1398,LabX Equipment,NEW,INV-115
+jasminasahinovic,Nikon DSLR,1348,FotoCentar BH,APPROVED,INV-116
+farukhadzic,Air Conditioner,530,KlimaShop,COMPLETED,INV-117
+lejlakurtovic,Anatomical Models,746,MedEdu Models,NEW,INV-118
+edinpesic,Autoclave,890,SterilMed Systems,IN_PROGRESS,INV-119

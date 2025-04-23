@@ -97,11 +97,12 @@
 			<artifactId>commons-text</artifactId>
 			<version>1.10.0</version> <!-- or latest -->
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/com.opencsv/opencsv -->
 		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
+			<groupId>com.opencsv</groupId>
+			<artifactId>opencsv</artifactId>
+			<version>5.7.1</version>
 		</dependency>
-
 	</dependencies>
 
 

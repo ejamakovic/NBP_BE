@@ -5,28 +5,20 @@ import com.NBP.NBP.models.enums.EquipmentStatus;
 import com.NBP.NBP.models.enums.OrderStatus;
 import com.NBP.NBP.models.enums.UserType;
 import com.NBP.NBP.services.*;
+import com.opencsv.CSVReader;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
+import java.io.InputStreamReader;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Configuration
 public class DatabaseSeeder {
-
-    private static final String FACULTY_NAME = "ETF";
-    private static final String DEPARTMENT_NAME = "Računarstvo i informatika";
-    private static final String CATEGORY_NAME = "Računar";
-    private static final String LAB_NAME = "Lab 1";
-    private static final String SUPPLIER_NAME = "Tech Shop";
-    private static final String USER_FIRST_NAME = "Ermina";
-    private static final String USER_LAST_NAME = "Jamaković";
-    private static final String USER_EMAIL = "ermina@etf.unsa.ba";
-    private static final String USER_PASSWORD = "password123";
-    private static final String USER_USERNAME = "erminajamakovic";
-    private static final String ROLE_NAME = "Slastičar";
-    private static final String EQUIPMENT_NAME = "Dell Inspiron";
-    private static final String SERVICE_DESCRIPTION = "Zamjena baterije";
 
     @Bean
     CommandLineRunner seedDatabase(
@@ -44,96 +36,276 @@ public class DatabaseSeeder {
             CustomUserService customUserService
     ) {
         return args -> {
-            Faculty faculty = facultyService.findByName(FACULTY_NAME)
-                    .orElseGet(() -> {
-                        facultyService.saveFaculty(new Faculty(FACULTY_NAME));
-                        return facultyService.findByName(FACULTY_NAME).orElseThrow();
-                    });
+            // Seed faculties
+            seedFromCSV("seedData/faculties.csv", line -> {
+                try {
+                    String abbreviation = line[0];
+                    String name = line[1];
+                    facultyService.saveFaculty(new Faculty(abbreviation, name));
+                } catch (Exception e) {
+                    System.err.println("Skipping faculty due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Faculties have been added.");
 
-            Department department = departmentService.findByName(DEPARTMENT_NAME)
-                    .orElseGet(() -> {
-                        departmentService.saveDepartment(new Department(DEPARTMENT_NAME, faculty.getId()));
-                        return departmentService.findByName(DEPARTMENT_NAME).orElseThrow();
-                    });
+            // Seed departments
+            seedFromCSV("seedData/departments.csv", line -> {
+                try {
+                    String departmentName = line[0];
+                    String facultyAbbreviation = line[1];
+                    Optional<Faculty> faculty = facultyService.findByAbbreviation(facultyAbbreviation);
+                    if (faculty.isPresent()) {
+                        departmentService.saveDepartment(new Department(departmentName, faculty.get().getId()));
+                    } else {
+                        System.err.println("Faculty not found for abbreviation: " + facultyAbbreviation);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Skipping department due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Departments have been added.");
 
-            Category category = categoryService.findByName(CATEGORY_NAME)
-                    .orElseGet(() -> {
-                        categoryService.saveCategory(new Category(CATEGORY_NAME));
-                        return categoryService.findByName(CATEGORY_NAME).orElseThrow();
-                    });
+            // Seed categories
+            seedFromCSV("seedData/categories.csv", line -> {
+                try {
+                    categoryService.saveCategory(new Category(line[0], line[1]));
+                } catch (Exception e) {
+                    System.err.println("Skipping category due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Categories have been added.");
 
-            Laboratory lab = laboratoryService.findByName(LAB_NAME)
-                    .orElseGet(() -> {
-                        laboratoryService.saveLaboratory(new Laboratory(LAB_NAME, department.getId()));
-                        return laboratoryService.findByName(LAB_NAME).orElseThrow();
-                    });
+            // Seed laboratories
+            seedFromCSV("seedData/labs.csv", line -> {
+                try {
+                    String labName = line[0];
+                    String departmentName = line[1];
+                    Optional<Department> department = departmentService.findByName(departmentName);
+                    if (department.isPresent()) {
+                        laboratoryService.saveLaboratory(new Laboratory(labName, department.get().getId()));
+                    } else {
+                        System.err.println("Department not found for name: " + departmentName);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Skipping lab due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Laboratories have been added.");
 
-            Equipment equipment = equipmentService.findByName(EQUIPMENT_NAME)
-                    .orElseGet(() -> {
-                        equipmentService.saveEquipment(new Equipment(
-                                EQUIPMENT_NAME, category.getId(), lab.getId(), EquipmentStatus.LABORATORY));
-                        return equipmentService.findByName(EQUIPMENT_NAME).orElseThrow();
-                    });
+            // Seed equipment
+            seedFromCSV("seedData/equipment.csv", line -> {
+                try {
+                    String equipmentName = line[0];
+                    String categoryName = line[1];
+                    String labName = line[2];
+                    EquipmentStatus status = EquipmentStatus.valueOf(line[3]);
 
-            Supplier supplier = supplierService.findByName(SUPPLIER_NAME)
-                    .orElseGet(() -> {
-                        supplierService.saveSupplier(new Supplier(SUPPLIER_NAME, equipment.getId()));
-                        return supplierService.findByName(SUPPLIER_NAME).orElseThrow();
-                    });
+                    Optional<Category> category = categoryService.findByName(categoryName);
+                    if (!category.isPresent()) {
+                        System.err.println("Category not found: " + categoryName);
+                        return;
+                    }
 
-            Role role = roleService.findByName(ROLE_NAME)
-                    .orElseGet(() -> {
-                        roleService.saveRole(new Role(ROLE_NAME));
-                        return roleService.findByName(ROLE_NAME).orElseThrow();
-                    });
+                    Optional<Laboratory> laboratory = laboratoryService.findByName(labName);
+                    if (!laboratory.isPresent()) {
+                        System.err.println("Laboratory not found: " + labName);
+                        return;
+                    }
 
-            User user = userService.findByEmail(USER_EMAIL)
-                    .orElseGet(() -> {
-                        userService.saveUser(new User(
-                                USER_FIRST_NAME,
-                                USER_LAST_NAME,
-                                USER_EMAIL,
-                                USER_PASSWORD,
-                                USER_USERNAME,
-                                role.getId()
-                        ));
-                        return userService.findByEmail(USER_EMAIL).orElseThrow();
-                    });
+                    equipmentService.saveEquipment(new Equipment(equipmentName, category.get().getId(), laboratory.get().getId(), status));
+                } catch (Exception e) {
+                    System.err.println("Skipping equipment due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Equipment has been added.");
 
-            CustomUser customUser = customUserService.getByUserId(user.getId())
-                    .orElseGet(() -> {
-                        CustomUser newCustomUser = new CustomUser(user.getId(), UserType.USER, 2025,department.getId());
-                        customUserService.saveUser(newCustomUser);
-                        return customUserService.getByUserId(user.getId())
-                                .orElseThrow(() -> new IllegalArgumentException("User could not be created or found"));
-                    });
+            // Seed suppliers
+            seedFromCSV("seedData/suppliers.csv", line -> {
+                try {
+                    String supplierName = line[0];
+                    String equipmentName = line[1];
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+                    supplierService.saveSupplier(new Supplier(supplierName, equipment.get().getId()));
+                } catch (Exception e) {
+                    System.err.println("Skipping supplier due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Suppliers have been added.");
 
-            if (orderService.findByEquipment(equipment).isEmpty()) {
-                orderService.saveOrder(new Order(
-                        customUser.getId(),
-                        equipment.getId(),
-                        (int) 1000.00,
-                        supplier.getId(),
-                        OrderStatus.APPROVED,
-                        "INV-001"
-                ));
-            }
+            // Seed roles
+            seedFromCSV("seedData/roles.csv", line -> {
+                try {
+                    roleService.saveRole(new Role(line[0]));
+                } catch (Exception e) {
+                    System.err.println("Skipping role due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Roles have been added.");
 
-            if (rentalService.findByEquipment(equipment).isEmpty()) {
-                rentalService.saveRental(new Rental(
-                        equipment.getId(),
-                        LocalDate.now(),
-                        LocalDate.now().plusDays(7)
-                ));
-            }
+            // Seed users
+            seedFromCSV("seedData/users.csv", line -> {
+                try {
+                    String roleName = line[5];
+                    Optional<Role> role = roleService.findByRoleName(roleName);
 
-            if (serviceService.findByEquipment(equipment).isEmpty()) {
-                serviceService.saveService(new Service(
-                        equipment.getId(),
-                        SERVICE_DESCRIPTION,
-                        LocalDate.now()
-                ));
-            }
+                    if (role.isPresent()) {
+                        int roleId = role.get().getId();
+                        User user = new User(line[0], line[1], line[2], line[3], line[4], roleId);
+                        userService.saveUser(user);
+                    } else {
+                        System.err.println("Role not found: " + roleName);
+                    }
+                } catch (Exception e) {
+                    System.err.println("Skipping user due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Users have been added.");
+
+            // Seed custom users
+            seedFromCSV("seedData/custom_users.csv", line -> {
+                try {
+                    String username = line[0];
+                    User user = userService.findByUsername(username)
+                            .orElseThrow(() -> new RuntimeException("User with username '" + username + "' not found."));
+
+                    String departmentName = line[3];
+                    Department department = departmentService.findByName(departmentName)
+                            .orElseThrow(() -> new RuntimeException("Department with name '" + departmentName + "' not found."));
+
+                    customUserService.saveUser(new CustomUser(
+                            user.getId(),
+                            UserType.valueOf(line[1]),
+                            Integer.parseInt(line[2]),
+                            department.getId()
+                    ));
+                } catch (Exception e) {
+                    System.err.println("Skipping custom user due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Custom users have been added.");
+
+            // Seed orders
+            seedFromCSV("seedData/orders.csv", line -> {
+                try {
+                    String username = line[0];
+
+                    Optional<User> user = userService.findByUsername(username);
+                    if (!user.isPresent()) {
+                        System.err.println("User not found: " + username);
+                        return;
+                    }
+
+                    Optional<CustomUser> customUser = customUserService.getByUserId(user.get().getId());
+                    if (!customUser.isPresent()) {
+                        System.err.println("CustomUser not found for username: " + username);
+                        return;
+                    }
+
+                    String equipmentName = line[1];
+                    int price = Integer.parseInt(line[2]);
+                    String supplierName = line[3];
+                    OrderStatus status = OrderStatus.valueOf(line[4]);
+                    String invoiceNumber = line[5];
+
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+
+                    Optional<Supplier> supplier = supplierService.findByName(supplierName);
+                    if (!supplier.isPresent()) {
+                        System.err.println("Supplier not found: " + supplierName);
+                        return;
+                    }
+
+                    Order order = new Order(
+                            customUser.get().getId(),
+                            equipment.get().getId(),
+                            price,
+                            supplier.get().getId(),
+                            status,
+                            invoiceNumber
+                    );
+                    orderService.saveOrder(order);
+                } catch (Exception e) {
+                    System.err.println("Skipping order due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Orders have been added.");
+
+            // Seed rentals
+            seedFromCSV("seedData/rentals.csv", line -> {
+                try {
+                    String equipmentName = line[0];
+
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+                    rentalService.saveRental(new Rental(equipment.get().getId(), LocalDate.parse(line[1]), LocalDate.parse(line[2])));
+                } catch (Exception e) {
+                    System.err.println("Skipping rental due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Rentals have been added.");
+
+            // Seed services
+            seedFromCSV("seedData/services.csv", line -> {
+                try {
+                    String equipmentName = line[0];
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+                    serviceService.saveService(new Service(equipment.get().getId(), line[1], LocalDate.parse(line[2])));
+                } catch (Exception e) {
+                    System.err.println("Skipping service due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Services have been added.");
         };
+    }
+
+    private void seedFromCSV(String filePath, CSVConsumer consumer) {
+        try {
+            Resource resource = new ClassPathResource(filePath);
+            try (CSVReader csvReader = new CSVReader(new InputStreamReader(resource.getInputStream()))) {
+                String[] line;
+                csvReader.skip(1);
+
+                while ((line = csvReader.readNext()) != null) {
+                    if (line.length == 0 || line[0].trim().isEmpty()) {
+                        continue;
+                    }
+                    consumer.accept(line);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to seed from " + filePath + ": " + e.getMessage());
+        }
+    }
+
+    @FunctionalInterface
+    interface CSVConsumer {
+        void accept(String[] line) throws Exception;
     }
 }

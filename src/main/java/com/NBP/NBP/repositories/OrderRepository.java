@@ -6,6 +6,7 @@ import com.NBP.NBP.models.enums.OrderStatus;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.List;
@@ -40,6 +41,7 @@ public class OrderRepository {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", orderRowMapper, id);
     }
 
+    @Transactional
     public int save(Order order) {
         return jdbcTemplate.update(
                 "INSERT INTO " + TABLE_NAME + " (custom_user_id, equipment_id, price, supplier_id, invoice_number, order_status) VALUES (?, ?, ?, ?, ?, ?)",
@@ -47,6 +49,7 @@ public class OrderRepository {
                 order.getSupplierId(), order.getInvoiceNumber(), order.getOrderStatus().name());
     }
 
+    @Transactional
     public int update(Order order) {
         return jdbcTemplate.update(
                 "UPDATE " + TABLE_NAME + " SET custom_user_id = ?, equipment_id = ?, price = ?, supplier_id = ?, invoice_number = ?, order_status = ? WHERE id = ?",
@@ -54,6 +57,7 @@ public class OrderRepository {
                 order.getSupplierId(), order.getInvoiceNumber(), order.getOrderStatus().name(), order.getId());
     }
 
+    @Transactional
     public int delete(int id) {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }

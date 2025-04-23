@@ -38,4 +38,8 @@ public class FacultyService {
     public Optional<Faculty> findByName(String name) {
         return facultyRepository.findByName(name);
     }
+
+    public Optional<Faculty> findByAbbreviation(String abbreviation) {
+        return facultyRepository.findByAbbreviation(abbreviation);
+    }
 }
