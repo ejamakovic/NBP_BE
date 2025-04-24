@@ -4,8 +4,8 @@ CREATE TABLE NBP08.FACULTY (
                                id NUMBER PRIMARY KEY,
                                name VARCHAR2(255) NOT NULL,
                                abbreviation VARCHAR2(10) NOT NULL,
-                               CONSTRAINT unique_faculty_name UNIQUE (name),  -- Jedinstveno ime fakulteta
-                               CONSTRAINT unique_faculty_abbreviation UNIQUE (abbreviation) -- Jedinstvena skraćenica fakulteta
+                               CONSTRAINT unique_faculty_name UNIQUE (name),
+                               CONSTRAINT unique_faculty_abbreviation UNIQUE (abbreviation)
 );
 
 CREATE TABLE NBP08.DEPARTMENT (
@@ -15,7 +15,7 @@ CREATE TABLE NBP08.DEPARTMENT (
                                   CONSTRAINT fk_department_faculty
                                       FOREIGN KEY (faculty_id) REFERENCES NBP08.FACULTY(id)
                                           ON DELETE CASCADE,
-                                  CONSTRAINT unique_department_name UNIQUE (name) -- Jedinstveno ime odeljenja
+                                  CONSTRAINT unique_department_name UNIQUE (name)
 );
 
 CREATE TABLE NBP08.CUSTOM_USER (
@@ -40,14 +40,14 @@ CREATE TABLE NBP08.LABORATORY (
                                   CONSTRAINT fk_lab_department
                                       FOREIGN KEY (department_id) REFERENCES NBP08.DEPARTMENT(id)
                                           ON DELETE CASCADE,
-                                  CONSTRAINT unique_laboratory_name UNIQUE (name) -- Jedinstveno ime laboratorije
+                                  CONSTRAINT unique_laboratory_name UNIQUE (name)
 );
 
 CREATE TABLE NBP08.CATEGORY (
                                 id NUMBER PRIMARY KEY,
                                 name VARCHAR2(100) NOT NULL,
                                 description VARCHAR2(255),
-                                CONSTRAINT unique_category_name UNIQUE (name) -- Jedinstveno ime kategorije
+                                CONSTRAINT unique_category_name UNIQUE (name)
 );
 
 CREATE TABLE NBP08.EQUIPMENT (
@@ -63,7 +63,7 @@ CREATE TABLE NBP08.EQUIPMENT (
                                  CONSTRAINT fk_equipment_laboratory
                                      FOREIGN KEY (laboratory_id) REFERENCES NBP08.LABORATORY(id)
                                          ON DELETE CASCADE,
-                                 CONSTRAINT unique_equipment_name UNIQUE (name) -- Jedinstveno ime opreme
+                                 CONSTRAINT unique_equipment_name UNIQUE (name)
 );
 
 CREATE TABLE NBP08.SUPPLIER (
@@ -73,7 +73,7 @@ CREATE TABLE NBP08.SUPPLIER (
                                 CONSTRAINT fk_supplier_equipment
                                     FOREIGN KEY (equipment_id) REFERENCES NBP08.EQUIPMENT(id)
                                         ON DELETE CASCADE,
-                                CONSTRAINT unique_supplier_name UNIQUE (name) -- Jedinstveno ime dobavljača
+                                CONSTRAINT unique_supplier_name UNIQUE (name)
 );
 
 CREATE TABLE NBP08.ORDERS (
@@ -93,7 +93,7 @@ CREATE TABLE NBP08.ORDERS (
                               CONSTRAINT fk_order_supplier
                                   FOREIGN KEY (supplier_id) REFERENCES NBP08.SUPPLIER(id)
                                       ON DELETE CASCADE,
-                              CONSTRAINT unique_order_invoice UNIQUE (invoice_number) -- Jedinstveni broj fakture
+                              CONSTRAINT unique_order_invoice UNIQUE (invoice_number)
 );
 
 CREATE TABLE NBP08.RENTAL (
@@ -104,7 +104,7 @@ CREATE TABLE NBP08.RENTAL (
                               CONSTRAINT fk_rental_equipment
                                   FOREIGN KEY (equipment_id) REFERENCES NBP08.EQUIPMENT(id)
                                       ON DELETE CASCADE,
-                              CONSTRAINT unique_rental_date UNIQUE (equipment_id, rent_date) -- Jedinstveni datum iznajmljivanja po opremi
+                              CONSTRAINT unique_rental_date UNIQUE (equipment_id, rent_date)
 );
 
 CREATE TABLE NBP08.SERVICE (
@@ -115,5 +115,5 @@ CREATE TABLE NBP08.SERVICE (
                                CONSTRAINT fk_service_equipment
                                    FOREIGN KEY (equipment_id) REFERENCES NBP08.EQUIPMENT(id)
                                        ON DELETE CASCADE,
-                               CONSTRAINT unique_service_date UNIQUE (equipment_id, service_date) -- Jedinstveni datum servisa po opremi
+                               CONSTRAINT unique_service_date UNIQUE (equipment_id, service_date)
 );
