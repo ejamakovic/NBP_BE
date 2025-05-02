@@ -26,11 +26,27 @@ public class EquipmentRepository {
             rs.getString("name"),
             rs.getInt("category_id"),
             rs.getInt("laboratory_id"),
-            EquipmentStatus.valueOf(rs.getString("status"))
-    );
+            EquipmentStatus.valueOf(rs.getString("status")));
 
     public List<Equipment> findAll() {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, equipmentRowMapper);
+    }
+
+    public List<Equipment> findPaginated(int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(
+                sql,
+                preparedStatement -> {
+                    preparedStatement.setInt(1, offset);
+                    preparedStatement.setInt(2, limit);
+                },
+                equipmentRowMapper);
+    }
+
+    public int countAll() {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME;
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
     }
 
     public Equipment findById(int id) {
@@ -39,14 +55,20 @@ public class EquipmentRepository {
 
     @Transactional
     public int save(Equipment equipment) {
-        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (description, name, category_id, laboratory_id, status) VALUES (?, ?, ?, ?, ?)",
-                equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(), equipment.getStatus().name());
+        return jdbcTemplate.update(
+                "INSERT INTO " + TABLE_NAME
+                        + " (description, name, category_id, laboratory_id, status) VALUES (?, ?, ?, ?, ?)",
+                equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(),
+                equipment.getStatus().name());
     }
 
     @Transactional
     public int update(Equipment equipment) {
-        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET description = ?, name = ?, category_id = ?, laboratory_id = ?, status = ? WHERE id = ?",
-                equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(), equipment.getStatus().name(), equipment.getId());
+        return jdbcTemplate.update(
+                "UPDATE " + TABLE_NAME
+                        + " SET description = ?, name = ?, category_id = ?, laboratory_id = ?, status = ? WHERE id = ?",
+                equipment.getDescription(), equipment.getName(), equipment.getCategoryId(), equipment.getLaboratoryId(),
+                equipment.getStatus().name(), equipment.getId());
     }
 
     @Transactional
@@ -59,8 +81,7 @@ public class EquipmentRepository {
             Equipment equipment = jdbcTemplate.queryForObject(
                     "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     equipmentRowMapper,
-                    name
-            );
+                    name);
             return Optional.of(equipment);
         } catch (Exception e) {
             return Optional.empty();

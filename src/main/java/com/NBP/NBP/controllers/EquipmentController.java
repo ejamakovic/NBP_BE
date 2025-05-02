@@ -1,6 +1,7 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
 import com.NBP.NBP.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/equipments")
+@RequestMapping("/equipment")
 public class EquipmentController {
     private final EquipmentService equipmentService;
 
@@ -18,9 +19,19 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
+    // Without pagination... no need
+    // @GetMapping
+    // public List<Equipment> getAllEquipment() {
+    //     return equipmentService.getAllEquipment();
+    // }
+
     @GetMapping
-    public List<Equipment> getAllEquipment() {
-        return equipmentService.getAllEquipment();
+    public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
+            @RequestParam(value = "page", defaultValue = "1") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size) {
+
+        PaginatedEquipmentResponseDTO response = equipmentService.getPaginatedEquipment(page, size);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
