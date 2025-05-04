@@ -22,12 +22,13 @@ public class EquipmentService {
         return equipmentRepository.findAll();
     }
 
-    public PaginatedEquipmentResponseDTO getPaginatedEquipment(int page, int size) {
+    public PaginatedEquipmentResponseDTO getPaginatedEquipment(int page, int size, String sortKey,
+            String sortDirection) {
         int offset = page * size;
-        List<Equipment> equipmentList = equipmentRepository.findPaginated(offset, size);
+        List<Equipment> equipmentList = equipmentRepository.findPaginated(offset, size, sortKey, sortDirection);
         int totalEquipment = equipmentRepository.countAll();
-
         int totalPages = (int) Math.ceil((double) totalEquipment / size);
+
         return new PaginatedEquipmentResponseDTO(equipmentList, totalPages, totalEquipment, page);
     }
 

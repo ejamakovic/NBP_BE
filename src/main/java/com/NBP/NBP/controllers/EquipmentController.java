@@ -19,18 +19,15 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
-    // Without pagination... no need
-    // @GetMapping
-    // public List<Equipment> getAllEquipment() {
-    //     return equipmentService.getAllEquipment();
-    // }
-
     @GetMapping
     public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
-            @RequestParam(value = "page", defaultValue = "1") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size) {
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortKey", defaultValue = "name") String sortKey,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
 
-        PaginatedEquipmentResponseDTO response = equipmentService.getPaginatedEquipment(page, size);
+        PaginatedEquipmentResponseDTO response = equipmentService.getPaginatedEquipment(page, size, sortKey,
+                sortDirection);
         return ResponseEntity.ok(response);
     }
 

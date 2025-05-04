@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class EquipmentRepository {
@@ -32,8 +33,23 @@ public class EquipmentRepository {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, equipmentRowMapper);
     }
 
-    public List<Equipment> findPaginated(int offset, int limit) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+    private static final Set<String> ALLOWED_SORT_KEYS = Set.of("name", "status");
+    private static final Set<String> ALLOWED_SORT_DIRECTIONS = Set.of("asc", "desc");
+
+    public List<Equipment> findPaginated(int offset, int limit, String sortKey, String sortDirection) {
+
+        if (!ALLOWED_SORT_KEYS.contains(sortKey.toLowerCase())) {
+            sortKey = "name";
+        }
+        if (!ALLOWED_SORT_DIRECTIONS.contains(sortDirection.toLowerCase())) {
+
+            sortDirection = "asc";
+        }
+
+        String sql = "SELECT * FROM " + TABLE_NAME +
+                " ORDER BY " + sortKey + " " + sortDirection +
+                " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
         return jdbcTemplate.query(
                 sql,
                 preparedStatement -> {
