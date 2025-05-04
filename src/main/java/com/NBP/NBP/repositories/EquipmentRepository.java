@@ -101,7 +101,7 @@ public class EquipmentRepository {
     }
 
     @Transactional
-    public int update(Equipment equipment) {
+    public int update(EquipmentWithDetailsDTO equipment) {
         return jdbcTemplate.update(
                 "UPDATE " + TABLE_NAME
                         + " SET description = ?, name = ?, category_id = ?, laboratory_id = ?, status = ? WHERE id = ?",

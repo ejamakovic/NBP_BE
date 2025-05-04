@@ -42,7 +42,7 @@ public class EquipmentService {
         return equipmentRepository.save(equipment);
     }
 
-    public int updateEquipment(Equipment equipment) {
+    public int updateEquipment(EquipmentWithDetailsDTO equipment) {
         return equipmentRepository.update(equipment);
     }
 
