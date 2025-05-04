@@ -22,9 +22,8 @@ public class CategoryRepository {
 
     private final RowMapper<Category> categoryRowMapper = (rs, rowNum) -> new Category(
             rs.getInt("id"),
-            rs.getString("description"),
-            rs.getString("name")
-    );
+            rs.getString("name"),
+            rs.getString("description"));
 
     public List<Category> findAll() {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, categoryRowMapper);
@@ -56,8 +55,7 @@ public class CategoryRepository {
             Category category = jdbcTemplate.queryForObject(
                     "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     categoryRowMapper,
-                    name
-            );
+                    name);
             return Optional.of(category);
         } catch (Exception e) {
             return Optional.empty();
