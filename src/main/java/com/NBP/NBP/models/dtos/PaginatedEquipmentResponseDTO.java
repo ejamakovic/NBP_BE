@@ -2,28 +2,24 @@ package com.NBP.NBP.models.dtos;
 
 import java.util.List;
 
-import com.NBP.NBP.models.Equipment;
-
 public class PaginatedEquipmentResponseDTO {
-    private List<Equipment> content;
+    private List<EquipmentWithDetailsDTO> content;
     private int totalPages;
     private int totalElements;
     private int currentPage;
 
-    // Constructor
-    public PaginatedEquipmentResponseDTO(List<Equipment> content, int totalPages, int totalElements, int currentPage) {
+    public PaginatedEquipmentResponseDTO(List<EquipmentWithDetailsDTO> content, int totalPages, int totalElements, int currentPage) {
         this.content = content;
         this.totalPages = totalPages;
         this.totalElements = totalElements;
         this.currentPage = currentPage;
     }
 
-    // Getters and Setters
-    public List<Equipment> getContent() {
+    public List<EquipmentWithDetailsDTO> getContent() {
         return content;
     }
 
-    public void setContent(List<Equipment> content) {
+    public void setContent(List<EquipmentWithDetailsDTO> content) {
         this.content = content;
     }
 
