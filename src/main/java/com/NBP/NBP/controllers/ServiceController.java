@@ -1,5 +1,6 @@
 package com.NBP.NBP.controllers;
 
+import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.Service;
 import com.NBP.NBP.services.ServiceService;
 import org.springframework.web.bind.annotation.*;
@@ -40,5 +41,10 @@ public class ServiceController {
     @DeleteMapping("/{id}")
     public void deleteService(@PathVariable int id) {
         serviceService.deleteService(id);
+    }
+
+    @GetMapping("/equipment/{equipmentId}")
+    public List<Service> getServicesByEquipment(@PathVariable int equipmentId) {
+        return serviceService.findByEquipmentId(equipmentId);
     }
 }

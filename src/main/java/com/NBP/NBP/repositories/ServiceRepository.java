@@ -65,4 +65,17 @@ public class ServiceRepository {
             return Collections.emptyList();
         }
     }
+
+    public List<Service> findByEquipmentId(int equipmentId) {
+        try {
+            return jdbcTemplate.query(
+                    "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?",
+                    serviceRowMapper,
+                    equipmentId
+            );
+        } catch (Exception e) {
+            return Collections.emptyList();
+        }
+    }
+
 }

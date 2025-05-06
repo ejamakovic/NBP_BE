@@ -38,7 +38,8 @@ public class ServiceService {
         return serviceRepository.delete(id);
     }
 
-    public List<Service> findByEquipment(Equipment equipment) {
-        return serviceRepository.findByEquipment(equipment);
+    public List<Service> findByEquipmentId(int equipmentId) {
+        return serviceRepository.findByEquipmentId(equipmentId);
     }
+
 }
