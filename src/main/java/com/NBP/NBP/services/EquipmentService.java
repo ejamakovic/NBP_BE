@@ -1,6 +1,8 @@
 package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.dtos.EquipmentWithDetailsDTO;
+import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
 import com.NBP.NBP.repositories.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -21,6 +23,17 @@ public class EquipmentService {
         return equipmentRepository.findAll();
     }
 
+    public PaginatedEquipmentResponseDTO getPaginatedEquipment(int page, int size, String sortKey,
+            String sortDirection) {
+        int offset = page * size;
+        List<EquipmentWithDetailsDTO> equipmentList = equipmentRepository.findPaginated(offset, size, sortKey,
+                sortDirection);
+        int totalEquipment = equipmentRepository.countAll();
+        int totalPages = (int) Math.ceil((double) totalEquipment / size);
+
+        return new PaginatedEquipmentResponseDTO(equipmentList, totalPages, totalEquipment, page);
+    }
+
     public Equipment getEquipmentById(int id) {
         return equipmentRepository.findById(id);
     }
@@ -29,7 +42,7 @@ public class EquipmentService {
         return equipmentRepository.save(equipment);
     }
 
-    public int updateEquipment(Equipment equipment) {
+    public int updateEquipment(EquipmentWithDetailsDTO equipment) {
         return equipmentRepository.update(equipment);
     }
 

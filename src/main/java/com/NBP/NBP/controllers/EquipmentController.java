@@ -1,15 +1,17 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.Equipment;
+import com.NBP.NBP.models.dtos.EquipmentWithDetailsDTO;
+import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
 import com.NBP.NBP.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
-@RequestMapping("/equipments")
+@RequestMapping("/equipment")
 public class EquipmentController {
     private final EquipmentService equipmentService;
 
@@ -19,8 +21,15 @@ public class EquipmentController {
     }
 
     @GetMapping
-    public List<Equipment> getAllEquipment() {
-        return equipmentService.getAllEquipment();
+    public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
+            @RequestParam(value = "page", defaultValue = "0") int page,
+            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "sortKey", defaultValue = "name") String sortKey,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
+
+        PaginatedEquipmentResponseDTO response = equipmentService.getPaginatedEquipment(page, size, sortKey,
+                sortDirection);
+        return ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
@@ -30,21 +39,27 @@ public class EquipmentController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createEquipment(@RequestBody Equipment equipment) {
+    public ResponseEntity<?> createEquipment(@RequestBody Equipment equipment) {
         int result = equipmentService.saveEquipment(equipment);
-        return result > 0 ? ResponseEntity.ok("Equipment created successfully") : ResponseEntity.badRequest().build();
+        return result > 0
+                ? ResponseEntity.ok(Map.of("message", "Equipment created successfully"))
+                : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateEquipment(@PathVariable int id, @RequestBody Equipment equipment) {
+    public ResponseEntity<?> updateEquipment(@PathVariable int id, @RequestBody EquipmentWithDetailsDTO equipment) {
         equipment.setId(id);
         int result = equipmentService.updateEquipment(equipment);
-        return result > 0 ? ResponseEntity.ok("Equipment updated successfully") : ResponseEntity.badRequest().build();
+        return result > 0
+                ? ResponseEntity.ok(Map.of("message", "Equipment updated successfully"))
+                : ResponseEntity.badRequest().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteEquipment(@PathVariable int id) {
+    public ResponseEntity<?> deleteEquipment(@PathVariable int id) {
         int result = equipmentService.deleteEquipment(id);
-        return result > 0 ? ResponseEntity.ok("Equipment deleted successfully") : ResponseEntity.badRequest().build();
+        return result > 0
+                ? ResponseEntity.ok(Map.of("message", "Equipment deleted successfully"))
+                : ResponseEntity.badRequest().build();
     }
 }
