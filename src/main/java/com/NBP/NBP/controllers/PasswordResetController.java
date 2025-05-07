@@ -7,6 +7,7 @@ import jakarta.mail.internet.MimeMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,23 +17,25 @@ public class PasswordResetController {
     private final PasswordResetService passwordResetService;
     private final JavaMailSender mailSender;
 
-    public PasswordResetController(JavaMailSender mailSender,PasswordResetService passwordResetService) {
+    public PasswordResetController(JavaMailSender mailSender, PasswordResetService passwordResetService) {
         this.passwordResetService = passwordResetService;
         this.mailSender = mailSender;
     }
 
     @PostMapping("/reset-password")
+    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO request) {
         boolean success = passwordResetService.resetPasswordAndSendEmail(request.getEmail());
-    
+
         if (success) {
             return ResponseEntity.ok("New password has been sent to your email.");
         } else {
             return ResponseEntity.badRequest().body("Email not found or failed to send.");
         }
     }
-    
+
     @PostMapping("/send")
+    @PreAuthorize("hasRole('ADMIN')")
     public boolean sendTestEmail(@RequestParam String toEmail) {
         try {
             MimeMessage message = mailSender.createMimeMessage();

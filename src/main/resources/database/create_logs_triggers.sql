@@ -97,7 +97,7 @@ END;
 /
 
 CREATE OR REPLACE TRIGGER TRG_LOG_FACULTY_NBP08
-    AFTER INSERT OR UPDATE OR DELETE ON NBP08.FACULTY
+    AFTER INSERT OR UPDATE OR DELETE ON NBP08.RENTAL_REQUEST
     FOR EACH ROW
     WHEN (USER = 'NBP08')
 DECLARE
@@ -120,7 +120,7 @@ BEGIN
     )
     VALUES (
                v_action_name,
-               'NBP08.FACULTY',
+               'NBP08.RENTAL_REQUEST',
                SYSTIMESTAMP,
                USER
            );

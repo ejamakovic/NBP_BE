@@ -6,6 +6,7 @@ import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
 import com.NBP.NBP.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -20,6 +21,7 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -32,12 +34,14 @@ public class EquipmentController {
         return ResponseEntity.ok(response);
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Equipment> getEquipmentById(@PathVariable int id) {
         Equipment equipment = equipmentService.getEquipmentById(id);
         return equipment != null ? ResponseEntity.ok(equipment) : ResponseEntity.notFound().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<?> createEquipment(@RequestBody Equipment equipment) {
         int result = equipmentService.saveEquipment(equipment);
@@ -46,6 +50,7 @@ public class EquipmentController {
                 : ResponseEntity.badRequest().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEquipment(@PathVariable int id, @RequestBody EquipmentWithDetailsDTO equipment) {
         equipment.setId(id);
@@ -55,6 +60,7 @@ public class EquipmentController {
                 : ResponseEntity.badRequest().build();
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEquipment(@PathVariable int id) {
         int result = equipmentService.deleteEquipment(id);

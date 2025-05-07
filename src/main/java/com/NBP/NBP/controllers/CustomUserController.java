@@ -4,6 +4,7 @@ import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.services.CustomUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,18 +21,20 @@ public class CustomUserController {
         this.customUserService = customUserService;
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping
     public List<CustomUser> getAllUsers() {
         return customUserService.getAllUsers();
     }
 
+    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<CustomUser> getById(@PathVariable int id) {
         Optional<CustomUser> user = customUserService.getById(id);
         return user.isPresent() ? ResponseEntity.ok(user.get()) : ResponseEntity.notFound().build();
     }
 
-
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody CustomUser user) {
         try {
@@ -42,10 +45,11 @@ public class CustomUserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody CustomUser user) {
         try {
-            user.setId(id);  // Make sure the ID in the path matches the ID in the body
+            user.setId(id);  // Ensure the ID in the path matches the ID in the body
             customUserService.updateUser(user);
             return ResponseEntity.ok("User updated successfully");
         } catch (IllegalArgumentException e) {
@@ -53,6 +57,7 @@ public class CustomUserController {
         }
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         customUserService.deleteUser(id);

@@ -30,6 +30,10 @@ public class AuthenticationService {
 
         // Retrieve user and verify password (as you already did)
         User user = userRepository.findByEmail(loginDto.getEmail());
+        if (user == null) {
+            logger.warn("No user found for email: {}", loginDto.getEmail());
+            throw new RuntimeException("Invalid credentials");
+        }
         if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
             logger.info("Password verification succeeded for email: {}", loginDto.getEmail());
 

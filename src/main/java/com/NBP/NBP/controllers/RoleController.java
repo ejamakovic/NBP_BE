@@ -4,6 +4,7 @@ import com.NBP.NBP.models.Role;
 import com.NBP.NBP.services.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -19,17 +20,20 @@ public class RoleController {
     }
 
     @GetMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public List<Role> getAllRoles() {
         return roleService.getAllRoles();
     }
 
     @GetMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Role> getRoleById(@PathVariable int id) {
         Role role = roleService.getRoleById(id);
         return role != null ? ResponseEntity.ok(role) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> createRole(@RequestBody Role role) {
         System.out.println("POST request received with body: " + role); // Dodatno logovanje
         System.out.println("Received Role: " + role.getName());  // Debug log
@@ -38,6 +42,7 @@ public class RoleController {
     }
 
     @PutMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> updateRole(@PathVariable int id, @RequestBody Role role) {
         role.setId(id);
         int result = roleService.updateRole(role);
@@ -45,6 +50,7 @@ public class RoleController {
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteRole(@PathVariable int id) {
         int result = roleService.deleteRole(id);
         return result > 0 ? ResponseEntity.ok("Role deleted successfully") : ResponseEntity.badRequest().build();

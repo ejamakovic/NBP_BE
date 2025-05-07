@@ -39,7 +39,7 @@ public class RentalRequestRepository {
 
     @Transactional
     public int save(RentalRequest request) {
-        String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, custom_user_id, request_date, status) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, custom_user_id, request_date, status) VALUES (?, ?, ?, ?)";
         return jdbcTemplate.update(sql, request.getEquipmentId(), request.getCustomUserId(), Date.valueOf(request.getRequestDate()), request.getStatus());
     }
 

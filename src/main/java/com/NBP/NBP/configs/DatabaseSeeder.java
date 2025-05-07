@@ -21,7 +21,7 @@ import java.util.Optional;
 @Configuration
 public class DatabaseSeeder {
 
-    // @Bean
+    @Bean
     CommandLineRunner seedDatabase(
             CategoryService categoryService,
             DepartmentService departmentService,
