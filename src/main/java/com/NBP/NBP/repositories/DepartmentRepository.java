@@ -21,8 +21,7 @@ public class DepartmentRepository {
 
     private final RowMapper<Department> departmentRowMapper = (rs, rowNum) -> new Department(
             rs.getInt("id"),
-            rs.getString("name"),
-            rs.getInt("faculty_id"));
+            rs.getString("name"));
 
     public List<Department> findAll() {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, departmentRowMapper);
@@ -34,14 +33,14 @@ public class DepartmentRepository {
 
     @Transactional
     public int save(Department department) {
-        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (name, faculty_id) VALUES (?, ?)",
-                department.getName(), department.getFacultyId());
+        return jdbcTemplate.update("INSERT INTO " + TABLE_NAME + " (name) VALUES (?)",
+                department.getName());
     }
 
     @Transactional
     public int update(Department department) {
-        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET name = ?, faculty_id = ? WHERE id = ?",
-                department.getName(), department.getFacultyId(), department.getId());
+        return jdbcTemplate.update("UPDATE " + TABLE_NAME + " SET name = ? WHERE id = ?",
+                department.getName(), department.getId());
     }
 
     @Transactional

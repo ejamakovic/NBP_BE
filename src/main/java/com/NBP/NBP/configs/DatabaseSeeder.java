@@ -13,6 +13,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
@@ -25,7 +26,6 @@ public class DatabaseSeeder {
             CategoryService categoryService,
             DepartmentService departmentService,
             EquipmentService equipmentService,
-            FacultyService facultyService,
             LaboratoryService laboratoryService,
             OrderService orderService,
             RentalService rentalService,
@@ -33,33 +33,16 @@ public class DatabaseSeeder {
             SupplierService supplierService,
             UserService userService,
             RoleService roleService,
-            CustomUserService customUserService
+            CustomUserService customUserService,
+            RentalRequestService rentalRequestService
     ) {
         return args -> {
-            // Seed faculties
-            seedFromCSV("seedData/faculties.csv", line -> {
-                try {
-                    String abbreviation = line[0];
-                    String name = line[1];
-                    facultyService.saveFaculty(new Faculty(abbreviation, name));
-                } catch (Exception e) {
-                    System.err.println("Skipping faculty due to error: " + Arrays.toString(line));
-                    System.err.println("Reason: " + e.getMessage());
-                }
-            });
-            System.out.println("Faculties have been added.");
 
             // Seed departments
             seedFromCSV("seedData/departments.csv", line -> {
                 try {
                     String departmentName = line[0];
-                    String facultyAbbreviation = line[1];
-                    Optional<Faculty> faculty = facultyService.findByAbbreviation(facultyAbbreviation);
-                    if (faculty.isPresent()) {
-                        departmentService.saveDepartment(new Department(departmentName, faculty.get().getId()));
-                    } else {
-                        System.err.println("Faculty not found for abbreviation: " + facultyAbbreviation);
-                    }
+                    departmentService.saveDepartment(new Department(departmentName));
                 } catch (Exception e) {
                     System.err.println("Skipping department due to error: " + Arrays.toString(line));
                     System.err.println("Reason: " + e.getMessage());
@@ -282,6 +265,48 @@ public class DatabaseSeeder {
                 }
             });
             System.out.println("Services have been added.");
+
+            // Seed rental requests
+            seedFromCSV("seedData/request.csv", line -> {
+                try {
+                    String equipmentName = line[0];
+                    String username = line[1];
+                    Date requestDate = Date.valueOf(line[2]);
+                    String status = line[3];
+
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+
+                    Optional<User> user = userService.findByUsername(username);
+                    if (!user.isPresent()) {
+                        System.err.println("User not found: " + username);
+                        return;
+                    }
+
+                    Optional<CustomUser> customUser = customUserService.getByUserId(user.get().getId());
+                    if (!customUser.isPresent()) {
+                        System.err.println("CustomUser not found for username: " + username);
+                        return;
+                    }
+
+                    RentalRequest request = new RentalRequest(
+                            equipment.get().getId(),
+                            customUser.get().getId(),
+                            requestDate.toLocalDate(),
+                            status
+                    );
+
+                    rentalRequestService.save(request);
+                } catch (Exception e) {
+                    System.err.println("Skipping rental request due to error: " + Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Rental requests have been added.");
+
         };
     }
 

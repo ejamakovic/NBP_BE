@@ -1,0 +1,21 @@
+equipmentName,username,requestDate,status
+Dell Inspiron,aminhasanovic,2025-05-01,PENDING
+HP Pavilion,selmaalispahic,2025-05-02,APPROVED
+Lenovo ThinkPad,markopetrovic,2025-05-03,PENDING
+Acer Aspire,amrabegovic,2025-05-04,REJECTED
+Canon EOS,nedimcausevic,2025-05-05,RETURNED
+Apple MacBook,lejlauhuc,2025-05-06,PENDING
+3D Printer,mirzamehmedovic,2025-05-07,APPROVED
+Raspberry Pi,dzenanaavdic,2025-05-01,PENDING
+Sony Projector,kemalkaralic,2025-05-02,REJECTED
+Fujifilm Biometric Scanner,eminabesic,2025-05-03,PENDING
+Makita Power Tools,eneshasic,2025-05-04,APPROVED
+Philips ECG,almadedic,2025-05-05,RETURNED
+Autodesk AutoCAD,elmahuremovic,2025-05-06,PENDING
+Garmin GPS,tarikbeglerovic,2025-05-07,REJECTED
+JBL Speakers,saidabajramovic,2025-05-01,RETURNED
+Chemistry Lab Set,mirsadkadic,2025-05-02,PENDING
+Nikon DSLR,jasminasahinovic,2025-05-03,APPROVED
+Air Conditioner,farukhadzic,2025-05-04,PENDING
+Anatomical Models,lejlakurtovic,2025-05-05,REJECTED
+Autoclave,edinpesic,2025-05-06,PENDING
