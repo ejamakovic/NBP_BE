@@ -17,11 +17,10 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
+
     private final AuthenticationProvider authenticationProvider;
 
-    public SecurityConfiguration(
-            AuthenticationProvider authenticationProvider
-    ) {
+    public SecurityConfiguration(AuthenticationProvider authenticationProvider) {
         this.authenticationProvider = authenticationProvider;
     }
 
@@ -30,11 +29,15 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/reset-password").authenticated() // Samo prijavljeni korisnici mogu da resetuju lozinku
-                        .requestMatchers("/api/auth/send").hasRole("ADMIN") // Samo admin može slati testne e-mailove
-                        .requestMatchers("/api/auth/**").permitAll() // login, register
+                        .requestMatchers("/api/auth/reset-password").authenticated()
+                        .requestMatchers("/api/auth/send").hasRole("ADMIN")
+                        .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
                         .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
+
+                        // DOZVOLI pristup reportu bez autentifikacije za sad
+                        .requestMatchers("/reports/**").permitAll()
+
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session
@@ -55,7 +58,6 @@ public class SecurityConfiguration {
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-
         source.registerCorsConfiguration("/**", configuration);
 
         return source;
