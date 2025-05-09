@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+                                  http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+              name="LaboratoryReport"
+              pageWidth="595" pageHeight="842"
+              columnWidth="555" columnSpacing="1"
+              leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <!-- Parametar za naziv izveštaja -->
+    <parameter name="REPORT_TITLE" class="java.lang.String"/>
+
+    <field name="equipment_id" class="java.lang.Integer"/>
+    <field name="equipment_name" class="java.lang.String"/>
+    <field name="service_count" class="java.math.BigDecimal"/>
+    <field name="report_generated_at" class="java.util.Date"/>
+
+    <!-- Naslov izveštaja -->
+    <title>
+        <band height="80">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+
+    <!-- Zaglavlje stranice -->
+    <pageHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="200" height="30"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Equipment Name]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="250" y="0" width="200" height="30"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Service Count]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="450" y="0" width="100" height="30"/>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Report Date]]></text>
+            </staticText>
+        </band>
+    </pageHeader>
+
+    <!-- Glavni sadržaj (detalji) -->
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="200" height="20"/>
+                <textFieldExpression><![CDATA[$F{equipment_name}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="250" y="0" width="200" height="20"/>
+                <textFieldExpression><![CDATA[$F{service_count}.intValue()]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="450" y="0" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$F{report_generated_at}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+</jasperReport>

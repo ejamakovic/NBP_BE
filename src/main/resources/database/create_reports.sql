@@ -22,8 +22,6 @@ BEGIN
             VALUES (rec.id, rec.name, rec.equipment_count, SYSDATE);
         END LOOP;
 
-    -- Commit na kraju procedure
-    COMMIT;
 END;
 /
 
@@ -38,7 +36,6 @@ BEGIN
     NBP08.FILL_EQUIPMENT_BY_LAB_REPORT;
 END;
 /
-
 
 -- =============================================
 -- IZVJEŠTAJ 2: Broj opreme po kategoriji
@@ -61,8 +58,6 @@ BEGIN
             VALUES (rec.id, rec.name, rec.equipment_count, SYSDATE);
         END LOOP;
 
-    -- Commit na kraju procedure
-    COMMIT;
 END;
 /
 
@@ -99,8 +94,6 @@ BEGIN
             VALUES (rec.id, rec.name, rec.service_count, SYSDATE);
         END LOOP;
 
-    -- Commit na kraju procedure
-    COMMIT;
 END;
 /
 
@@ -137,9 +130,6 @@ BEGIN
             INSERT INTO NBP08.ORDERS_PER_SUPPLIER (supplier_id, supplier_name, order_count, report_generated_at)
             VALUES (rec.id, rec.name, rec.order_count, SYSDATE);
         END LOOP;
-
-    -- Commit na kraju procedure
-    COMMIT;
 END;
 /
 
@@ -154,7 +144,6 @@ BEGIN
     NBP08.FILL_ORDERS_PER_SUPPLIER;
 END;
 /
-
 
 -- =============================================
 -- IZVJEŠTAJ 5: Broj opreme po odjeljenju
@@ -179,8 +168,6 @@ BEGIN
             VALUES (rec.id, rec.name, rec.equipment_count, SYSDATE);
         END LOOP;
 
-    -- Commit na kraju procedure
-    COMMIT;
 END;
 /
 
