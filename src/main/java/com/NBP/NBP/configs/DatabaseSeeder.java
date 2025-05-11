@@ -139,15 +139,15 @@ public class DatabaseSeeder {
             // Seed users
             seedFromCSV("seedData/users.csv", line -> {
                 try {
-                    String roleName = line[5];
-                    Optional<Role> role = roleService.findByRoleName(roleName);
+                    int roleId = Integer.parseInt(line[5]);
+                    Optional<Role> role = Optional.ofNullable(roleService.getRoleById(roleId));
 
                     if (role.isPresent()) {
                         Role userRole = role.get();
                         User user = new User(line[0], line[1], line[2], line[3], line[4], userRole);
                         userService.saveUser(user);
                     } else {
-                        System.err.println("Role not found: " + roleName);
+                        System.err.println("Role not found: " + role);
                     }
                 } catch (Exception e) {
                     System.err.println("Skipping user due to error: " + Arrays.toString(line));
