@@ -1,6 +1,7 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.Role;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -36,12 +37,19 @@ public class UserRepository {
         Optional.ofNullable(resultSet.getObject("address_id", Integer.class))
                 .ifPresent(user::setAddressId);
 
-        user.setRoleId(resultSet.getInt("role_id"));
+        int roleId = resultSet.getInt("role_id");
+        String roleName = resultSet.getString("role_name");
+        user.setRole(new Role(roleId, roleName));
+
         return user;
     };
 
     private String getSelectQuery() {
-        return String.format("SELECT * FROM %s", TABLE_NAME);
+        return """
+        SELECT u.*, r.name AS role_name
+        FROM %s u
+        JOIN nbp.role r ON u.role_id = r.id
+        """.formatted(TABLE_NAME);
     }
 
     private String getInsertQuery() {
@@ -88,7 +96,7 @@ public class UserRepository {
                 user.getPhoneNumber(),
                 user.getBirthDate(),
                 user.getAddressId(),
-                user.getRoleId()
+                user.getRole().getId()
         );
     }
 
@@ -103,7 +111,7 @@ public class UserRepository {
                 user.getPhoneNumber(),
                 user.getBirthDate(),
                 user.getAddressId(),
-                user.getRoleId(),
+                user.getRole().getId(),
                 user.getId()
         );
     }
@@ -121,12 +129,13 @@ public class UserRepository {
 
     public User findByUsername(String username) {
         try {
-            String sql = String.format("SELECT * FROM %s WHERE username = ?", TABLE_NAME);
-            return jdbcTemplate.queryForObject(
-                    sql,
-                    userRowMapper,
-                    username
-            );
+            String sql = """
+            SELECT u.*, r.name AS role_name
+            FROM %s u
+            JOIN nbp.role r ON u.role_id = r.id
+            WHERE u.username = ?
+        """.formatted(TABLE_NAME);
+            return jdbcTemplate.queryForObject(sql, userRowMapper, username);
         } catch (Exception e) {
             return null;
         }
@@ -134,7 +143,12 @@ public class UserRepository {
 
     public User findByEmail(String email) {
         try {
-            String sql = String.format("SELECT * FROM %s WHERE email = ?", TABLE_NAME);
+            String sql = """
+            SELECT u.*, r.name AS role_name
+            FROM %s u
+            JOIN nbp.role r ON u.role_id = r.id
+            WHERE u.username = ?
+        """.formatted(TABLE_NAME);
             return jdbcTemplate.queryForObject(sql, userRowMapper, email);
         } catch (EmptyResultDataAccessException e) {
             return null;

@@ -40,10 +40,17 @@ public class JwtService {
 
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
+
         if (userDetails instanceof User) {
             User user = (User) userDetails;
             claims.put("userId", user.getId());
+
+            if (user.getRole() != null) {
+                claims.put("roleId", user.getRole().getId());
+                claims.put("roleName", user.getRole().getName());
+            }
         }
+
         String token = buildToken(claims, userDetails);
         logger.debug("Generated token in jwtService: {}", token); // Check token generation here
         return token;

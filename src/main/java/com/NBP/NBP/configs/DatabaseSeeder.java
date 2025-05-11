@@ -143,8 +143,8 @@ public class DatabaseSeeder {
                     Optional<Role> role = roleService.findByRoleName(roleName);
 
                     if (role.isPresent()) {
-                        int roleId = role.get().getId();
-                        User user = new User(line[0], line[1], line[2], line[3], line[4], roleId);
+                        Role userRole = role.get();
+                        User user = new User(line[0], line[1], line[2], line[3], line[4], userRole);
                         userService.saveUser(user);
                     } else {
                         System.err.println("Role not found: " + roleName);

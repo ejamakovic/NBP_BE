@@ -15,21 +15,21 @@ public class User implements UserDetails {
     private String phoneNumber;
     private LocalDate birthDate;
     private Integer addressId;
-    private int roleId;
+    private Role role;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String username, int roleId) {
+    public User(String firstName, String lastName, String email, String password, String username, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.password = password;
         this.username = username;
-        this.roleId = roleId;
+        this.role = role;
     }
 
-    public User(int id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, int roleId) {
+    public User(int id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, Role role) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -39,7 +39,7 @@ public class User implements UserDetails {
         this.birthDate = birthDate;
         this.phoneNumber = phoneNumber;
         this.addressId = addressId;
-        this.roleId = roleId;
+        this.role = role;
     }
 
     public int getId() {
@@ -74,13 +74,9 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public int getRoleId() {
-        return roleId;
-    }
+    public Role getRole() { return role; }
 
-    public void setRoleId(int roleId) {
-        this.roleId = roleId;
-    }
+    public void setRole(Role role) { this.role = role; }
 
     public String getUsername() {
         return username;
