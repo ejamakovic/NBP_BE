@@ -11,6 +11,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
 import java.util.List;
 
 @Configuration
@@ -28,13 +29,21 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
+//                        .requestMatchers("/api/auth/reset-password").authenticated()
+//                        .requestMatchers("/api/auth/send").hasAuthority("NBP08_ADMIN")
+//                        .requestMatchers("/api/auth/**").permitAll()
+//                        .requestMatchers("/api/admin/**").hasAuthority("NBP08_ADMIN")
+//                        .requestMatchers("/api/user/**").hasAnyAuthority("NBP08_USER", "NBP08_ADMIN")
                         .requestMatchers("/**").permitAll()
+                        .requestMatchers("/reports/**").permitAll()
+                        .anyRequest().authenticated()
                 )
+
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .authenticationProvider(authenticationProvider);
+                //.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

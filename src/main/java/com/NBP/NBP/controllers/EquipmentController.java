@@ -21,7 +21,7 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -34,14 +34,14 @@ public class EquipmentController {
         return ResponseEntity.ok(response);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Equipment> getEquipmentById(@PathVariable int id) {
         Equipment equipment = equipmentService.getEquipmentById(id);
         return equipment != null ? ResponseEntity.ok(equipment) : ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public ResponseEntity<?> createEquipment(@RequestBody Equipment equipment) {
         int result = equipmentService.saveEquipment(equipment);
@@ -50,7 +50,7 @@ public class EquipmentController {
                 : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<?> updateEquipment(@PathVariable int id, @RequestBody EquipmentWithDetailsDTO equipment) {
         equipment.setId(id);
@@ -60,7 +60,7 @@ public class EquipmentController {
                 : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEquipment(@PathVariable int id) {
         int result = equipmentService.deleteEquipment(id);

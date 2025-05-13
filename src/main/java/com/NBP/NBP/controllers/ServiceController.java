@@ -18,32 +18,32 @@ public class ServiceController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public List<Service> getAllServices() {
         return serviceService.getAllServices();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public Service getServiceById(@PathVariable int id) {
         return serviceService.getServiceById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void createService(@RequestBody Service service) {
         serviceService.saveService(service);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void updateService(@PathVariable int id, @RequestBody Service service) {
         service.setId(id);
         serviceService.updateService(service);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void deleteService(@PathVariable int id) {
         serviceService.deleteService(id);
     }

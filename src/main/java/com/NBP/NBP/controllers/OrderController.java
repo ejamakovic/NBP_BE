@@ -16,32 +16,32 @@ public class OrderController {
         this.orderService = orderService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<Order> getAllOrders() {
         return orderService.getAllOrders();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public Order getOrderById(@PathVariable int id) {
         return orderService.getOrderById(id);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public void createOrder(@RequestBody Order order) {
         orderService.saveOrder(order);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public void updateOrder(@PathVariable int id, @RequestBody Order order) {
         order.setId(id);
         orderService.updateOrder(order);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteOrder(@PathVariable int id) {
         orderService.deleteOrder(id);

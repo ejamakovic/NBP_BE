@@ -1,9 +1,11 @@
 package com.NBP.NBP.models;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
 import java.util.Collection;
+import java.util.Collections;
 
 public class User implements UserDetails {
     private int id;
@@ -110,10 +112,6 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
-    }
 
     public String getPassword() {
         return password;
@@ -146,4 +144,16 @@ public class User implements UserDetails {
     public void setAddressId(Integer addressId) {
         this.addressId = addressId;
     }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (roleId == 1500) {
+            return Collections.singletonList(new SimpleGrantedAuthority("NBP08_ADMIN"));
+        } else if (roleId == 1501) {
+            return Collections.singletonList(new SimpleGrantedAuthority("NBP08_USER"));
+        } else {
+            return Collections.emptyList();
+        }
+    }
+
 }

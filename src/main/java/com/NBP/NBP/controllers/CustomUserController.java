@@ -21,20 +21,20 @@ public class CustomUserController {
         this.customUserService = customUserService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<CustomUser> getAllUsers() {
         return customUserService.getAllUsers();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<CustomUser> getById(@PathVariable int id) {
         Optional<CustomUser> user = customUserService.getById(id);
         return user.isPresent() ? ResponseEntity.ok(user.get()) : ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public ResponseEntity<String> createUser(@RequestBody CustomUser user) {
         try {
@@ -45,7 +45,7 @@ public class CustomUserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody CustomUser user) {
         try {
@@ -57,7 +57,7 @@ public class CustomUserController {
         }
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         customUserService.deleteUser(id);

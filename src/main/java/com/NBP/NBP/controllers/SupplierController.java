@@ -20,27 +20,27 @@ public class SupplierController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN') or hasAuthority('NBP08_USER')")
     public List<Supplier> getAllSuppliers() {
         return supplierService.getAllSuppliers();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN') or hasRole('USER')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN') or hasAuthority('NBP08_USER')")
     public ResponseEntity<Supplier> getSupplierById(@PathVariable int id) {
         Supplier supplier = supplierService.getSupplierById(id);
         return supplier != null ? ResponseEntity.ok(supplier) : ResponseEntity.notFound().build();
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public ResponseEntity<String> createSupplier(@RequestBody Supplier supplier) {
         int result = supplierService.saveSupplier(supplier);
         return result > 0 ? ResponseEntity.ok("Supplier created successfully") : ResponseEntity.badRequest().build();
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public ResponseEntity<String> updateSupplier(@PathVariable int id, @RequestBody Supplier supplier) {
         supplier.setId(id);
         int result = supplierService.updateSupplier(supplier);
@@ -48,7 +48,7 @@ public class SupplierController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public ResponseEntity<String> deleteSupplier(@PathVariable int id) {
         int result = supplierService.deleteSupplier(id);
         return result > 0 ? ResponseEntity.ok("Supplier deleted successfully") : ResponseEntity.badRequest().build();

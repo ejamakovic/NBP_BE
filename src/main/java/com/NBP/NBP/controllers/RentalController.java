@@ -17,32 +17,32 @@ public class RentalController {
         this.rentalService = rentalService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<Rental> getAllRentals() {
         return rentalService.getAllRentals();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public Rental getRentalById(@PathVariable int id) {
         return rentalService.getRentalById(id);
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public void createRental(@RequestBody Rental rental) {
         rentalService.saveRental(rental);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public void updateRental(@PathVariable int id, @RequestBody Rental rental) {
         rental.setId(id);
         rentalService.updateRental(rental);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteRental(@PathVariable int id) {
         rentalService.deleteRental(id);

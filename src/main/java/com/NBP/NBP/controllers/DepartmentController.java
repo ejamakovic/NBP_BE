@@ -19,27 +19,27 @@ public class DepartmentController {
         this.departmentService = departmentService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NBP08_USER') or hasRole('NBP08_ADMIN')")
     @GetMapping
     public List<Department> getAllDepartments() {
         return departmentService.getAllDepartments();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Department> getDepartmentById(@PathVariable int id) {
         Department department = departmentService.getDepartmentById(id);
         return department != null ? ResponseEntity.ok(department) : ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public ResponseEntity<String> createDepartment(@RequestBody Department department) {
         int result = departmentService.saveDepartment(department);
         return result > 0 ? ResponseEntity.ok("Department created successfully") : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateDepartment(@PathVariable int id, @RequestBody Department department) {
         department.setId(id);
@@ -47,7 +47,7 @@ public class DepartmentController {
         return result > 0 ? ResponseEntity.ok("Department updated successfully") : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteDepartment(@PathVariable int id) {
         int result = departmentService.deleteDepartment(id);

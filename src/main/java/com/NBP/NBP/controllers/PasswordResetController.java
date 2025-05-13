@@ -35,7 +35,7 @@ public class PasswordResetController {
     }
 
     @PostMapping("/send")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public boolean sendTestEmail(@RequestParam String toEmail) {
         try {
             MimeMessage message = mailSender.createMimeMessage();

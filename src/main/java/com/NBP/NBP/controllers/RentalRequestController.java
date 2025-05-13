@@ -18,32 +18,32 @@ public class RentalRequestController {
     }
 
     @GetMapping
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     public List<RentalRequest> getAll() {
         return service.getAll();
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     public RentalRequest getById(@PathVariable int id) {
         return service.getById(id);
     }
 
     @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void create(@RequestBody RentalRequest request) {
         service.save(request);
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void update(@PathVariable int id, @RequestBody RentalRequest request) {
         request.setId(id);
         service.update(request);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('NBP08_ADMIN')")
     public void delete(@PathVariable int id) {
         service.delete(id);
     }

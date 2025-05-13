@@ -19,27 +19,27 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<Category> getAllCategories() {
         return categoryService.getAllCategories();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<Category> getCategoryById(@PathVariable int id) {
         Category category = categoryService.getCategoryById(id);
         return category != null ? ResponseEntity.ok(category) : ResponseEntity.notFound().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
         int result = categoryService.saveCategory(category);
         return result > 0 ? ResponseEntity.ok("Category created successfully") : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateCategory(@PathVariable int id, @RequestBody Category category) {
         category.setId(id);
@@ -47,7 +47,7 @@ public class CategoryController {
         return result > 0 ? ResponseEntity.ok("Category updated successfully") : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteCategory(@PathVariable int id) {
         int result = categoryService.deleteCategory(id);

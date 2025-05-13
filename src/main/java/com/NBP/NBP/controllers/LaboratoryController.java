@@ -16,32 +16,32 @@ public class LaboratoryController {
         this.laboratoryService = laboratoryService;
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<Laboratory> getAllLaboratories() {
         return laboratoryService.getAllLaboratories();
     }
 
-    @PreAuthorize("hasRole('USER') or hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping("/{id}")
     public Laboratory getLaboratoryById(@PathVariable int id) {
         return laboratoryService.getLaboratoryById(id);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
     public void createLaboratory(@RequestBody Laboratory laboratory) {
         laboratoryService.saveLaboratory(laboratory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public void updateLaboratory(@PathVariable int id, @RequestBody Laboratory laboratory) {
         laboratory.setId(id);
         laboratoryService.updateLaboratory(laboratory);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public void deleteLaboratory(@PathVariable int id) {
         laboratoryService.deleteLaboratory(id);
