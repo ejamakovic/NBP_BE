@@ -38,7 +38,6 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    // Generate a JWT token for the given user
     public String generateToken(UserDetails userDetails) {
         Map<String, Object> claims = new HashMap<>();
 
@@ -47,12 +46,11 @@ public class JwtService {
 
             Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
             if (authorities != null && !authorities.isEmpty()) {
-                List<String> roles = authorities.stream()
-                        .map(GrantedAuthority::getAuthority)
-                        .collect(Collectors.toList());
-                claims.put("roles", roles);
+                // Uzmi samo prvu rolu
+                String role = authorities.iterator().next().getAuthority();
+                claims.put("role", role);
             } else {
-                claims.put("roles", Collections.emptyList());
+                claims.put("role", "");
             }
         }
 
@@ -60,6 +58,7 @@ public class JwtService {
         logger.debug("Generated token in jwtService: {}", token);
         return token;
     }
+
 
     // Build the JWT token with the given claims
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
