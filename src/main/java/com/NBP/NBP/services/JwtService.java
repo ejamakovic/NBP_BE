@@ -43,10 +43,12 @@ public class JwtService {
 
         if (userDetails instanceof User user) {
             claims.put("userId", user.getId());
+            claims.put("email", user.getEmail());
+            claims.put("firstName", user.getFirstName());
+            claims.put("lastName", user.getLastName());
 
             Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
             if (authorities != null && !authorities.isEmpty()) {
-                // Uzmi samo prvu rolu
                 String role = authorities.iterator().next().getAuthority();
                 claims.put("role", role);
             } else {
@@ -55,10 +57,9 @@ public class JwtService {
         }
 
         String token = buildToken(claims, userDetails);
-        logger.debug("Generated token in jwtService: {}", token);
+        logger.debug("Generated token in jwtService: {}", token); 
         return token;
     }
-
 
     // Build the JWT token with the given claims
     private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails) {
@@ -109,7 +110,7 @@ public class JwtService {
 
     // Get the signing key for the token
     private Key getSignInKey() {
-        byte[] keyBytes = hexStringToByteArray(secretKey);  // Convert hex string to byte array
+        byte[] keyBytes = hexStringToByteArray(secretKey); // Convert hex string to byte array
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
