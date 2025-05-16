@@ -27,12 +27,16 @@ public class AuthenticationController {
     public ResponseEntity<String> authenticate(@RequestBody LoginUserDto loginUserDto) {
         try {
             LoginResponse loginResponse = authenticationService.authenticate(loginUserDto);
-            String token = loginResponse.getToken(); // Assuming getToken() getter in LoginResponse
+            String token = loginResponse.getToken();
             return ResponseEntity.ok(token);
         } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body("Invalid credentials");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("An unexpected error occurred during authentication");
         }
     }
 

@@ -6,6 +6,7 @@ import com.NBP.NBP.models.dtos.LoginUserDto;
 import com.NBP.NBP.repositories.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -19,7 +20,8 @@ public class AuthenticationService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
+    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder,
+            JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -28,29 +30,21 @@ public class AuthenticationService {
     public LoginResponse authenticate(LoginUserDto loginDto) {
         logger.info("Starting authentication for email: {}", loginDto.getEmail());
 
-        // Retrieve user and verify password (as you already did)
         User user = userRepository.findByEmail(loginDto.getEmail());
-        if (user == null) {
-            logger.warn("No user found for email: {}", loginDto.getEmail());
-            throw new RuntimeException("Invalid credentials");
+        if (user == null || !passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
+            logger.warn("Invalid credentials for email: {}", loginDto.getEmail());
+            throw new BadCredentialsException("Invalid credentials");
         }
-        if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            logger.info("Password verification succeeded for email: {}", loginDto.getEmail());
 
-            // Generate token
-            String token = jwtService.generateToken((UserDetails) user);
-            logger.debug("Generated token: {}", token); // Avoid logging token in production
+        logger.info("Password verification succeeded for email: {}", loginDto.getEmail());
 
-            // Ensure response is correct
-            LoginResponse response = new LoginResponse(token, jwtService.getExpirationTime(), user.getEmail());
-            logger.debug("Login response: {}", response);
+        String token = jwtService.generateToken((UserDetails) user);
+        logger.debug("Generated token: {}", token);
 
-            // Return the response
-            return response;
-        } else {
-            logger.warn("Authentication failed for email: {}", loginDto.getEmail());
-            throw new RuntimeException("Invalid credentials");
-        }
+        LoginResponse response = new LoginResponse(token, jwtService.getExpirationTime(), user.getEmail());
+        logger.debug("Login response: {}", response);
+
+        return response;
     }
 
 }
