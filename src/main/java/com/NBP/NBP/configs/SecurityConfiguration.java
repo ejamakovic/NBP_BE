@@ -32,6 +32,7 @@ public class SecurityConfiguration {
                         .requestMatchers("/api/admin/**").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/api/user/**").hasAnyAuthority("NBP08_USER", "NBP08_ADMIN")
                         .requestMatchers("/reports/**").permitAll()
+                        .requestMatchers("/users").permitAll()
                         .anyRequest().authenticated()
                 )
 
