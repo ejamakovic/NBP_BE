@@ -26,7 +26,7 @@ public class SecurityConfiguration {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/reset-password").authenticated()
+                        .requestMatchers("/auth/reset-password").permitAll()
                         .requestMatchers("/auth/send").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/auth/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("NBP08_ADMIN")

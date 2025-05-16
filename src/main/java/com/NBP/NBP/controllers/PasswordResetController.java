@@ -23,7 +23,6 @@ public class PasswordResetController {
     }
 
     @PostMapping("/reset-password")
-    @PreAuthorize("isAuthenticated()")
     public ResponseEntity<String> resetPassword(@RequestBody PasswordResetDTO request) {
         boolean success = passwordResetService.resetPasswordAndSendEmail(request.getEmail());
 
