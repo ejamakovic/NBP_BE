@@ -28,7 +28,7 @@ public class UserController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
+    // @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void createUser(@RequestBody User user) {
         userService.saveUser(user);
     }
