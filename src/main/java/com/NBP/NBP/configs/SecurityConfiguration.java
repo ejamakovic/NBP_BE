@@ -9,6 +9,7 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -16,20 +17,25 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.NBP.NBP.services.CustomUserDetailsService;
+import com.NBP.NBP.services.UserService;
+
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
+    public SecurityConfiguration() {
+    }
 
-    private final AuthenticationProvider authenticationProvider;
-
-    public SecurityConfiguration(AuthenticationProvider authenticationProvider) {
-        this.authenticationProvider = authenticationProvider;
+    @Bean
+    public UserDetailsService userDetailsService(UserService userService) {
+        return new CustomUserDetailsService(userService);
     }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
-            com.NBP.NBP.configs.JwtAuthenticationFilter jwtAuthenticationFilter) throws Exception {
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            AuthenticationProvider authenticationProvider) throws Exception {
         http.cors(withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
@@ -40,9 +46,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/user/**").hasAnyAuthority("NBP08_USER", "NBP08_ADMIN")
                         .requestMatchers("/reports/**").permitAll()
                         .requestMatchers("/users").permitAll()
-
+                        .requestMatchers("/equipment").hasAuthority("NBP08_ADMIN")
                         .anyRequest().authenticated())
-
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
