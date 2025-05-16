@@ -60,7 +60,7 @@ public class EquipmentController {
                 : ResponseEntity.badRequest().build();
     }
 
-    @PreAuthorize("hasRole('NBP08_ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteEquipment(@PathVariable int id) {
         int result = equipmentService.deleteEquipment(id);
