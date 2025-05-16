@@ -1,6 +1,7 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.services.AuthenticationService;
+import com.NBP.NBP.models.LoginResponse;
 import com.NBP.NBP.models.dtos.LoginUserDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +26,14 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<String> authenticate(@RequestBody LoginUserDto loginUserDto) {
         try {
-            String loginResponse = String.valueOf(authenticationService.authenticate(loginUserDto));
-            String[] parts = loginResponse.split(",");
-            String tokenPart = parts[0];
-            String token = tokenPart.substring(tokenPart.indexOf("token=") + 6);
+            LoginResponse loginResponse = authenticationService.authenticate(loginUserDto);
+            String token = loginResponse.getToken(); // Assuming getToken() getter in LoginResponse
             return ResponseEntity.ok(token);
         } catch (AuthenticationException e) {
-            // Handle authentication exception
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
         } catch (Exception e) {
-            // Handle other exceptions
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 }
