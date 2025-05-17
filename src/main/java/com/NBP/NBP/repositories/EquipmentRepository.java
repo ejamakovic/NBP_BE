@@ -66,7 +66,7 @@ public class EquipmentRepository {
                 "l.name AS laboratory_name " +
                 "FROM " + TABLE_NAME + " e " +
                 "JOIN CATEGORY c ON e.category_id = c.id " +
-                "JOIN LABORATORY l ON e.laboratory_id = l.id " +
+                "LEFT JOIN LABORATORY l ON e.laboratory_id = l.id " +
                 "ORDER BY " + sortKey + " " + sortDirection +
                 " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -95,7 +95,7 @@ public class EquipmentRepository {
                 "l.name AS laboratory_name " +
                 "FROM " + TABLE_NAME + " e " +
                 "JOIN CATEGORY c ON e.category_id = c.id " +
-                "JOIN LABORATORY l ON e.laboratory_id = l.id " +
+                "LEFT JOIN LABORATORY l ON e.laboratory_id = l.id " +
                 "LEFT JOIN rental r ON r.equipment_id = e.id AND (r.return_date IS NULL OR r.return_date > CURRENT_DATE) "
                 +
                 "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = ?) " +
