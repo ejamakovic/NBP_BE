@@ -39,7 +39,7 @@ public class EquipmentService {
 
     public PaginatedEquipmentResponseDTO getPaginatedEquipment(int page, int size, String sortKey,
             String sortDirection) {
-        int offset = (page - 1) * size;
+        int offset = page * size;
         List<EquipmentWithDetailsDTO> equipmentList = equipmentRepository.findPaginated(offset, size, sortKey,
                 sortDirection);
         int totalEquipment = equipmentRepository.countAll();
@@ -51,7 +51,7 @@ public class EquipmentService {
     public PaginatedEquipmentResponseDTO getPaginatedEquipmentForUser(Integer userId, int page, int size,
             String sortKey,
             String sortDirection) {
-        int offset = (page - 1) * size;
+        int offset = page * size;
         List<EquipmentWithDetailsDTO> equipmentList = equipmentRepository.findPaginatedForUser(userId, offset, size,
                 sortKey, sortDirection);
         int totalEquipment = equipmentRepository.countAllForUser(userId);
