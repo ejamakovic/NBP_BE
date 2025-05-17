@@ -3,16 +3,15 @@ package com.NBP.NBP.controllers;
 import com.NBP.NBP.models.dtos.PasswordChangeDTO;
 import com.NBP.NBP.models.dtos.PasswordResetDTO;
 import com.NBP.NBP.services.PasswordResetService;
+import com.NBP.NBP.utils.SecurityUtils;
+
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 
 @RestController
 @RequestMapping("/auth")
@@ -37,16 +36,11 @@ public class PasswordResetController {
         }
     }
 
-    @PostMapping("/change-password/{id}")
-    @PreAuthorize("#id == authentication.principal.id")
-    public ResponseEntity<String> changePassword(
-            @PathVariable int id,
-            @RequestBody PasswordChangeDTO request) {
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("Principal: " + auth.getPrincipal());
-
-        boolean success = passwordResetService.changePassword(id, request);
+    @PostMapping("/change-password")
+    @PreAuthorize("isAuthenticated()")
+    public ResponseEntity<String> changePassword(@RequestBody PasswordChangeDTO request) {
+        int userId = SecurityUtils.getCurrentUserId();
+        boolean success = passwordResetService.changePassword(userId, request);
 
         if (success) {
             return ResponseEntity.ok("Password changed successfully.");
