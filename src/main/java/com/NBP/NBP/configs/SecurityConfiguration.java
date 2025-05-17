@@ -48,13 +48,27 @@ public class SecurityConfiguration {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/reset-password").permitAll()
-                        .requestMatchers("/auth/send").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/auth/**").permitAll()
+                        
+                        .requestMatchers("/auth/send").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("NBP08_ADMIN")
-                        .requestMatchers("/user/**").hasAnyAuthority("NBP08_USER", "NBP08_ADMIN")
-                        .requestMatchers("/reports/**").permitAll()
-                        .requestMatchers("/users").permitAll()
-                        .requestMatchers("/equipment").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/apps/**").hasAuthority("NBP08_ADMIN")
+                        .requestMatchers("/logs/**").hasAuthority("NBP08_ADMIN")
+                        .requestMatchers("/reports/**").hasAuthority("NBP08_ADMIN")
+                        .requestMatchers("/roles/**").hasAuthority("NBP08_ADMIN")
+                        .requestMatchers("/services/**").hasAuthority("NBP08_ADMIN")
+                        
+                        .requestMatchers("/user/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/categories/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/customUsers/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/departments/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/equipment/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/laboratories/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/orders/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/rentals/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/rentalRequests/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+                        .requestMatchers("/suppliers/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
