@@ -3,14 +3,14 @@ package com.NBP.NBP.models;
 import com.NBP.NBP.models.enums.EquipmentStatus;
 
 public class Equipment {
-    private int id;
+    private Integer id;
     private String description;
     private String name;
-    private int categoryId;
-    private int laboratoryId;
+    private Integer categoryId;
+    private Integer laboratoryId;
     private EquipmentStatus status;
 
-    public Equipment(int id, String description, String name, int categoryId, int laboratoryId,
+    public Equipment(Integer id, String description, String name, Integer categoryId, Integer laboratoryId,
             EquipmentStatus status) {
         this.id = id;
         this.description = description;
@@ -20,18 +20,18 @@ public class Equipment {
         this.status = status;
     }
 
-    public Equipment(String name, int categoryId, int laboratoryId, EquipmentStatus status) {
+    public Equipment(String name, Integer categoryId, Integer laboratoryId, EquipmentStatus status) {
         this.name = name;
         this.categoryId = categoryId;
         this.laboratoryId = laboratoryId;
         this.status = status;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -51,19 +51,19 @@ public class Equipment {
         this.name = name;
     }
 
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
-    public int getLaboratoryId() {
+    public Integer getLaboratoryId() {
         return laboratoryId;
     }
 
-    public void setLaboratoryId(int laboratoryId) {
+    public void setLaboratoryId(Integer laboratoryId) {
         this.laboratoryId = laboratoryId;
     }
 

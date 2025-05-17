@@ -51,8 +51,12 @@ public class EquipmentService {
         return equipmentRepository.findById(id);
     }
 
-    public int saveEquipment(EquipmentWithDetailsDTO equipment) {
+    public int saveEquipment(Equipment equipment) {
         return equipmentRepository.save(equipment);
+    }
+
+    public int saveEquipmentWithDTO(EquipmentWithDetailsDTO equipment) {
+        return equipmentRepository.save(equipment.toEquipment());
     }
 
     public int updateEquipment(EquipmentWithDetailsDTO equipment) {

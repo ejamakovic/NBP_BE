@@ -1,5 +1,6 @@
 package com.NBP.NBP.models.dtos;
 
+import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.enums.EquipmentStatus;
 
 public class EquipmentWithDetailsDTO {
@@ -75,4 +76,15 @@ public class EquipmentWithDetailsDTO {
     public void setLaboratoryName(String laboratoryName) {
         this.laboratoryName = laboratoryName;
     }
+
+    public Equipment toEquipment() {
+        return new Equipment(
+                this.id,
+                this.description,
+                this.name,
+                this.categoryId,
+                this.laboratoryId,
+                this.status);
+    }
+
 }
