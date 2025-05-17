@@ -1,6 +1,8 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.RentalRequest;
+import com.NBP.NBP.models.enums.RequestStatus;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -24,8 +26,7 @@ public class RentalRequestRepository {
             rs.getInt("equipment_id"),
             rs.getInt("custom_user_id"),
             rs.getDate("request_date").toLocalDate(),
-            rs.getString("status")
-    );
+            RequestStatus.valueOf(rs.getString("status").trim().toUpperCase()));
 
     public List<RentalRequest> findAll() {
         String sql = "SELECT * FROM " + TABLE_NAME;
@@ -39,14 +40,18 @@ public class RentalRequestRepository {
 
     @Transactional
     public int save(RentalRequest request) {
-        String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, custom_user_id, request_date, status) VALUES (?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, request.getEquipmentId(), request.getCustomUserId(), Date.valueOf(request.getRequestDate()), request.getStatus());
+        String sql = "INSERT INTO " + TABLE_NAME
+                + " (equipment_id, custom_user_id, request_date, status) VALUES (?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, request.getEquipmentId(), request.getCustomUserId(),
+                Date.valueOf(request.getRequestDate()), request.getStatus());
     }
 
     @Transactional
     public int update(RentalRequest request) {
-        String sql = "UPDATE " + TABLE_NAME + " SET equipment_id = ?, custom_user_id = ?, request_date = ?, status = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, request.getEquipmentId(), request.getCustomUserId(), Date.valueOf(request.getRequestDate()), request.getStatus(), request.getId());
+        String sql = "UPDATE " + TABLE_NAME
+                + " SET equipment_id = ?, custom_user_id = ?, request_date = ?, status = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, request.getEquipmentId(), request.getCustomUserId(),
+                Date.valueOf(request.getRequestDate()), request.getStatus(), request.getId());
     }
 
     @Transactional

@@ -1,6 +1,7 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.RentalRequest;
+import com.NBP.NBP.models.dtos.RentalRequestDTO;
 import com.NBP.NBP.services.RentalRequestService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -30,9 +31,11 @@ public class RentalRequestController {
     }
 
     @PostMapping
-    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
-    public void create(@RequestBody RentalRequest request) {
-        service.save(request);
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
+    public void create(@RequestBody RentalRequestDTO dto) {
+        RentalRequest request = new RentalRequest();
+        request.setEquipmentId(dto.getEquipmentId());
+        service.createRequest(request);
     }
 
     @PutMapping("/{id}")

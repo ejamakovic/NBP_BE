@@ -166,4 +166,11 @@ public class EquipmentRepository {
             return Optional.empty();
         }
     }
+
+    public EquipmentStatus getStatusById(int equipmentId) {
+        String sql = "SELECT status FROM equipment WHERE id = ?";
+        String statusStr = jdbcTemplate.queryForObject(sql, String.class, equipmentId);
+        return EquipmentStatus.valueOf(statusStr);
+    }
+
 }

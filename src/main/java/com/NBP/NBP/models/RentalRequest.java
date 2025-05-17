@@ -2,14 +2,20 @@ package com.NBP.NBP.models;
 
 import java.time.LocalDate;
 
+import com.NBP.NBP.models.enums.RequestStatus;
+
 public class RentalRequest {
     private int id;
     private int equipmentId;
     private int customUserId;
     private LocalDate requestDate;
-    private String status; // PENDING, APPROVED, REJECTED
+    private RequestStatus status; // PENDING, APPROVED, REJECTED
 
-    public RentalRequest(int id, int equipmentId, int customUserId, LocalDate requestDate, String status) {
+    public RentalRequest() {
+
+    }
+
+    public RentalRequest(int id, int equipmentId, int customUserId, LocalDate requestDate, RequestStatus status) {
         this.id = id;
         this.equipmentId = equipmentId;
         this.customUserId = customUserId;
@@ -17,7 +23,7 @@ public class RentalRequest {
         this.status = status;
     }
 
-    public RentalRequest(int equipmentId, int customUserId, LocalDate requestDate, String status) {
+    public RentalRequest(int equipmentId, int customUserId, LocalDate requestDate, RequestStatus status) {
         this.equipmentId = equipmentId;
         this.customUserId = customUserId;
         this.requestDate = requestDate;
@@ -56,11 +62,11 @@ public class RentalRequest {
         this.requestDate = requestDate;
     }
 
-    public String getStatus() {
+    public RequestStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(RequestStatus status) {
         this.status = status;
     }
 }

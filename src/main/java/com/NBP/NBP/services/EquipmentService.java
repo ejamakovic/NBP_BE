@@ -3,6 +3,7 @@ package com.NBP.NBP.services;
 import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.dtos.EquipmentWithDetailsDTO;
 import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
+import com.NBP.NBP.models.enums.EquipmentStatus;
 import com.NBP.NBP.repositories.EquipmentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,5 +65,10 @@ public class EquipmentService {
 
     public Optional<Equipment> findByName(String name) {
         return equipmentRepository.findByName(name);
+    }
+
+    public boolean isEquipmentRented(int equipmentId) {
+        EquipmentStatus status = equipmentRepository.getStatusById(equipmentId);
+        return status == EquipmentStatus.RENTED;
     }
 }
