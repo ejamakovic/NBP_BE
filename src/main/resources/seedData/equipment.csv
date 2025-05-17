@@ -1,41 +1,161 @@
-name,categoryName,labName,status
-Dell Inspiron,Računarska oprema,Laboratorij za programiranje,LABORATORY
-HP Pavilion,Mjerne naprave,Laboratorij za elektroniku,LABORATORY
-Lenovo ThinkPad,Elektroničke komponente,Laboratorij za električne mreže,STORAGE
-Acer Aspire,Mikroskopi,Laboratorij za biomedicinu,LABORATORY
-Canon EOS,Hemijska oprema,Laboratorij za hemijsku analizu,LABORATORY
-Apple MacBook,Zaštitna oprema,Laboratorij za radiološku dijagnostiku,LABORATORY
-3D Printer,3D štampači,Laboratorij za mikrobiologiju,RENTED
-Raspberry Pi,Robotski setovi,Laboratorij za sestrinstvo,RENTED
-Sony Projector,Multimedijalna oprema,Laboratorij za prehranu,RENTED
-Fujifilm Biometric Scanner,Biometrijska oprema,Laboratorij za jezike,LABORATORY
-Makita Power Tools,Alati za obradu materijala,Laboratorij za filozofsku analizu,STORAGE
-Philips ECG,Medicinska oprema,Laboratorij za historijska istraživanja,RENTED
-Autodesk AutoCAD,Softverski alati,Laboratorij za pedagogiju,LABORATORY
-Garmin GPS,Geodetska oprema,Laboratorij za psihologijska ispitivanja,STORAGE
-JBL Speakers,Audiovizuelna oprema,Laboratorij za fiziku čestica,RENTED
-Chemistry Lab Set,Eksperimentalni setovi,Laboratorij za molekularnu biologiju,RENTED
-Nikon DSLR,Fotografska oprema,Laboratorij za GIS tehnologije,LABORATORY
-Air Conditioner,Uređaji za klimatizaciju,Laboratorij za političke studije,LABORATORY
-Anatomical Models,Edukativni modeli,Laboratorij za kriminološka istraživanja,STORAGE
-Autoclave,Oprema za sterilizaciju,Laboratorij za programiranje,LABORATORY
-Dell Latitude,Računarska oprema,Laboratorij za računarske sisteme,SERVICE
-HP Envy,Mjerne naprave,Laboratorij za mjerne tehnologije,SERVICE
-Acer Swift,Elektroničke komponente,Laboratorij za analizu signala,SERVICE
-Asus ZenBook,Mikroskopi,Laboratorij za genetiku,SERVICE
-Canon DSLR Plus,Hemijska oprema,Laboratorij za analizu materijala,SERVICE
-MacBook Pro,Zaštitna oprema,Laboratorij za sigurnost,SERVICE
-Epson 3D Printer,3D štampači,Laboratorij za prototipiranje,SERVICE
-Arduino Set,Robotski setovi,Laboratorij za automatiku,SERVICE
-BenQ Projector,Multimedijalna oprema,Laboratorij za vizualne medije,SERVICE
-Panasonic Biometric Scanner,Biometrijska oprema,Laboratorij za biometriju,SERVICE
-Bosch Power Tools,Alati za obradu materijala,Laboratorij za industrijsku obradu,SERVICE
-GE Healthcare ECG,Medicinska oprema,Laboratorij za kardiologiju,SERVICE
-AutoCAD Software,Softverski alati,Laboratorij za CAD dizajn,SERVICE
-Topcon GPS,Geodetska oprema,Laboratorij za precizna mjerenja,SERVICE
-Logitech Speakers,Audiovizuelna oprema,Laboratorij za zvučnu tehnologiju,SERVICE
-Lab Set Chemistry,Eksperimentalni setovi,Laboratorij za hemijske eksperimente,SERVICE
-Leica DSLR,Fotografska oprema,Laboratorij za digitalnu fotografiju,SERVICE
-Daikin AC,Uređaji za klimatizaciju,Laboratorij za energetsku efikasnost,SERVICE
-K-12 Models,Edukativni modeli,Laboratorij za biološke studije,SERVICE
-Sterilization Unit,Oprema za sterilizaciju,Laboratorij za mikrobiologiju,SERVICE
+name,category,laboratoryId,status
+Allen-Bradley MicroLogix,PLC sistemi,1-01,SERVICE
+ESP32 Dev Kit,Razvojni alati,1-01,RENTED
+Temperature Sensor Module,Senzori i aktuatori,1-02,SERVICE
+Temperature Sensor Module,Senzori i aktuatori,1-02,RENTED
+Temperature Sensor Module,Senzori i aktuatori,1-03,LABORATORY
+Arduino Mega,Razvojni alati,1-03,LABORATORY
+Omron CP1E,PLC sistemi,1-04,LABORATORY
+ESP32 Dev Kit,Razvojni alati,1-04,SERVICE
+STM32 Nucleo Board,Razvojni alati,1-05,SERVICE
+ESP32 Dev Kit,Razvojni alati,1-05,SERVICE
+Arduino Mega,Razvojni alati,1-06,RENTED
+Omron CP1E,PLC sistemi,1-06,LABORATORY
+ESP32 Dev Kit,Razvojni alati,1-07,SERVICE
+Servo Motor,Senzori i aktuatori,1-07,LABORATORY
+Omron CP1E,PLC sistemi,1-08,SERVICE
+Servo Motor,Senzori i aktuatori,1-08,LABORATORY
+Siemens S7-1200,PLC sistemi,1-09,SERVICE
+Ultrasonic Sensor,Senzori i aktuatori,1-09,STORAGE
+STM32 Nucleo Board,Razvojni alati,1-10,RENTED
+Servo Motor,Senzori i aktuatori,1-10,LABORATORY
+STM32 Nucleo Board,Razvojni alati,1-11,LABORATORY
+Breadboard,Elektroničke komponente,1-11,SERVICE
+STM32 Nucleo Board,Razvojni alati,1-12,LABORATORY
+Ultrasonic Sensor,Senzori i aktuatori,1-12,SERVICE
+Servo Motor,Senzori i aktuatori,1-13,LABORATORY
+Siemens S7-1200,PLC sistemi,1-13,LABORATORY
+Breadboard,Elektroničke komponente,1-14,SERVICE
+STM32 Nucleo Board,Razvojni alati,1-14,RENTED
+Arduino Mega,Razvojni alati,1-15,STORAGE
+Arduino Mega,Razvojni alati,1-15,RENTED
+Resistor Pack,Elektroničke komponente,1-16,STORAGE
+Temperature Sensor Module,Senzori i aktuatori,1-16,RENTED
+Temperature Sensor Module,Senzori i aktuatori,1-17,STORAGE
+Allen-Bradley MicroLogix,PLC sistemi,1-17,RENTED
+Siemens S7-1200,PLC sistemi,1-18,LABORATORY
+Arduino Mega,Razvojni alati,1-18,STORAGE
+ESP32 Dev Kit,Razvojni alati,1-19,RENTED
+Breadboard,Elektroničke komponente,1-19,RENTED
+Temperature Sensor Module,Senzori i aktuatori,1-20,SERVICE
+STM32 Nucleo Board,Razvojni alati,1-20,SERVICE
+AC Induction Motor,Električne mašine,2-01,LABORATORY
+AC Induction Motor,Električne mašine,2-01,STORAGE
+IGBT Module,Energetska elektronika,2-02,SERVICE
+DC-DC Converter,Energetska elektronika,2-02,SERVICE
+DC-DC Converter,Energetska elektronika,2-03,STORAGE
+Three-phase Inverter,Energetska elektronika,2-03,LABORATORY
+DC-DC Converter,Energetska elektronika,2-04,LABORATORY
+DC-DC Converter,Energetska elektronika,2-04,STORAGE
+IGBT Module,Energetska elektronika,2-05,STORAGE
+IGBT Module,Energetska elektronika,2-05,LABORATORY
+Resistor Pack,Elektroničke komponente,2-06,RENTED
+AC Induction Motor,Električne mašine,2-06,RENTED
+DC Motor Trainer,Električne mašine,2-07,SERVICE
+Breadboard,Elektroničke komponente,2-07,RENTED
+Op-Amp Kit,Elektroničke komponente,2-08,SERVICE
+AC Induction Motor,Električne mašine,2-08,SERVICE
+DC Motor Trainer,Električne mašine,2-09,LABORATORY
+AC Induction Motor,Električne mašine,2-09,SERVICE
+AC Induction Motor,Električne mašine,2-10,SERVICE
+Three-phase Inverter,Energetska elektronika,2-10,SERVICE
+Transformer Kit,Električne mašine,2-11,SERVICE
+Three-phase Inverter,Energetska elektronika,2-11,SERVICE
+Transformer Kit,Električne mašine,2-12,SERVICE
+Op-Amp Kit,Elektroničke komponente,2-12,STORAGE
+Three-phase Inverter,Energetska elektronika,2-13,SERVICE
+DC Motor Trainer,Električne mašine,2-13,SERVICE
+Resistor Pack,Elektroničke komponente,2-14,RENTED
+Three-phase Inverter,Energetska elektronika,2-14,RENTED
+Transformer Kit,Električne mašine,2-15,SERVICE
+Breadboard,Elektroničke komponente,2-15,LABORATORY
+Resistor Pack,Elektroničke komponente,2-16,LABORATORY
+Breadboard,Elektroničke komponente,2-16,LABORATORY
+AC Induction Motor,Električne mašine,2-17,LABORATORY
+DC-DC Converter,Energetska elektronika,2-17,LABORATORY
+IGBT Module,Energetska elektronika,2-18,LABORATORY
+DC Motor Trainer,Električne mašine,2-18,LABORATORY
+Breadboard,Elektroničke komponente,2-19,LABORATORY
+Op-Amp Kit,Elektroničke komponente,2-19,LABORATORY
+DC-DC Converter,Energetska elektronika,2-20,LABORATORY
+Breadboard,Elektroničke komponente,2-20,SERVICE
+LTE Modem,Telekomunikacijski uređaji,3-01,LABORATORY
+Network Switch,Telekomunikacijski uređaji,3-01,STORAGE
+VoIP Gateway,Telekomunikacijski uređaji,3-02,RENTED
+ESP32 Dev Kit,Razvojni alati,3-02,STORAGE
+Spectrum Analyzer,RF oprema,3-03,RENTED
+LTE Modem,Telekomunikacijski uređaji,3-03,LABORATORY
+Spectrum Analyzer,RF oprema,3-04,LABORATORY
+Spectrum Analyzer,RF oprema,3-04,LABORATORY
+Antenna Kit,RF oprema,3-05,LABORATORY
+Network Switch,Telekomunikacijski uređaji,3-05,LABORATORY
+RF Signal Generator,RF oprema,3-06,STORAGE
+Spectrum Analyzer,RF oprema,3-06,RENTED
+RF Signal Generator,RF oprema,3-07,SERVICE
+ESP32 Dev Kit,Razvojni alati,3-07,SERVICE
+ESP32 Dev Kit,Razvojni alati,3-08,STORAGE
+Arduino Mega,Razvojni alati,3-08,RENTED
+Antenna Kit,RF oprema,3-09,STORAGE
+RF Signal Generator,RF oprema,3-09,SERVICE
+VoIP Gateway,Telekomunikacijski uređaji,3-10,STORAGE
+Arduino Mega,Razvojni alati,3-10,RENTED
+STM32 Nucleo Board,Razvojni alati,3-11,LABORATORY
+Antenna Kit,RF oprema,3-11,RENTED
+ESP32 Dev Kit,Razvojni alati,3-12,RENTED
+ESP32 Dev Kit,Razvojni alati,3-12,LABORATORY
+Network Switch,Telekomunikacijski uređaji,3-13,LABORATORY
+STM32 Nucleo Board,Razvojni alati,3-13,SERVICE
+RF Signal Generator,RF oprema,3-14,SERVICE
+LTE Modem,Telekomunikacijski uređaji,3-14,RENTED
+VoIP Gateway,Telekomunikacijski uređaji,3-15,RENTED
+RF Signal Generator,RF oprema,3-15,RENTED
+LTE Modem,Telekomunikacijski uređaji,3-16,LABORATORY
+Arduino Mega,Razvojni alati,3-16,STORAGE
+Spectrum Analyzer,RF oprema,3-17,RENTED
+Antenna Kit,RF oprema,3-17,LABORATORY
+VoIP Gateway,Telekomunikacijski uređaji,3-18,SERVICE
+Spectrum Analyzer,RF oprema,3-18,LABORATORY
+STM32 Nucleo Board,Razvojni alati,3-19,LABORATORY
+Network Switch,Telekomunikacijski uređaji,3-19,SERVICE
+RF Signal Generator,RF oprema,3-20,SERVICE
+Arduino Mega,Razvojni alati,3-20,LABORATORY
+Arduino Mega,Razvojni alati,4-01,SERVICE
+STM32 Nucleo Board,Razvojni alati,4-01,RENTED
+Mechanical Keyboard,Računarska oprema,4-02,STORAGE
+Network Attached Storage,Serverska oprema,4-02,STORAGE
+HP ProLiant Server,Serverska oprema,4-03,STORAGE
+Cisco Router,Serverska oprema,4-03,LABORATORY
+Mechanical Keyboard,Računarska oprema,4-04,STORAGE
+STM32 Nucleo Board,Razvojni alati,4-04,SERVICE
+Dell Desktop,Računarska oprema,4-05,RENTED
+STM32 Nucleo Board,Razvojni alati,4-05,RENTED
+HP ProLiant Server,Serverska oprema,4-06,LABORATORY
+Network Attached Storage,Serverska oprema,4-06,RENTED
+27-inch Monitor,Računarska oprema,4-07,STORAGE
+ESP32 Dev Kit,Razvojni alati,4-07,SERVICE
+27-inch Monitor,Računarska oprema,4-08,STORAGE
+Cisco Router,Serverska oprema,4-08,RENTED
+HP ProLiant Server,Serverska oprema,4-09,LABORATORY
+Network Attached Storage,Serverska oprema,4-09,STORAGE
+STM32 Nucleo Board,Razvojni alati,4-10,STORAGE
+Network Attached Storage,Serverska oprema,4-10,LABORATORY
+Cisco Router,Serverska oprema,4-11,SERVICE
+Dell Desktop,Računarska oprema,4-11,LABORATORY
+Mechanical Keyboard,Računarska oprema,4-12,LABORATORY
+STM32 Nucleo Board,Razvojni alati,4-12,RENTED
+ESP32 Dev Kit,Razvojni alati,4-13,SERVICE
+STM32 Nucleo Board,Razvojni alati,4-13,RENTED
+Arduino Mega,Razvojni alati,4-14,SERVICE
+STM32 Nucleo Board,Razvojni alati,4-14,SERVICE
+HP ProLiant Server,Serverska oprema,4-15,RENTED
+ESP32 Dev Kit,Razvojni alati,4-15,STORAGE
+Cisco Router,Serverska oprema,4-16,RENTED
+STM32 Nucleo Board,Razvojni alati,4-16,STORAGE
+Dell Desktop,Računarska oprema,4-17,RENTED
+Dell Desktop,Računarska oprema,4-17,LABORATORY
+STM32 Nucleo Board,Razvojni alati,4-18,SERVICE
+Dell Desktop,Računarska oprema,4-18,LABORATORY
+27-inch Monitor,Računarska oprema,4-19,RENTED
+Arduino Mega,Razvojni alati,4-19,RENTED
+Arduino Mega,Razvojni alati,4-20,RENTED
+27-inch Monitor,Računarska oprema,4-20,LABORATORY
