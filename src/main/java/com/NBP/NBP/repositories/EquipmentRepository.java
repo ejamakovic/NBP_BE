@@ -133,7 +133,7 @@ public class EquipmentRepository {
     }
 
     @Transactional
-    public int save(Equipment equipment) {
+    public int save(EquipmentWithDetailsDTO equipment) {
         return jdbcTemplate.update(
                 "INSERT INTO " + TABLE_NAME
                         + " (description, name, category_id, laboratory_id, status) VALUES (?, ?, ?, ?, ?)",

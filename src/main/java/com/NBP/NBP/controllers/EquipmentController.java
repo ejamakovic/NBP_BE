@@ -59,7 +59,7 @@ public class EquipmentController {
 
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping
-    public ResponseEntity<?> createEquipment(@RequestBody Equipment equipment) {
+    public ResponseEntity<?> createEquipment(@RequestBody EquipmentWithDetailsDTO equipment) {
         int result = equipmentService.saveEquipment(equipment);
         return result > 0
                 ? ResponseEntity.ok(Map.of("message", "Equipment created successfully"))

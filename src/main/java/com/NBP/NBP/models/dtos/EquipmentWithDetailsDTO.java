@@ -3,20 +3,20 @@ package com.NBP.NBP.models.dtos;
 import com.NBP.NBP.models.enums.EquipmentStatus;
 
 public class EquipmentWithDetailsDTO {
-    private int id;
+    private Integer id;
     private String description;
     private String name;
-    private int categoryId;
-    private int laboratoryId;
+    private Integer categoryId;
+    private Integer laboratoryId;
     private EquipmentStatus status;
     private String categoryName;
     private String laboratoryName;
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -36,19 +36,19 @@ public class EquipmentWithDetailsDTO {
         this.name = name;
     }
 
-    public int getCategoryId() {
+    public Integer getCategoryId() {
         return categoryId;
     }
 
-    public void setCategoryId(int categoryId) {
+    public void setCategoryId(Integer categoryId) {
         this.categoryId = categoryId;
     }
 
-    public int getLaboratoryId() {
+    public Integer getLaboratoryId() {
         return laboratoryId;
     }
 
-    public void setLaboratoryId(int laboratoryId) {
+    public void setLaboratoryId(Integer laboratoryId) {
         this.laboratoryId = laboratoryId;
     }
 
