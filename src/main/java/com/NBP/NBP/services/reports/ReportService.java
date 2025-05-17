@@ -5,8 +5,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -14,163 +17,205 @@ import java.util.Map;
 @Service
 public class ReportService {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+        @Autowired
+        private JdbcTemplate jdbcTemplate;
 
-    public byte[] generateLaboratoryReport() throws JRException {
-        // SQL upit za čitanje podataka iz specijalno kreirane tabele
-        String sql = "SELECT laboratory_id, laboratory_name, equipment_count, report_generated_at " +
-                "FROM NBP08.EQUIPMENT_BY_LAB_REPORT";
+        public byte[] generateLaboratoryReport() throws JRException {
+                // SQL upit za čitanje podataka iz specijalno kreirane tabele
+                String sql = "SELECT laboratory_id, laboratory_name, equipment_count, report_generated_at " +
+                                "FROM NBP08.EQUIPMENT_BY_LAB_REPORT";
 
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                // Mapiraj podatke u JRBeanCollectionDataSource
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
-        // Mapiraj podatke u JRBeanCollectionDataSource
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
+                // Kompajliraj JRXML template
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/equipment_per_lab_report.jrxml"));
 
-        // Kompajliraj JRXML template
-        JasperReport jasperReport = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("/reports/equipment_per_lab_report.jrxml")
-        );
+                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Equipment count by laboratory");
 
+                // Popuni izveštaj sa podacima
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-        // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("REPORT_TITLE", "Equipment count by laboratory");
+                // Izvezi izveštaj u PDF
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
-        // Popuni izveštaj sa podacima
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                return outputStream.toByteArray();
+        }
 
-        // Izvezi izveštaj u PDF
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+        public byte[] generateCategoryReport() throws JRException {
+                // SQL upit za čitanje podataka iz specijalno kreirane tabele
+                String sql = "SELECT category_id, category_name, equipment_count, report_generated_at " +
+                                "FROM NBP08.EQUIPMENT_BY_CATEGORY_REPORT";
 
-        return outputStream.toByteArray();
-    }
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-    public byte[] generateCategoryReport () throws JRException {
-        // SQL upit za čitanje podataka iz specijalno kreirane tabele
-        String sql = "SELECT category_id, category_name, equipment_count, report_generated_at " +
-                "FROM NBP08.EQUIPMENT_BY_CATEGORY_REPORT";
+                // Mapiraj podatke u JRBeanCollectionDataSource
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
+                // Kompajliraj JRXML template
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/equipment_per_category_report.jrxml"));
 
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Equipment count by category");
 
-        // Mapiraj podatke u JRBeanCollectionDataSource
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
+                // Popuni izveštaj sa podacima
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-        // Kompajliraj JRXML template
-        JasperReport jasperReport = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("/reports/equipment_per_category_report.jrxml")
-        );
+                // Izvezi izveštaj u PDF
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
+                return outputStream.toByteArray();
+        }
 
-        // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("REPORT_TITLE", "Equipment count by category");
+        public byte[] generateServiceReport() throws JRException {
+                // SQL upit za čitanje podataka iz specijalno kreirane tabele
+                String sql = "SELECT equipment_id, equipment_name, service_count, report_generated_at " +
+                                "FROM NBP08.SERVICE_COUNT_PER_EQUIPMENT";
 
-        // Popuni izveštaj sa podacima
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-        // Izvezi izveštaj u PDF
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+                // Mapiraj podatke u JRBeanCollectionDataSource
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
-        return outputStream.toByteArray();
-    }
+                // Kompajliraj JRXML template
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/service_per_equipment_report.jrxml"));
 
-    public byte[] generateServiceReport () throws JRException {
-        // SQL upit za čitanje podataka iz specijalno kreirane tabele
-        String sql = "SELECT equipment_id, equipment_name, service_count, report_generated_at " +
-                "FROM NBP08.SERVICE_COUNT_PER_EQUIPMENT";
+                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Service count per equipment");
 
+                // Popuni izveštaj sa podacima
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                // Izvezi izveštaj u PDF
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
-        // Mapiraj podatke u JRBeanCollectionDataSource
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
+                return outputStream.toByteArray();
+        }
 
-        // Kompajliraj JRXML template
-        JasperReport jasperReport = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("/reports/service_per_equipment_report.jrxml")
-        );
+        public byte[] generateServiceByEquipmentIdReport(int equipmentId) throws JRException {
+                String sql = "SELECT s.description, s.service_date, " +
+                                "e.name AS equipment_name, l.name AS laboratory_name, " +
+                                "c.name AS category_name, d.name AS department_name " +
+                                "FROM service s " +
+                                "JOIN equipment e ON s.equipment_id = e.id " +
+                                "JOIN laboratory l ON e.laboratory_id = l.id " +
+                                "JOIN category c ON e.category_id = c.id " +
+                                "JOIN department d ON l.department_id = d.id " +
+                                "WHERE s.equipment_id = ? " +
+                                "ORDER BY s.service_date DESC";
 
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, equipmentId);
 
-        // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("REPORT_TITLE", "Service count per equipment");
+                if (rows.isEmpty()) {
+                        throw new IllegalArgumentException("No service data found for equipment ID: " + equipmentId);
+                }
 
-        // Popuni izveštaj sa podacima
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                System.out.println("All rows:");
+                for (Map<String, Object> row : rows) {
+                        System.out.println(row);
+                }
 
-        // Izvezi izveštaj u PDF
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+                Map<String, Object> firstRow = rows.get(0);
 
-        return outputStream.toByteArray();
-    }
+                String equipmentName = (String) firstRow.get("EQUIPMENT_NAME");
+                String labName = (String) firstRow.get("LABORATORY_NAME");
+                String categoryName = (String) firstRow.get("CATEGORY_NAME");
+                String departmentName = (String) firstRow.get("DEPARTMENT_NAME");
 
-    public byte[] generateOrderReport () throws JRException {
-        // SQL upit za čitanje podataka iz specijalno kreirane tabele
-        String sql = "SELECT supplier_id, supplier_name, order_count, report_generated_at " +
-                "FROM NBP08.ORDERS_PER_SUPPLIER";
+                Collection<Map<String, ?>> dataCollection = new ArrayList<>();
+                for (Map<String, Object> row : rows) {
+                        row.remove("EQUIPMENT_NAME");
+                        row.remove("LABORATORY_NAME");
+                        row.remove("CATEGORY_NAME");
+                        row.remove("DEPARTMENT_NAME");
+                        dataCollection.add(row);
+                }
 
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Service report for " + equipmentName);
+                parameters.put("LABORATORY_NAME", labName);
+                parameters.put("CATEGORY_NAME", categoryName);
+                parameters.put("DEPARTMENT_NAME", departmentName);
 
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataCollection);
 
-        // Mapiraj podatke u JRBeanCollectionDataSource
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/service_by_equipmentId_report.jrxml"));
 
-        // Kompajliraj JRXML template
-        JasperReport jasperReport = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("/reports/order_per_supplier_report.jrxml")
-        );
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
-        // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("REPORT_TITLE", "Order count per supplier");
+                return outputStream.toByteArray();
+        }
 
-        // Popuni izveštaj sa podacima
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+        public byte[] generateOrderReport() throws JRException {
+                // SQL upit za čitanje podataka iz specijalno kreirane tabele
+                String sql = "SELECT supplier_id, supplier_name, order_count, report_generated_at " +
+                                "FROM NBP08.ORDERS_PER_SUPPLIER";
 
-        // Izvezi izveštaj u PDF
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-        return outputStream.toByteArray();
-    }
+                // Mapiraj podatke u JRBeanCollectionDataSource
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
-    public byte[] generateDepartmentReport () throws JRException {
-        // SQL upit za čitanje podataka iz specijalno kreirane tabele
-        String sql = "SELECT department_id, department_name, equipment_count, report_generated_at " +
-                "FROM NBP08.EQUIPMENT_BY_DEPARTMENT";
+                // Kompajliraj JRXML template
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/order_per_supplier_report.jrxml"));
 
+                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Order count per supplier");
 
-        List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
+                // Popuni izveštaj sa podacima
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-        // Mapiraj podatke u JRBeanCollectionDataSource
-        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
+                // Izvezi izveštaj u PDF
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
-        // Kompajliraj JRXML template
-        JasperReport jasperReport = JasperCompileManager.compileReport(
-                getClass().getResourceAsStream("/reports/equipment_per_department_report.jrxml")
-        );
+                return outputStream.toByteArray();
+        }
 
+        public byte[] generateDepartmentReport() throws JRException {
+                // SQL upit za čitanje podataka iz specijalno kreirane tabele
+                String sql = "SELECT department_id, department_name, equipment_count, report_generated_at " +
+                                "FROM NBP08.EQUIPMENT_BY_DEPARTMENT";
 
-        // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
-        Map<String, Object> parameters = new HashMap<>();
-        parameters.put("REPORT_TITLE", "Equipment count by department");
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-        // Popuni izveštaj sa podacima
-        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+                // Mapiraj podatke u JRBeanCollectionDataSource
+                JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
-        // Izvezi izveštaj u PDF
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-        JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+                // Kompajliraj JRXML template
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/equipment_per_department_report.jrxml"));
 
-        return outputStream.toByteArray();
-    }
+                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Equipment count by department");
 
+                // Popuni izveštaj sa podacima
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+                // Izvezi izveštaj u PDF
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+
+                return outputStream.toByteArray();
+        }
 
 }

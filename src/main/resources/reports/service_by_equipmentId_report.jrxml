@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+    name="service_by_equipment_report" pageWidth="595" pageHeight="842"
+    columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+
+    <parameter name="REPORT_TITLE" class="java.lang.String" />
+
+    <!-- Fields -->
+    <parameter name="LABORATORY_NAME" class="java.lang.String" />
+    <parameter name="CATEGORY_NAME" class="java.lang.String" />
+    <parameter name="DEPARTMENT_NAME" class="java.lang.String" />
+    <!-- Fields -->
+    <field name="EQUIPMENT_ID" class="java.math.BigDecimal" />
+    <field name="DESCRIPTION" class="java.lang.String" />
+    <field name="SERVICE_DATE" class="java.util.Date" />
+
+    <title>
+        <band height="220">
+            <!-- Report Title centered on top -->
+            <textField isStretchWithOverflow="true">
+                <reportElement x="0" y="0" width="555" height="30" />
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA[$P{REPORT_TITLE}]]></textFieldExpression>
+            </textField>
+
+            <!-- Laboratory Name -->
+            <textField>
+                <reportElement x="0" y="70" width="300" height="15" />
+                <textElement>
+                    <font size="12" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA["Laboratory: " + $P{LABORATORY_NAME}]]></textFieldExpression>
+            </textField>
+
+            <!-- Category Name -->
+            <textField>
+                <reportElement x="0" y="95" width="300" height="15" />
+                <textElement>
+                    <font size="12" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA["Category: " + $P{CATEGORY_NAME}]]></textFieldExpression>
+            </textField>
+
+            <!-- Department Name -->
+            <textField>
+                <reportElement x="0" y="120" width="300" height="15" />
+                <textElement>
+                    <font size="12" isBold="true" />
+                </textElement>
+                <textFieldExpression><![CDATA["Department: " + $P{DEPARTMENT_NAME}]]></textFieldExpression>
+            </textField>
+
+            <!-- Horizontal line below parameters -->
+            <line>
+                <reportElement x="0" y="175" width="555" height="1" forecolor="#CCCCCC" />
+            </line>
+        </band>
+    </title>
+
+    <columnHeader>
+        <band height="25">
+            <staticText>
+                <reportElement x="100" y="5" width="255" height="20" />
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Description]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="350" y="5" width="150" height="20" />
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font isBold="true" />
+                </textElement>
+                <text><![CDATA[Service Date]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <detail>
+        <band height="25">
+            <textField>
+                <reportElement x="100" y="5" width="255" height="15" />
+                <textElement textAlignment="Left" verticalAlignment="Middle" />
+                <textFieldExpression><![CDATA[$F{DESCRIPTION}]]></textFieldExpression>
+            </textField>
+
+            <textField pattern="dd.MM.yyyy">
+                <reportElement x="350" y="5" width="150" height="15" />
+                <textElement textAlignment="Left" verticalAlignment="Middle" />
+                <textFieldExpression><![CDATA[$F{SERVICE_DATE}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+
+    <pageFooter>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="20" />
+                <textElement textAlignment="Right" verticalAlignment="Middle" />
+                <textFieldExpression><![CDATA["Page " + $V{PAGE_NUMBER}]]></textFieldExpression>
+            </textField>
+        </band>
+    </pageFooter>
+</jasperReport>

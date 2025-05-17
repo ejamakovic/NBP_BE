@@ -7,6 +7,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -74,6 +75,25 @@ public class ReportController {
         }
     }
 
+    @GetMapping("/service-by-equipmentId/{id}")
+    public ResponseEntity<byte[]> getServiceByEquipmentIdReport(@PathVariable("id") int equipmentId) {
+        try {
+            byte[] reportData = reportService.generateServiceByEquipmentIdReport(equipmentId);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "inline; filename=equipment_service_report_" + equipmentId + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(reportData);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to generate report".getBytes());
+        }
+    }
+
     @GetMapping("/order-by-supplier")
     public ResponseEntity<byte[]> getOrderBySupplierReport() {
         try {
@@ -111,6 +131,5 @@ public class ReportController {
             return ResponseEntity.status(500).body("Failed to generate report".getBytes());
         }
     }
-
 
 }
