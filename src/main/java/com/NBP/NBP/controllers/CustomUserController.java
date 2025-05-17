@@ -45,7 +45,7 @@ public class CustomUserController {
         }
     }
 
-    @PreAuthorize("hasRole('NBP08_ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody CustomUser user) {
         try {
@@ -57,7 +57,7 @@ public class CustomUserController {
         }
     }
 
-    @PreAuthorize("hasRole('NBP08_ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable int id) {
         customUserService.deleteUser(id);

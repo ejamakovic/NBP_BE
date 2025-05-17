@@ -46,7 +46,7 @@ public class RentalRequestController {
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("hasRole('NBP08_ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public void delete(@PathVariable int id) {
         service.delete(id);
     }
