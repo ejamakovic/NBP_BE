@@ -1,6 +1,8 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Laboratory;
+import com.NBP.NBP.models.dtos.LaboratoryWithDepartmentDTO;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -8,12 +10,29 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 public class LaboratoryRepository {
     private static final String TABLE_NAME = "NBP08.LABORATORY";
 
     private final JdbcTemplate jdbcTemplate;
+    private static final Set<String> ALLOWED_SORT_KEYS = Set.of(
+            "laboratory_name",
+            "department_name");
+
+    private static final Set<String> ALLOWED_SORT_DIRECTIONS = Set.of(
+            "asc",
+            "desc");
+
+    private final RowMapper<LaboratoryWithDepartmentDTO> laboratoryWithDepartmentRowMapper = (rs, rowNum) -> {
+        LaboratoryWithDepartmentDTO dto = new LaboratoryWithDepartmentDTO();
+        dto.setLaboratoryId(rs.getInt("laboratory_id"));
+        dto.setLaboratoryName(rs.getString("laboratory_name"));
+        dto.setDepartmentId(rs.getInt("department_id"));
+        dto.setDepartmentName(rs.getString("department_name"));
+        return dto;
+    };
 
     public LaboratoryRepository(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -26,6 +45,62 @@ public class LaboratoryRepository {
 
     public List<Laboratory> findAll() {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, labRowMapper);
+    }
+
+    public List<LaboratoryWithDepartmentDTO> findPaginated(int offset, int limit, String sortKey,
+            String sortDirection) {
+
+        if (!ALLOWED_SORT_KEYS.contains(sortKey.toLowerCase())) {
+            sortKey = "laboratory_name";
+        }
+        if (!ALLOWED_SORT_DIRECTIONS.contains(sortDirection.toLowerCase())) {
+            sortDirection = "asc";
+        }
+
+        String sql = "SELECT l.id AS laboratory_id, l.name AS laboratory_name, " +
+                "d.id AS department_id, d.name AS department_name " +
+                "FROM LABORATORY l " +
+                "JOIN DEPARTMENT d ON l.department_id = d.id " +
+                "ORDER BY " + sortKey + " " + sortDirection + " " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        return jdbcTemplate.query(sql, ps -> {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+        }, laboratoryWithDepartmentRowMapper);
+    }
+
+    public List<LaboratoryWithDepartmentDTO> findPaginatedForUser(int userId, int offset, int limit, String sortKey,
+            String sortDirection) {
+        String sql = "SELECT l.id AS laboratory_id, l.name AS laboratory_name, " +
+                "d.id AS department_id, d.name AS department_name " +
+                "FROM LABORATORY l " +
+                "JOIN DEPARTMENT d ON l.department_id = d.id " +
+                "JOIN USER_LABORATORY ul ON ul.laboratory_id = l.id " +
+                "WHERE ul.user_id = ? " +
+                "ORDER BY " + sortKey + " " + sortDirection + " " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        return jdbcTemplate.query(sql, ps -> {
+            ps.setInt(1, userId);
+            ps.setInt(2, offset);
+            ps.setInt(3, limit);
+        }, laboratoryWithDepartmentRowMapper);
+    }
+
+    public int countAll() {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME;
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
+    }
+
+    public int countAllForUser(Integer userId) {
+        String sql = "SELECT COUNT(DISTINCT l.id) FROM LABORATORY l " +
+                "JOIN DEPARTMENT d ON l.department_id = d.id " +
+                "JOIN USER_DEPARTMENT ud ON ud.department_id = d.id AND ud.user_id = ?";
+
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        return result != null ? result : 0;
     }
 
     public Laboratory findById(int id) {
@@ -54,8 +129,7 @@ public class LaboratoryRepository {
             Laboratory laboratory = jdbcTemplate.queryForObject(
                     "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     labRowMapper,
-                    name
-            );
+                    name);
             return Optional.of(laboratory);
         } catch (Exception e) {
             return Optional.empty();

@@ -5,6 +5,8 @@ import com.NBP.NBP.models.dtos.EquipmentWithDetailsDTO;
 import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
 import com.NBP.NBP.security.CustomUserDetails;
 import com.NBP.NBP.services.EquipmentService;
+import com.NBP.NBP.utils.SecurityUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -44,7 +46,7 @@ public class EquipmentController {
         if (roles.contains("NBP08_ADMIN")) {
             response = equipmentService.getPaginatedEquipment(page, size, sortKey, sortDirection);
         } else {
-            Integer userId = getUserIdFromAuthentication(authentication);
+            Integer userId = SecurityUtils.getCurrentUserId();
             response = equipmentService.getPaginatedEquipmentForUser(userId, page, size, sortKey, sortDirection);
         }
         return ResponseEntity.ok(response);
@@ -83,14 +85,6 @@ public class EquipmentController {
         return result > 0
                 ? ResponseEntity.ok(Map.of("message", "Equipment deleted successfully"))
                 : ResponseEntity.badRequest().build();
-    }
-
-    private Integer getUserIdFromAuthentication(Authentication authentication) {
-        Object principal = authentication.getPrincipal();
-        if (principal instanceof CustomUserDetails) {
-            return ((CustomUserDetails) principal).getUserId();
-        }
-        throw new IllegalStateException("Cannot extract user ID from Authentication principal");
     }
 
 }
