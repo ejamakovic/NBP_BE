@@ -4,8 +4,16 @@ import com.NBP.NBP.models.LoginResponse;
 import com.NBP.NBP.models.User;
 import com.NBP.NBP.models.dtos.LoginUserDto;
 import com.NBP.NBP.repositories.UserRepository;
+
+import jakarta.mail.MessagingException;
+import jakarta.mail.internet.MimeMessage;
+
+import java.security.SecureRandom;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,12 +27,14 @@ public class AuthenticationService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final JavaMailSender mailSender;
 
     public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            JwtService jwtService) {
+            JwtService jwtService, JavaMailSender mailSender) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.mailSender = mailSender;
     }
 
     public LoginResponse authenticate(LoginUserDto loginDto) {
@@ -45,6 +55,64 @@ public class AuthenticationService {
         logger.debug("Login response: {}", response);
 
         return response;
+    }
+
+    public void registerUserAndSendCredentials(User user) throws MessagingException {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        String randomPassword = generateRandomPassword();
+        user.setPassword(passwordEncoder.encode(randomPassword));
+        userRepository.save(user);
+
+        sendRegistrationEmail(user, randomPassword);
+    }
+
+    private void sendRegistrationEmail(User user, String password) throws MessagingException {
+        MimeMessage message = mailSender.createMimeMessage();
+        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+
+        helper.setTo(user.getEmail());
+        helper.setSubject("👤 Welcome to NBP App - Your Login Info");
+        helper.setFrom("your-email@gmail.com");
+
+        String htmlContent = """
+                <html>
+                <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                  <div style="max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                    <h2 style="color: #2c3e50;">Hello %s,</h2>
+                    <p style="font-size: 16px; color: #555;">Your account for the NBP app has been created successfully.</p>
+                    <p style="font-size: 18px; font-weight: bold; color: #2c3e50;">Your login credentials are:</p>
+                    <p><strong>Username:</strong> %s</p>
+                    <div style="padding: 10px 15px; background-color: #ecf0f1; border-left: 5px solid #3498db; margin: 10px 0; font-size: 20px; font-weight: bold; color: #2980b9;">
+                      %s
+                    </div>
+                    <p style="font-size: 14px; color: #777;">Please log in and change this password as soon as possible.</p>
+                    <hr style="margin-top: 30px;">
+                    <p style="font-size: 12px; color: #bbb;">ETF Inventory Team</p>
+                  </div>
+                </body>
+                </html>
+                """
+                .formatted(user.getFirstName(), user.getUsername(), password);
+
+        helper.setText(htmlContent, true);
+        mailSender.send(message);
+    }
+
+    private String generateRandomPassword() {
+        int length = 10;
+        String charSet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        SecureRandom random = new SecureRandom();
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < length; i++) {
+            sb.append(charSet.charAt(random.nextInt(charSet.length())));
+        }
+        return sb.toString();
     }
 
 }
