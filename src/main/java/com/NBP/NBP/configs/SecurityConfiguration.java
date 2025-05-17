@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
+import com.NBP.NBP.security.CustomAccessDeniedHandler;
+import com.NBP.NBP.security.CustomAuthenticationEntryPoint;
 import com.NBP.NBP.services.CustomUserDetailsService;
 import com.NBP.NBP.services.UserService;
 
@@ -24,7 +26,13 @@ import com.NBP.NBP.services.UserService;
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
 public class SecurityConfiguration {
-    public SecurityConfiguration() {
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
+
+    public SecurityConfiguration(CustomAccessDeniedHandler customAccessDeniedHandler,
+            CustomAuthenticationEntryPoint customAuthenticationEntryPoint) {
+        this.customAccessDeniedHandler = customAccessDeniedHandler;
+        this.customAuthenticationEntryPoint = customAuthenticationEntryPoint;
     }
 
     @Bean
@@ -46,12 +54,15 @@ public class SecurityConfiguration {
                         .requestMatchers("/user/**").hasAnyAuthority("NBP08_USER", "NBP08_ADMIN")
                         .requestMatchers("/reports/**").permitAll()
                         .requestMatchers("/users").permitAll()
-                        .requestMatchers("/equipment").hasAuthority("NBP08_ADMIN")
+                        .requestMatchers("/equipment").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
                         .anyRequest().authenticated())
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .exceptionHandling(exceptionHandling -> exceptionHandling
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                        .authenticationEntryPoint(customAuthenticationEntryPoint));
 
         return http.build();
     }

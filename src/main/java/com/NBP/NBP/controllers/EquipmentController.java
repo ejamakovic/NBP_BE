@@ -3,13 +3,18 @@ package com.NBP.NBP.controllers;
 import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.dtos.EquipmentWithDetailsDTO;
 import com.NBP.NBP.models.dtos.PaginatedEquipmentResponseDTO;
+import com.NBP.NBP.security.CustomUserDetails;
 import com.NBP.NBP.services.EquipmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/equipment")
@@ -21,16 +26,27 @@ public class EquipmentController {
         this.equipmentService = equipmentService;
     }
 
-    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
+    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     public ResponseEntity<PaginatedEquipmentResponseDTO> getAllEquipment(
             @RequestParam(value = "page", defaultValue = "0") int page,
             @RequestParam(value = "size", defaultValue = "10") int size,
             @RequestParam(value = "sortKey", defaultValue = "name") String sortKey,
-            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection,
+            Authentication authentication) {
 
-        PaginatedEquipmentResponseDTO response = equipmentService.getPaginatedEquipment(page, size, sortKey,
-                sortDirection);
+        Set<String> roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.toSet());
+
+        PaginatedEquipmentResponseDTO response;
+
+        if (roles.contains("NBP08_ADMIN")) {
+            response = equipmentService.getPaginatedEquipment(page, size, sortKey, sortDirection);
+        } else {
+            Integer userId = getUserIdFromAuthentication(authentication);
+            response = equipmentService.getPaginatedEquipmentForUser(userId, page, size, sortKey, sortDirection);
+        }
         return ResponseEntity.ok(response);
     }
 
@@ -68,4 +84,13 @@ public class EquipmentController {
                 ? ResponseEntity.ok(Map.of("message", "Equipment deleted successfully"))
                 : ResponseEntity.badRequest().build();
     }
+
+    private Integer getUserIdFromAuthentication(Authentication authentication) {
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails) principal).getUserId();
+        }
+        throw new IllegalStateException("Cannot extract user ID from Authentication principal");
+    }
+
 }

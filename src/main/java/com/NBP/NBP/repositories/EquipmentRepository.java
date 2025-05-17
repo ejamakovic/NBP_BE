@@ -77,13 +77,54 @@ public class EquipmentRepository {
                     preparedStatement.setInt(2, limit);
                 },
                 equipmentWithDetailsRowMapper);
-        System.out.println(res);
         return res;
+    }
+
+    public List<EquipmentWithDetailsDTO> findPaginatedForUser(Integer userId, int offset, int limit, String sortKey,
+            String sortDirection) {
+        if (!ALLOWED_SORT_KEYS.contains(sortKey.toLowerCase())) {
+            sortKey = "name";
+        }
+        if (!ALLOWED_SORT_DIRECTIONS.contains(sortDirection.toLowerCase())) {
+            sortDirection = "asc";
+        }
+
+        String sql = "SELECT e.id, e.name, e.description, e.status, " +
+                "e.category_id, e.laboratory_id, " +
+                "c.name AS category_name, " +
+                "l.name AS laboratory_name " +
+                "FROM " + TABLE_NAME + " e " +
+                "JOIN CATEGORY c ON e.category_id = c.id " +
+                "JOIN LABORATORY l ON e.laboratory_id = l.id " +
+                "LEFT JOIN rental r ON r.equipment_id = e.id AND (r.return_date IS NULL OR r.return_date > CURRENT_DATE) "
+                +
+                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = ?) " +
+                "ORDER BY " + sortKey + " " + sortDirection + " " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        return jdbcTemplate.query(
+                sql,
+                preparedStatement -> {
+                    preparedStatement.setInt(1, userId); // <-- changed from username to userId here
+                    preparedStatement.setInt(2, offset);
+                    preparedStatement.setInt(3, limit);
+                },
+                equipmentWithDetailsRowMapper);
     }
 
     public int countAll() {
         String sql = "SELECT COUNT(*) FROM " + TABLE_NAME;
         Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
+    }
+
+    public int countAllForUser(Integer userId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " e " +
+                "LEFT JOIN rental r ON r.equipment_id = e.id AND (r.return_date IS NULL OR r.return_date > CURRENT_DATE) "
+                +
+                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = ?)";
+
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return result != null ? result : 0;
     }
 

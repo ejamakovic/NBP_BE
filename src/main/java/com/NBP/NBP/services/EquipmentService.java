@@ -34,6 +34,18 @@ public class EquipmentService {
         return new PaginatedEquipmentResponseDTO(equipmentList, totalPages, totalEquipment, page);
     }
 
+    public PaginatedEquipmentResponseDTO getPaginatedEquipmentForUser(Integer userId, int page, int size,
+            String sortKey,
+            String sortDirection) {
+        int offset = page * size;
+        List<EquipmentWithDetailsDTO> equipmentList = equipmentRepository.findPaginatedForUser(userId, offset, size,
+                sortKey, sortDirection);
+        int totalEquipment = equipmentRepository.countAllForUser(userId);
+        int totalPages = (int) Math.ceil((double) totalEquipment / size);
+
+        return new PaginatedEquipmentResponseDTO(equipmentList, totalPages, totalEquipment, page);
+    }
+
     public Equipment getEquipmentById(int id) {
         return equipmentRepository.findById(id);
     }
