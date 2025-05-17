@@ -1,21 +1,48 @@
 equipmentName,description,serviceDate
-Dell Latitude,Service for Dell Latitude,2025-04-21
-HP Envy,Service for HP Envy,2025-04-22
-Acer Swift,Service for Acer Swift,2025-04-23
-Asus ZenBook,Service for Asus ZenBook,2025-04-24
-Canon DSLR Plus,Service for Canon DSLR Plus,2025-04-25
-MacBook Pro,Service for MacBook Pro,2025-04-26
-Epson 3D Printer,Service for Epson 3D Printer,2025-04-27
-Arduino Set,Service for Arduino Set,2025-04-28
-BenQ Projector,Service for BenQ Projector,2025-04-29
-Panasonic Biometric Scanner,Service for Panasonic Biometric Scanner,2025-04-30
-Bosch Power Tools,Service for Bosch Power Tools,2025-05-01
-GE Healthcare ECG,Service for GE Healthcare ECG,2025-05-02
-AutoCAD Software,Service for AutoCAD Software,2025-05-03
-Topcon GPS,Service for Topcon GPS,2025-05-04
-Logitech Speakers,Service for Logitech Speakers,2025-05-05
-Lab Set Chemistry,Service for Lab Set Chemistry,2025-05-06
-Leica DSLR,Service for Leica DSLR,2025-05-07
-Daikin AC,Service for Daikin AC,2025-05-08
-K-12 Models,Service for K-12 Models,2025-05-09
-Sterilization Unit,Service for Sterilization Unit,2025-05-10
+Breadboard,TEST,2022-11-15
+Siemens S7-1200,TEST2,2023-04-22
+Op-Amp Kit,TEST,2021-09-10
+Transformer Kit,TEST,2023-01-05
+Temperature Sensor Module,TEST,2022-07-18
+STM32 Nucleo Board,TEST,2021-12-30
+DC Motor Trainer,TEST,2023-03-14
+DC-DC Converter,TEST,2022-05-27
+IGBT Module,TEST,2023-02-02
+equipmentName,description,serviceDate
+Breadboard,Initial inspection and cleaning,2022-11-15
+Breadboard,Checked all connections,2022-12-15
+Breadboard,Replaced worn jumper wires,2023-01-15
+Breadboard,Verified continuity,2023-02-15
+Breadboard,Tested with prototype circuits,2023-03-15
+Breadboard,General maintenance and dusting,2023-04-15
+Breadboard,Recalibrated connectors,2023-05-15
+Breadboard,Final inspection and approval,2023-06-15
+Siemens S7-1200,Firmware update applied,2023-04-22
+Siemens S7-1200,Tested I/O modules,2023-05-22
+Siemens S7-1200,Network connectivity check,2023-06-22
+Siemens S7-1200,Replaced faulty power supply,2023-07-22
+Siemens S7-1200,System diagnostics run,2023-08-22
+Siemens S7-1200,Backed up configuration,2023-09-22
+Siemens S7-1200,General cleaning and inspection,2023-10-22
+Op-Amp Kit,Checked all op-amps for noise,2021-09-10
+Op-Amp Kit,Replaced faulty capacitors,2021-10-10
+Op-Amp Kit,Verified gain settings,2021-11-10
+Op-Amp Kit,Calibrated input/output,2021-12-10
+Op-Amp Kit,Tested with signal generator,2022-01-10
+Op-Amp Kit,Final functional check,2022-02-10
+Transformer Kit,Inspected core and windings,2023-01-05
+Transformer Kit,Replaced insulation tape,2023-02-05
+Transformer Kit,Tested voltage outputs,2023-03-05
+Transformer Kit,Checked thermal performance,2023-04-05
+Transformer Kit,General maintenance,2023-05-05
+Temperature Sensor Module,Calibrated sensor,2022-07-18
+Temperature Sensor Module,Checked wiring connections,2022-08-18
+Temperature Sensor Module,Verified temperature readings,2022-09-18
+Temperature Sensor Module,Tested in controlled environment,2022-10-18
+STM32 Nucleo Board,Updated firmware,2021-12-30
+STM32 Nucleo Board,Checked USB interface,2022-01-30
+STM32 Nucleo Board,Tested GPIO pins,2022-02-28
+DC Motor Trainer,Lubricated moving parts,2023-03-14
+DC Motor Trainer,Tested motor torque,2023-04-14
+DC Motor Trainer,Checked power supply and wiring,2023-05-14
+DC Motor Trainer,Verified speed control response,2023-06-14

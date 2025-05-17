@@ -68,44 +68,44 @@ public class DatabaseSeeder {
 
             // Seed categories
             seedFromCSV("seedData/categories.csv", line -> {
-            try {
-            categoryService.saveCategory(new Category(line[0], line[1]));
-            } catch (Exception e) {
-            System.err.println("Skipping category due to error: " +
-            Arrays.toString(line));
-            System.err.println("Reason: " + e.getMessage());
-            }
+                try {
+                    categoryService.saveCategory(new Category(line[0], line[1]));
+                } catch (Exception e) {
+                    System.err.println("Skipping category due to error: " +
+                            Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
             });
             System.out.println("Categories have been added.");
 
             // Seed equipment
             seedFromCSV("seedData/equipment.csv", line -> {
-            try {
-            String equipmentName = line[0];
-            String categoryName = line[1];
-            String labName = line[2];
-            EquipmentStatus status = EquipmentStatus.valueOf(line[3]);
+                try {
+                    String equipmentName = line[0];
+                    String categoryName = line[1];
+                    String labName = line[2];
+                    EquipmentStatus status = EquipmentStatus.valueOf(line[3]);
 
-            Optional<Category> category = categoryService.findByName(categoryName);
-            if (!category.isPresent()) {
-            System.err.println("Category not found: " + categoryName);
-            return;
-            }
+                    Optional<Category> category = categoryService.findByName(categoryName);
+                    if (!category.isPresent()) {
+                        System.err.println("Category not found: " + categoryName);
+                        return;
+                    }
 
-            Optional<Laboratory> laboratory = laboratoryService.findByName(labName);
-            if (!laboratory.isPresent()) {
-            System.err.println("Laboratory not found: " + labName);
-            return;
-            }
+                    Optional<Laboratory> laboratory = laboratoryService.findByName(labName);
+                    if (!laboratory.isPresent()) {
+                        System.err.println("Laboratory not found: " + labName);
+                        return;
+                    }
 
-            equipmentService.saveEquipment(
-            new Equipment(equipmentName, category.get().getId(),
-            laboratory.get().getId(), status));
-            } catch (Exception e) {
-            System.err.println("Skipping equipment due to error: " +
-            Arrays.toString(line));
-            System.err.println("Reason: " + e.getMessage());
-            }
+                    equipmentService.saveEquipment(
+                            new Equipment(equipmentName, category.get().getId(),
+                                    laboratory.get().getId(), status));
+                } catch (Exception e) {
+                    System.err.println("Skipping equipment due to error: " +
+                            Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
             });
             System.out.println("Equipment has been added.");
 
@@ -258,24 +258,24 @@ public class DatabaseSeeder {
             // });
             // System.out.println("Rentals have been added.");
 
-            // // Seed services
-            // seedFromCSV("seedData/services.csv", line -> {
-            // try {
-            // String equipmentName = line[0];
-            // Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
-            // if (!equipment.isPresent()) {
-            // System.err.println("Equipment not found: " + equipmentName);
-            // return;
-            // }
-            // serviceService.saveService(new Service(equipment.get().getId(), line[1],
-            // LocalDate.parse(line[2])));
-            // } catch (Exception e) {
-            // System.err.println("Skipping service due to error: " +
-            // Arrays.toString(line));
-            // System.err.println("Reason: " + e.getMessage());
-            // }
-            // });
-            // System.out.println("Services have been added.");
+            // Seed services
+            seedFromCSV("seedData/services.csv", line -> {
+                try {
+                    String equipmentName = line[0];
+                    Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
+                    if (!equipment.isPresent()) {
+                        System.err.println("Equipment not found: " + equipmentName);
+                        return;
+                    }
+                    serviceService.saveService(new Service(equipment.get().getId(), line[1],
+                            LocalDate.parse(line[2])));
+                } catch (Exception e) {
+                    System.err.println("Skipping service due to error: " +
+                            Arrays.toString(line));
+                    System.err.println("Reason: " + e.getMessage());
+                }
+            });
+            System.out.println("Services have been added.");
 
             // // Seed rental requests
             // seedFromCSV("seedData/request.csv", line -> {
