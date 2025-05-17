@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -49,7 +50,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/reset-password").permitAll()
                         .requestMatchers("/auth/**").permitAll()
-                        
+
                         .requestMatchers("/auth/send").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/apps/**").hasAuthority("NBP08_ADMIN")
@@ -57,8 +58,9 @@ public class SecurityConfiguration {
                         .requestMatchers("/reports/**").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/roles/**").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/services/**").hasAuthority("NBP08_ADMIN")
-                        
-                        .requestMatchers("/user/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
+
+                        .requestMatchers(HttpMethod.POST, "/users").permitAll()
+                        .requestMatchers("/users/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
                         .requestMatchers("/categories/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
                         .requestMatchers("/customUsers/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")
                         .requestMatchers("/departments/**").hasAnyAuthority("NBP08_ADMIN", "NBP08_USER")

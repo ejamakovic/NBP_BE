@@ -8,7 +8,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 public class User implements UserDetails {
-    private int id;
+    private Integer id;
     private String firstName;
     private String lastName;
     private String email;
@@ -17,12 +17,12 @@ public class User implements UserDetails {
     private String phoneNumber;
     private LocalDate birthDate;
     private Integer addressId;
-    private int roleId;
+    private Integer roleId;
 
     public User() {
     }
 
-    public User(String firstName, String lastName, String email, String password, String username, int roleId) {
+    public User(String firstName, String lastName, String email, String password, String username, Integer roleId) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -31,7 +31,7 @@ public class User implements UserDetails {
         this.roleId = roleId;
     }
 
-    public User(int id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, int roleId) {
+    public User(Integer id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, Integer roleId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -44,11 +44,11 @@ public class User implements UserDetails {
         this.roleId = roleId;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -76,11 +76,11 @@ public class User implements UserDetails {
         this.lastName = lastName;
     }
 
-    public int getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
-    public void setRoleId(int roleId) {
+    public void setRoleId(Integer roleId) {
         this.roleId = roleId;
     }
 

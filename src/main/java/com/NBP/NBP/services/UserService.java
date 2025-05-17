@@ -3,20 +3,33 @@ package com.NBP.NBP.services;
 import java.util.List;
 import java.util.Optional;
 import java.util.regex.Pattern;
+import java.time.Year;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.dtos.UserRegistrationDTO;
+import com.NBP.NBP.repositories.CustomUserRepository;
+import com.NBP.NBP.repositories.DepartmentRepository;
 import com.NBP.NBP.repositories.UserRepository;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
+    private final CustomUserRepository customUserRepository;
+    private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository,
+            CustomUserRepository customUserRepository,
+            DepartmentRepository departmentRepository,
+            PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.customUserRepository = customUserRepository;
+        this.departmentRepository = departmentRepository;
         this.passwordEncoder = passwordEncoder;
     }
 
@@ -37,7 +50,8 @@ public class UserService {
         }
 
         if (!isValidPassword(user.getPassword())) {
-            throw new IllegalArgumentException("Password must be at least 8 characters long and contain a mix of letters and numbers");
+            throw new IllegalArgumentException(
+                    "Password must be at least 8 characters long and contain a mix of letters and numbers");
         }
 
         String hashedPassword = passwordEncoder.encode(user.getPassword());
@@ -46,10 +60,56 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional
+    public void saveUserAndCustomUser(UserRegistrationDTO dto) {
+        User user = dto.getUser();
+        Integer departmentId = dto.getDepartmentId();
+
+        if (departmentId == null || departmentId == 0) {
+            throw new IllegalArgumentException("Department ID must be specified");
+        }
+
+        if (!departmentRepository.existsById(departmentId)) {
+            throw new IllegalArgumentException("Department with ID " + departmentId + " does not exist");
+        }
+
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new IllegalArgumentException("Username already exists");
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
+            throw new IllegalArgumentException("Email already exists");
+        }
+
+        if (!isValidPassword(user.getPassword())) {
+            throw new IllegalArgumentException(
+                    "Password must be at least 8 characters long and contain a mix of letters and numbers");
+        }
+
+        try {
+            String hashedPassword = passwordEncoder.encode(user.getPassword());
+            user.setPassword(hashedPassword);
+
+            user = userRepository.save(user);
+
+            CustomUser customUser = new CustomUser();
+            customUser.setUserId(user.getId());
+            customUser.setDepartmentId(departmentId);
+            customUser.setYear(Year.now().getValue());
+
+            customUserRepository.save(customUser);
+        } catch (Exception e) {
+            if ((user.getId() != null)) {
+                userRepository.delete(user.getId());
+            }
+            throw new RuntimeException("Failed to create user and custom user: " + e.getMessage(), e);
+        }
+    }
+
     public void updateUser(User user) throws IllegalArgumentException {
         if (user.getPassword() != null && !user.getPassword().isEmpty()) {
             if (!isValidPassword(user.getPassword())) {
-                throw new IllegalArgumentException("Password must be at least 8 characters long and contain a mix of letters and numbers");
+                throw new IllegalArgumentException(
+                        "Password must be at least 8 characters long and contain a mix of letters and numbers");
             }
 
             String hashedPassword = passwordEncoder.encode(user.getPassword());

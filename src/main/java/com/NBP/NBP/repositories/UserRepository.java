@@ -4,9 +4,14 @@ import com.NBP.NBP.models.User;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Date;
+import java.sql.PreparedStatement;
+import java.sql.Types;
 import java.util.List;
 import java.util.Optional;
 
@@ -45,17 +50,19 @@ public class UserRepository {
     }
 
     private String getInsertQuery() {
-        return String.format("""
-                INSERT INTO %s (first_name, last_name, email, password, username, phone_number, birth_date, address_id, role_id)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-                """, TABLE_NAME);
+        return String.format(
+                """
+                        INSERT INTO %s (first_name, last_name, email, password, username, phone_number, birth_date, address_id, role_id)
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """,
+                TABLE_NAME);
     }
 
     private String getUpdateQuery() {
         return String.format("""
-                UPDATE %s 
-                SET first_name = ?, last_name = ?, email = ?, password = ?, username = ?, phone_number = ?, 
-                    birth_date = ?, address_id = ?, role_id = ? 
+                UPDATE %s
+                SET first_name = ?, last_name = ?, email = ?, password = ?, username = ?, phone_number = ?,
+                    birth_date = ?, address_id = ?, role_id = ?
                 WHERE id = ?
                 """, TABLE_NAME);
     }
@@ -78,18 +85,32 @@ public class UserRepository {
     }
 
     @Transactional
-    public int save(User user) {
-        return jdbcTemplate.update(getInsertQuery(),
-                user.getFirstName(),
-                user.getLastName(),
-                user.getEmail(),
-                user.getPassword(),
-                user.getUsername(),
-                user.getPhoneNumber(),
-                user.getBirthDate(),
-                user.getAddressId(),
-                user.getRoleId()
-        );
+    public User save(User user) {
+        String sql = getInsertQuery();
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "id" });
+            ps.setString(1, user.getFirstName());
+            ps.setString(2, user.getLastName());
+            ps.setString(3, user.getEmail());
+            ps.setString(4, user.getPassword());
+            ps.setString(5, user.getUsername());
+            ps.setString(6, user.getPhoneNumber());
+            ps.setDate(7, user.getBirthDate() != null ? Date.valueOf(user.getBirthDate()) : null);
+            ps.setObject(8, user.getAddressId(), Types.INTEGER);
+            ps.setInt(9, user.getRoleId());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            user.setId(key.intValue());
+            return user;
+        } else {
+            throw new RuntimeException("Failed to retrieve generated user ID.");
+        }
     }
 
     @Transactional
@@ -104,8 +125,7 @@ public class UserRepository {
                 user.getBirthDate(),
                 user.getAddressId(),
                 user.getRoleId(),
-                user.getId()
-        );
+                user.getId());
     }
 
     @Transactional
@@ -125,8 +145,7 @@ public class UserRepository {
             return jdbcTemplate.queryForObject(
                     sql,
                     userRowMapper,
-                    username
-            );
+                    username);
         } catch (Exception e) {
             return null;
         }
@@ -164,6 +183,5 @@ public class UserRepository {
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, email, id);
         return count != null && count > 0;
     }
-
 
 }

@@ -29,7 +29,6 @@ public class CustomUserRepository {
         CustomUser user = new CustomUser();
         user.setId(resultSet.getInt("id"));
         user.setUserId(resultSet.getInt("user_id"));
-        user.setUserType(UserType.valueOf(resultSet.getString("user_type")));
         user.setYear(resultSet.getInt("year"));
         user.setDepartmentId(resultSet.getInt("department_id"));
         return user;
@@ -41,15 +40,15 @@ public class CustomUserRepository {
 
     private String getInsertQuery() {
         return String.format("""
-                INSERT INTO %s (user_id, user_type, year, department_id)
-                VALUES (?, ?, ?, ?)
+                INSERT INTO %s (user_id, year, department_id)
+                VALUES (?, ?, ?)
                 """, TABLE_NAME);
     }
 
     private String getUpdateQuery() {
         return String.format("""
-                UPDATE %s 
-                SET user_id = ?, user_type = ?, year = ?, department_id = ? 
+                UPDATE %s
+                SET user_id = ?, year = ?, department_id = ?
                 WHERE id = ?
                 """, TABLE_NAME);
     }
@@ -93,21 +92,17 @@ public class CustomUserRepository {
     public int save(CustomUser user) {
         return jdbcTemplate.update(getInsertQuery(),
                 user.getUserId(),
-                user.getUserType().toString(),
                 user.getYear(),
-                user.getDepartmentId()
-        );
+                user.getDepartmentId());
     }
 
     @Transactional
     public int update(CustomUser user) {
         return jdbcTemplate.update(getUpdateQuery(),
                 user.getUserId(),
-                user.getUserType().toString(),
                 user.getYear(),
                 user.getDepartmentId(),
-                user.getId()
-        );
+                user.getId());
     }
 
     @Transactional

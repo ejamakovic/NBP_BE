@@ -6,7 +6,6 @@ public class CustomUser {
 
     private int id;
     private int userId;
-    private UserType userType;
     private int year;
     private int departmentId;
 
@@ -15,7 +14,6 @@ public class CustomUser {
 
     public CustomUser(int userId, UserType userType, int year, int departmentId) {
         this.userId = userId;
-        this.userType = userType;
         this.year = year;
         this.departmentId = departmentId;
     }
@@ -23,7 +21,6 @@ public class CustomUser {
     public CustomUser(int id, int userId, UserType userType, int year, int departmentId) {
         this.id = id;
         this.userId = userId;
-        this.userType = userType;
         this.year = year;
         this.departmentId = departmentId;
     }
@@ -42,14 +39,6 @@ public class CustomUser {
 
     public void setUserId(int userId) {
         this.userId = userId;
-    }
-
-    public UserType getUserType() {
-        return userType;
-    }
-
-    public void setUserType(UserType userType) {
-        this.userType = userType;
     }
 
     public int getYear() {

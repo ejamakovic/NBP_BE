@@ -1,7 +1,11 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.dtos.UserRegistrationDTO;
 import com.NBP.NBP.services.UserService;
+
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +19,7 @@ public class UserController {
     public UserController(UserService userService) {
         this.userService = userService;
     }
+
     @GetMapping
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     public List<User> getAllUsers() {
@@ -29,8 +34,16 @@ public class UserController {
 
     @PostMapping
     // @PreAuthorize("hasAuthority('NBP08_ADMIN')")
-    public void createUser(@RequestBody User user) {
-        userService.saveUser(user);
+    public ResponseEntity<String> createUser(@RequestBody UserRegistrationDTO userDTO) {
+        try {
+            userService.saveUserAndCustomUser(userDTO);
+            return ResponseEntity.status(HttpStatus.CREATED).body("User created successfully.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("An unexpected error occurred.");
+        }
     }
 
     @PutMapping("/{id}")

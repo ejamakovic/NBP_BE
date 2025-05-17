@@ -48,13 +48,18 @@ public class DepartmentRepository {
         return jdbcTemplate.update("DELETE FROM " + TABLE_NAME + " WHERE id = ?", id);
     }
 
+    public boolean existsById(int id) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
+        return count != null && count > 0;
+    }
+
     public Optional<Department> findByName(String name) {
         try {
             Department department = jdbcTemplate.queryForObject(
                     "SELECT * FROM " + TABLE_NAME + " WHERE name = ?",
                     departmentRowMapper,
-                    name
-            );
+                    name);
             return Optional.of(department);
         } catch (Exception e) {
             return Optional.empty();

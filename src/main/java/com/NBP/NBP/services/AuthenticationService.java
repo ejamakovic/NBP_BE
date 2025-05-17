@@ -1,9 +1,15 @@
 package com.NBP.NBP.services;
 
+import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.LoginResponse;
 import com.NBP.NBP.models.User;
 import com.NBP.NBP.models.dtos.LoginUserDto;
+import com.NBP.NBP.models.dtos.UserRegistrationDTO;
+import com.NBP.NBP.repositories.CustomUserRepository;
+import com.NBP.NBP.repositories.DepartmentRepository;
 import com.NBP.NBP.repositories.UserRepository;
+
+import java.time.Year;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -18,6 +24,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthenticationService {
@@ -25,13 +32,21 @@ public class AuthenticationService {
     private final Logger logger = LoggerFactory.getLogger(AuthenticationService.class);
 
     private final UserRepository userRepository;
+    private final CustomUserRepository customUserRepository;
+    private final DepartmentRepository departmentRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final JavaMailSender mailSender;
 
-    public AuthenticationService(UserRepository userRepository, PasswordEncoder passwordEncoder,
-            JwtService jwtService, JavaMailSender mailSender) {
+    public AuthenticationService(UserRepository userRepository,
+            CustomUserRepository customUserRepository,
+            DepartmentRepository departmentRepository,
+            PasswordEncoder passwordEncoder,
+            JwtService jwtService,
+            JavaMailSender mailSender) {
         this.userRepository = userRepository;
+        this.customUserRepository = customUserRepository;
+        this.departmentRepository = departmentRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
         this.mailSender = mailSender;
@@ -57,7 +72,19 @@ public class AuthenticationService {
         return response;
     }
 
-    public void registerUserAndSendCredentials(User user) throws MessagingException {
+    @Transactional
+    public void registerUserAndSendCredentials(UserRegistrationDTO dto) throws MessagingException {
+        User user = dto.getUser();
+        Integer departmentId = dto.getDepartmentId();
+
+        if (departmentId == null || departmentId == 0) {
+        throw new IllegalArgumentException("Department ID must be specified");
+        }
+
+        if (!departmentRepository.existsById(departmentId)) {
+        throw new IllegalArgumentException("Department with ID " + departmentId + " does not exist");
+        }
+
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -66,10 +93,31 @@ public class AuthenticationService {
         }
 
         String randomPassword = generateRandomPassword();
-        user.setPassword(passwordEncoder.encode(randomPassword));
-        userRepository.save(user);
 
-        sendRegistrationEmail(user, randomPassword);
+        try {
+            user.setPassword(passwordEncoder.encode(randomPassword));
+            user = userRepository.save(user);
+
+            CustomUser customUser = new CustomUser();
+            customUser.setUserId(user.getId());
+            customUser.setDepartmentId(departmentId);
+            customUser.setYear(Year.now().getValue());
+
+            System.out.println(user.getId());
+            System.out.println(customUser.getId());
+
+            System.out.println(customUser.getUserId());
+            System.out.println(customUser.getYear());
+            System.out.println(customUser.getDepartmentId());
+            customUserRepository.save(customUser);
+
+            sendRegistrationEmail(user, randomPassword);
+        } catch (Exception e) {
+            if ((user.getId() != null)) {
+                userRepository.delete(user.getId());
+            }
+            throw new RuntimeException("Failed to register user and send credentials: " + e.getMessage(), e);
+        }
     }
 
     private void sendRegistrationEmail(User user, String password) throws MessagingException {

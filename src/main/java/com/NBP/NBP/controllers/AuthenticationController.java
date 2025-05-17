@@ -5,8 +5,9 @@ import com.NBP.NBP.services.AuthenticationService;
 import jakarta.mail.MessagingException;
 
 import com.NBP.NBP.models.LoginResponse;
-import com.NBP.NBP.models.User;
 import com.NBP.NBP.models.dtos.LoginUserDto;
+import com.NBP.NBP.models.dtos.UserRegistrationDTO;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -47,9 +48,9 @@ public class AuthenticationController {
 
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @PostMapping("/register")
-    public ResponseEntity<String> registerUser(@RequestBody User user) {
+    public ResponseEntity<String> registerUser(@RequestBody UserRegistrationDTO userDTO) {
         try {
-            authenticationService.registerUserAndSendCredentials(user);
+            authenticationService.registerUserAndSendCredentials(userDTO);
             return ResponseEntity.status(HttpStatus.CREATED).body("User registered and credentials sent to email.");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
