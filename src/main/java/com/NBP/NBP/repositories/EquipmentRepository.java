@@ -98,7 +98,7 @@ public class EquipmentRepository {
                 "LEFT JOIN LABORATORY l ON e.laboratory_id = l.id " +
                 "LEFT JOIN rental r ON r.equipment_id = e.id AND (r.return_date IS NULL OR r.return_date > CURRENT_DATE) "
                 +
-                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = ?) " +
+                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = (SELECT cu.id FROM CUSTOM_USER cu WHERE cu.user_id = ?)) " +
                 "ORDER BY " + sortKey + " " + sortDirection + " " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -122,7 +122,7 @@ public class EquipmentRepository {
         String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " e " +
                 "LEFT JOIN rental r ON r.equipment_id = e.id AND (r.return_date IS NULL OR r.return_date > CURRENT_DATE) "
                 +
-                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = ?)";
+                "WHERE e.status <> 'RENTED' OR (e.status = 'RENTED' AND r.custom_user_id = (SELECT cu.id FROM CUSTOM_USER cu WHERE cu.user_id = ?)) ";
 
         Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return result != null ? result : 0;

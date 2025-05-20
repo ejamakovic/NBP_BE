@@ -72,12 +72,19 @@ public class LaboratoryRepository {
 
     public List<LaboratoryWithDepartmentDTO> findPaginatedForUser(int userId, int offset, int limit, String sortKey,
             String sortDirection) {
+        if (!ALLOWED_SORT_KEYS.contains(sortKey.toLowerCase())) {
+            sortKey = "laboratory_name";
+        }
+        if (!ALLOWED_SORT_DIRECTIONS.contains(sortDirection.toLowerCase())) {
+            sortDirection = "asc";
+        }
+
         String sql = "SELECT l.id AS laboratory_id, l.name AS laboratory_name, " +
                 "d.id AS department_id, d.name AS department_name " +
                 "FROM LABORATORY l " +
                 "JOIN DEPARTMENT d ON l.department_id = d.id " +
-                "JOIN USER_LABORATORY ul ON ul.laboratory_id = l.id " +
-                "WHERE ul.user_id = ? " +
+                "JOIN CUSTOM_USER_DEPARTMENTS ud ON ud.department_id = d.id " +
+                "WHERE ud.custom_user_id = (SELECT cu.id FROM CUSTOM_USER cu WHERE cu.user_id = ?) " +
                 "ORDER BY " + sortKey + " " + sortDirection + " " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -97,7 +104,7 @@ public class LaboratoryRepository {
     public int countAllForUser(Integer userId) {
         String sql = "SELECT COUNT(DISTINCT l.id) FROM LABORATORY l " +
                 "JOIN DEPARTMENT d ON l.department_id = d.id " +
-                "JOIN USER_DEPARTMENT ud ON ud.department_id = d.id AND ud.user_id = ?";
+                "JOIN CUSTOM_USER_DEPARTMENTS ud ON ud.department_id = d.id AND ud.custom_user_id = (SELECT cu.id FROM CUSTOM_USER cu WHERE cu.user_id = ?) ";
 
         Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
         return result != null ? result : 0;
