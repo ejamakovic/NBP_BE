@@ -104,7 +104,7 @@ public class ReportService {
                 return outputStream.toByteArray();
         }
 
-        public byte[] generateServiceByEquipmentIdReport(int equipmentId) throws JRException {
+        public byte[] generateServiceByEquipmentIdReportOLD(int equipmentId) throws JRException {
                 String sql = "SELECT s.description, s.service_date, " +
                                 "e.name AS equipment_name, l.name AS laboratory_name, " +
                                 "c.name AS category_name, d.name AS department_name " +
@@ -125,6 +125,54 @@ public class ReportService {
                 System.out.println("All rows:");
                 for (Map<String, Object> row : rows) {
                         System.out.println(row);
+                }
+
+                Map<String, Object> firstRow = rows.get(0);
+
+                String equipmentName = (String) firstRow.get("EQUIPMENT_NAME");
+                String labName = (String) firstRow.get("LABORATORY_NAME");
+                String categoryName = (String) firstRow.get("CATEGORY_NAME");
+                String departmentName = (String) firstRow.get("DEPARTMENT_NAME");
+
+                Collection<Map<String, ?>> dataCollection = new ArrayList<>();
+                for (Map<String, Object> row : rows) {
+                        row.remove("EQUIPMENT_NAME");
+                        row.remove("LABORATORY_NAME");
+                        row.remove("CATEGORY_NAME");
+                        row.remove("DEPARTMENT_NAME");
+                        dataCollection.add(row);
+                }
+
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Service report for " + equipmentName);
+                parameters.put("LABORATORY_NAME", labName);
+                parameters.put("CATEGORY_NAME", categoryName);
+                parameters.put("DEPARTMENT_NAME", departmentName);
+
+                JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataCollection);
+
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/service_by_equipmentId_report.jrxml"));
+
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+
+                return outputStream.toByteArray();
+        }
+
+        public byte[] generateServiceByEquipmentIdReport(int equipmentId) throws JRException {
+                String sql = "SELECT description, service_date, equipment_name, laboratory_name, category_name, department_name "
+                                +
+                                "FROM service_by_equipment_summary " +
+                                "WHERE equipment_id = ? " +
+                                "ORDER BY service_date DESC";
+
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, equipmentId);
+
+                if (rows.isEmpty()) {
+                        throw new IllegalArgumentException("No service data found for equipment ID: " + equipmentId);
                 }
 
                 Map<String, Object> firstRow = rows.get(0);

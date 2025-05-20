@@ -182,3 +182,87 @@ BEGIN
     NBP08.FILL_EQUIPMENT_BY_DEPARTMENT;
 END;
 /
+
+-- SERVICE BY EQUIPMENT ID
+CREATE TABLE SERVICE_BY_EQUIPMENT_SUMMARY (
+    service_id NUMBER PRIMARY KEY,
+    equipment_id NUMBER,
+    service_date DATE,
+    description VARCHAR2(4000),
+    equipment_name VARCHAR2(255),
+    laboratory_name VARCHAR2(255),
+    category_name VARCHAR2(255),
+    department_name VARCHAR2(255)
+);
+
+-- TRG - SERVICE 
+CREATE OR REPLACE TRIGGER trg_service_summary
+AFTER INSERT OR UPDATE OR DELETE ON service
+FOR EACH ROW
+DECLARE
+    v_equipment_name   VARCHAR2(255);
+    v_laboratory_name  VARCHAR2(255);
+    v_category_name    VARCHAR2(255);
+    v_department_name  VARCHAR2(255);
+BEGIN
+    IF INSERTING OR UPDATING THEN
+        SELECT e.name, l.name, c.name, d.name
+          INTO v_equipment_name, v_laboratory_name, v_category_name, v_department_name
+          FROM equipment e
+          JOIN laboratory l ON e.laboratory_id = l.id
+          JOIN category c ON e.category_id = c.id
+          JOIN department d ON l.department_id = d.id
+         WHERE e.id = :NEW.equipment_id;
+
+        MERGE INTO service_by_equipment_summary s
+        USING (SELECT :NEW.id AS service_id FROM dual) src
+          ON (s.service_id = src.service_id)
+        WHEN MATCHED THEN
+          UPDATE SET
+            s.description = :NEW.description,
+            s.service_date = :NEW.service_date,
+            s.equipment_name = v_equipment_name,
+            s.laboratory_name = v_laboratory_name,
+            s.category_name = v_category_name,
+            s.department_name = v_department_name
+        WHEN NOT MATCHED THEN
+          INSERT (service_id, equipment_id, service_date, description, equipment_name, laboratory_name, category_name, department_name)
+          VALUES (:NEW.id, :NEW.equipment_id, :NEW.service_date, :NEW.description, v_equipment_name, v_laboratory_name, v_category_name, v_department_name);
+
+    ELSIF DELETING THEN
+        DELETE FROM service_by_equipment_summary WHERE service_id = :OLD.id;
+    END IF;
+END;
+/
+
+-- TRG - equip, lab, cat
+CREATE OR REPLACE TRIGGER trg_equipment_update
+AFTER UPDATE OF name, laboratory_id, category_id ON equipment
+FOR EACH ROW
+DECLARE
+    v_equipment_name   VARCHAR2(255);
+    v_laboratory_name  VARCHAR2(255);
+    v_category_name    VARCHAR2(255);
+    v_department_name  VARCHAR2(255);
+BEGIN
+    -- Fetch updated values once
+    SELECT e.name,
+           l.name,
+           c.name,
+           d.name
+      INTO v_equipment_name, v_laboratory_name, v_category_name, v_department_name
+      FROM equipment e
+      LEFT JOIN laboratory l ON e.laboratory_id = l.id
+      LEFT JOIN category c ON e.category_id = c.id
+      LEFT JOIN department d ON l.department_id = d.id
+     WHERE e.id = :NEW.id;
+
+    -- Update the summary table
+    UPDATE service_by_equipment_summary s
+       SET equipment_name = v_equipment_name,
+           laboratory_name = v_laboratory_name,
+           category_name = v_category_name,
+           department_name = v_department_name
+     WHERE s.equipment_id = :NEW.id;
+END;
+/
