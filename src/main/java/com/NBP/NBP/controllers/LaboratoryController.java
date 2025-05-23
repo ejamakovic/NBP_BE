@@ -27,8 +27,8 @@ public class LaboratoryController {
     @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public ResponseEntity<PaginatedLaboratoryResponseDTO> getAllLaboratories(
-            @RequestParam(value = "page", defaultValue = "0") int page,
-            @RequestParam(value = "size", defaultValue = "10") int size,
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
             @RequestParam(value = "sortKey", defaultValue = "name") String sortKey,
             @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection,
             Authentication authentication) {

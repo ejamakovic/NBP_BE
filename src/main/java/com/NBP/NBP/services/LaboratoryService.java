@@ -21,8 +21,12 @@ public class LaboratoryService {
         return laboratoryRepository.findAll();
     }
 
-    public PaginatedLaboratoryResponseDTO getPaginatedLaboratories(int page, int size, String sortKey,
+    public PaginatedLaboratoryResponseDTO getPaginatedLaboratories(Integer page, Integer size, String sortKey,
             String sortDirection) {
+        if (page == null || size == null) {
+            List<LaboratoryWithDepartmentDTO> allLabs = laboratoryRepository.findPaginated(null, null, sortKey, sortDirection);
+            return new PaginatedLaboratoryResponseDTO(allLabs, 1, allLabs.size(), 0);
+        }
         int offset = page * size;
         List<LaboratoryWithDepartmentDTO> labs = laboratoryRepository.findPaginated(offset, size, sortKey,
                 sortDirection);
@@ -32,13 +36,17 @@ public class LaboratoryService {
         return new PaginatedLaboratoryResponseDTO(labs, totalPages, totalLabs, page);
     }
 
-    public PaginatedLaboratoryResponseDTO getPaginatedLaboratoriesForUser(int userId, int page, int size,
+    public PaginatedLaboratoryResponseDTO getPaginatedLaboratoriesForUser(Integer userId, Integer page, Integer size,
             String sortKey, String sortDirection) {
-        int offset = page * size;
+        if (page == null || size == null) {
+            List<LaboratoryWithDepartmentDTO> allLabs = laboratoryRepository.findPaginatedForUser(userId, null, null, sortKey, sortDirection);
+            return new PaginatedLaboratoryResponseDTO(allLabs, 1, allLabs.size(), 0);
+        }
+        Integer offset = page * size;
         List<LaboratoryWithDepartmentDTO> labs = laboratoryRepository.findPaginatedForUser(userId, offset, size,
                 sortKey, sortDirection);
-        int totalLabs = laboratoryRepository.countAllForUser(userId);
-        int totalPages = (int) Math.ceil((double) totalLabs / size);
+        Integer totalLabs = laboratoryRepository.countAllForUser(userId);
+        Integer totalPages = (int) Math.ceil((double) totalLabs / size);
 
         return new PaginatedLaboratoryResponseDTO(labs, totalPages, totalLabs, page);
     }
