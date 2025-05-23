@@ -1,25 +1,25 @@
 package com.NBP.NBP.models.dtos;
 
 public class LaboratoryWithDepartmentDTO {
-    private Integer laboratoryId;
-    private String laboratoryName;
+    private Integer id;
+    private String name;
     private Integer departmentId;
     private String departmentName;
 
-    public Integer getLaboratoryId() {
-        return laboratoryId;
+    public Integer getId() {
+        return id;
     }
 
-    public void setLaboratoryId(Integer laboratoryId) {
-        this.laboratoryId = laboratoryId;
+    public void setId(Integer laboratoryId) {
+        this.id = laboratoryId;
     }
 
-    public String getLaboratoryName() {
-        return laboratoryName;
+    public String getName() {
+        return name;
     }
 
-    public void setLaboratoryName(String laboratoryName) {
-        this.laboratoryName = laboratoryName;
+    public void setName(String laboratoryName) {
+        this.name = laboratoryName;
     }
 
     public Integer getDepartmentId() {

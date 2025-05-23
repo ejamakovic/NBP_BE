@@ -27,8 +27,8 @@ public class LaboratoryRepository {
 
     private final RowMapper<LaboratoryWithDepartmentDTO> laboratoryWithDepartmentRowMapper = (rs, rowNum) -> {
         LaboratoryWithDepartmentDTO dto = new LaboratoryWithDepartmentDTO();
-        dto.setLaboratoryId(rs.getInt("id"));
-        dto.setLaboratoryName(rs.getString("name"));
+        dto.setId(rs.getInt("id"));
+        dto.setName(rs.getString("name"));
         dto.setDepartmentId(rs.getInt("department_id"));
         dto.setDepartmentName(rs.getString("department_name"));
         return dto;
