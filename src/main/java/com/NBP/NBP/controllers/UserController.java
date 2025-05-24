@@ -1,15 +1,19 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
 import com.NBP.NBP.models.dtos.UserRegistrationDTO;
 import com.NBP.NBP.services.UserService;
+import com.NBP.NBP.utils.SecurityUtils;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/users")
@@ -27,9 +31,15 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    @PreAuthorize("hasAuthority('NBP08_ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("isAuthenticated()")
     public User getUserById(@PathVariable int id) {
-        return userService.findById(id);
+        Integer userId = SecurityUtils.getCurrentUserId();
+        boolean isAdmin = SecurityUtils.hasAuthority("NBP08_ADMIN");
+        if (userId.equals(id) || isAdmin) {
+            return userService.findById(id);
+        } else {
+            throw new AccessDeniedException("You are not authorized to access this resource.");
+        }
     }
 
     @PostMapping
@@ -47,10 +57,17 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("hasAuthority('NBP08_ADMIN') or #id == authentication.principal.id")
+    @PreAuthorize("isAuthenticated()")
     public void updateUser(@PathVariable int id, @RequestBody User user) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        boolean isAdmin = SecurityUtils.hasAuthority("NBP08_ADMIN");
         user.setId(id);
-        userService.updateUser(user);
+
+        if (userId.equals(id) || isAdmin) {
+            userService.updateUser(user);
+        } else {
+            throw new AccessDeniedException("You are not authorized to access this resource.");
+        }
     }
 
     @DeleteMapping("/{id}")

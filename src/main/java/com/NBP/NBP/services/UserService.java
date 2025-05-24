@@ -38,7 +38,12 @@ public class UserService {
     }
 
     public User findById(int id) {
-        return userRepository.findById(id);
+        User user = userRepository.findById(id);
+        if (user != null) {
+            return user;
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
     }
 
     public void saveUser(User user) throws IllegalArgumentException {
