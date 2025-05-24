@@ -10,6 +10,7 @@ import com.NBP.NBP.repositories.DepartmentRepository;
 import com.NBP.NBP.repositories.UserRepository;
 
 import java.time.Year;
+import java.util.List;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
@@ -75,16 +76,14 @@ public class AuthenticationService {
     @Transactional
     public void registerUserAndSendCredentials(UserRegistrationDTO dto) throws MessagingException {
         User user = dto.getUser();
-        Integer departmentId = dto.getDepartmentId();
+        List<Integer> departmentIds = dto.getDepartmentIds();
 
-        if (departmentId == null || departmentId == 0) {
-        throw new IllegalArgumentException("Department ID must be specified");
+        if (departmentIds == null || departmentIds.size() == 0) {
+            throw new IllegalArgumentException("Department IDs must be specified");
         }
-
-        if (!departmentRepository.existsById(departmentId)) {
-        throw new IllegalArgumentException("Department with ID " + departmentId + " does not exist");
+        if (!departmentRepository.departmentIdsExist(departmentIds)) {
+            throw new IllegalArgumentException("One or more provided departments does not exist");
         }
-
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists");
         }
@@ -100,56 +99,59 @@ public class AuthenticationService {
 
             CustomUser customUser = new CustomUser();
             customUser.setUserId(user.getId());
-            customUser.setDepartmentId(departmentId);
             customUser.setYear(Year.now().getValue());
 
-            System.out.println(user.getId());
-            System.out.println(customUser.getId());
+            Integer customUserId = customUserRepository.save(customUser);
+            customUser.setId(customUserId);
 
-            System.out.println(customUser.getUserId());
-            System.out.println(customUser.getYear());
-            System.out.println(customUser.getDepartmentId());
-            customUserRepository.save(customUser);
+            customUserRepository.saveCustomUserDepartments(customUserId, departmentIds);
 
             sendRegistrationEmail(user, randomPassword);
+        } catch (MessagingException e) {
+            throw e;
         } catch (Exception e) {
-            if ((user.getId() != null)) {
-                userRepository.delete(user.getId());
-            }
-            throw new RuntimeException("Failed to register user and send credentials: " + e.getMessage(), e);
+            throw new RuntimeException("Failed to create user and custom user: " + e.getMessage(), e);
         }
     }
 
     private void sendRegistrationEmail(User user, String password) throws MessagingException {
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
-        helper.setTo(user.getEmail());
-        helper.setSubject("👤 Welcome to NBP App - Your Login Info");
-        helper.setFrom("your-email@gmail.com");
+            helper.setTo(user.getEmail());
+            helper.setSubject("👤 Welcome to NBP App - Your Login Info");
+            helper.setFrom("your-email@gmail.com");
 
-        String htmlContent = """
-                <html>
-                <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
-                  <div style="max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                    <h2 style="color: #2c3e50;">Hello %s,</h2>
-                    <p style="font-size: 16px; color: #555;">Your account for the NBP app has been created successfully.</p>
-                    <p style="font-size: 18px; font-weight: bold; color: #2c3e50;">Your login credentials are:</p>
-                    <p><strong>Username:</strong> %s</p>
-                    <div style="padding: 10px 15px; background-color: #ecf0f1; border-left: 5px solid #3498db; margin: 10px 0; font-size: 20px; font-weight: bold; color: #2980b9;">
-                      %s
-                    </div>
-                    <p style="font-size: 14px; color: #777;">Please log in and change this password as soon as possible.</p>
-                    <hr style="margin-top: 30px;">
-                    <p style="font-size: 12px; color: #bbb;">ETF Inventory Team</p>
-                  </div>
-                </body>
-                </html>
-                """
-                .formatted(user.getFirstName(), user.getUsername(), password);
+            String htmlContent = """
+                    <html>
+                    <body style="font-family: Arial, sans-serif; background-color: #f4f4f4; padding: 20px;">
+                      <div style="max-width: 600px; margin: auto; background-color: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                        <h2 style="color: #2c3e50;">Hello %s,</h2>
+                        <p style="font-size: 16px; color: #555;">Your account for the NBP app has been created successfully.</p>
+                        <p style="font-size: 18px; font-weight: bold; color: #2c3e50;">Your login credentials are:</p>
+                        <p><strong>Username:</strong> %s</p>
+                        <div style="padding: 10px 15px; background-color: #ecf0f1; border-left: 5px solid #3498db; margin: 10px 0; font-size: 20px; font-weight: bold; color: #2980b9;">
+                          %s
+                        </div>
+                        <p style="font-size: 14px; color: #777;">Please log in and change this password as soon as possible.</p>
+                        <hr style="margin-top: 30px;">
+                        <p style="font-size: 12px; color: #bbb;">ETF Inventory Team</p>
+                      </div>
+                    </body>
+                    </html>
+                    """
+                    .formatted(user.getFirstName(), user.getUsername(), password);
 
-        helper.setText(htmlContent, true);
-        mailSender.send(message);
+            helper.setText(htmlContent, true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            logger.error("MessagingException while sending email to {}", user.getEmail(), e);
+            throw e; // rethrow to let the controller handle it
+        } catch (Exception e) {
+            logger.error("Unexpected error while sending email to {}", user.getEmail(), e);
+            throw new MessagingException("Email send failed: " + e.getMessage(), e);
+        }
     }
 
     private String generateRandomPassword() {

@@ -121,7 +121,7 @@ public class CustomUserRepository {
     }
 
     @Transactional
-    public void saveCustomUserDepartments(int userId, List<Integer> departmentIds) {
+    public void saveCustomUserDepartments(Integer userId, List<Integer> departmentIds) {
         if (departmentIds == null || departmentIds.isEmpty()) {
             return;
         }
