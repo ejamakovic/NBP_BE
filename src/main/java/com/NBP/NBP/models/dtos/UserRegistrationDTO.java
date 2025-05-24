@@ -1,8 +1,7 @@
 package com.NBP.NBP.models.dtos;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalDateTime;
+import java.util.List;
 
 import com.NBP.NBP.models.User;
 
@@ -14,9 +13,9 @@ public class UserRegistrationDTO {
     private String phoneNumber;
     private String username;
     private LocalDate birthDate;
-    private int addressId;
-    private int roleId;
-    private int departmentId;
+    private Integer addressId;
+    private Integer roleId;
+    private List<Integer> departmentIds;
 
     public String getFirstName() {
         return firstName;
@@ -74,7 +73,7 @@ public class UserRegistrationDTO {
         this.birthDate = birthDate;
     }
 
-    public int getAddressId() {
+    public Integer getAddressId() {
         return addressId;
     }
 
@@ -82,7 +81,7 @@ public class UserRegistrationDTO {
         this.addressId = addressId;
     }
 
-    public int getRoleId() {
+    public Integer getRoleId() {
         return roleId;
     }
 
@@ -90,12 +89,12 @@ public class UserRegistrationDTO {
         this.roleId = roleId;
     }
 
-    public int getDepartmentId() {
-        return departmentId;
+    public List<Integer> getDepartmentIds() {
+        return departmentIds;
     }
 
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
+    public void setDepartmentId(List<Integer> departmentIds) {
+        this.departmentIds = departmentIds;
     }
 
     public User getUser() {

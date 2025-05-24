@@ -63,14 +63,14 @@ public class UserService {
     @Transactional
     public void saveUserAndCustomUser(UserRegistrationDTO dto) {
         User user = dto.getUser();
-        Integer departmentId = dto.getDepartmentId();
+        List<Integer> departmentIds = dto.getDepartmentIds();
 
-        if (departmentId == null || departmentId == 0) {
-            throw new IllegalArgumentException("Department ID must be specified");
+        if (departmentIds == null || departmentIds.size() == 0) {
+            throw new IllegalArgumentException("Department IDs must be specified");
         }
 
-        if (!departmentRepository.existsById(departmentId)) {
-            throw new IllegalArgumentException("Department with ID " + departmentId + " does not exist");
+        if (!departmentRepository.departmentIdsExist(departmentIds)) {
+            throw new IllegalArgumentException("One or more provided departments does not exist");
         }
 
         if (userRepository.existsByUsername(user.getUsername())) {
@@ -93,14 +93,13 @@ public class UserService {
 
             CustomUser customUser = new CustomUser();
             customUser.setUserId(user.getId());
-            customUser.setDepartmentId(departmentId);
             customUser.setYear(Year.now().getValue());
 
-            customUserRepository.save(customUser);
+            int customUserId = customUserRepository.save(customUser);
+            customUser.setId(customUserId);
+
+            customUserRepository.saveCustomUserDepartments(customUserId, departmentIds);
         } catch (Exception e) {
-            if ((user.getId() != null)) {
-                userRepository.delete(user.getId());
-            }
             throw new RuntimeException("Failed to create user and custom user: " + e.getMessage(), e);
         }
     }

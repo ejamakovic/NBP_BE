@@ -6,9 +6,12 @@ import com.NBP.NBP.models.enums.UserType;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.PreparedStatement;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +33,6 @@ public class CustomUserRepository {
         user.setId(resultSet.getInt("id"));
         user.setUserId(resultSet.getInt("user_id"));
         user.setYear(resultSet.getInt("year"));
-        user.setDepartmentId(resultSet.getInt("department_id"));
         return user;
     };
 
@@ -40,15 +42,15 @@ public class CustomUserRepository {
 
     private String getInsertQuery() {
         return String.format("""
-                INSERT INTO %s (user_id, year, department_id)
-                VALUES (?, ?, ?)
+                INSERT INTO %s (user_id, year)
+                VALUES (?, ?)
                 """, TABLE_NAME);
     }
 
     private String getUpdateQuery() {
         return String.format("""
                 UPDATE %s
-                SET user_id = ?, year = ?, department_id = ?
+                SET user_id = ?, year = ?
                 WHERE id = ?
                 """, TABLE_NAME);
     }
@@ -90,10 +92,24 @@ public class CustomUserRepository {
 
     @Transactional
     public int save(CustomUser user) {
-        return jdbcTemplate.update(getInsertQuery(),
-                user.getUserId(),
-                user.getYear(),
-                user.getDepartmentId());
+        String sql = getInsertQuery();
+
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, new String[] { "id" });
+            ps.setInt(1, user.getUserId());
+            ps.setInt(2, user.getYear());
+            return ps;
+        }, keyHolder);
+
+        Number key = keyHolder.getKey();
+        if (key != null) {
+            user.setId(key.intValue());
+            return user.getId();
+        } else {
+            throw new RuntimeException("Failed to retrieve generated id for CustomUser");
+        }
     }
 
     @Transactional
@@ -101,8 +117,20 @@ public class CustomUserRepository {
         return jdbcTemplate.update(getUpdateQuery(),
                 user.getUserId(),
                 user.getYear(),
-                user.getDepartmentId(),
                 user.getId());
+    }
+
+    @Transactional
+    public void saveCustomUserDepartments(int userId, List<Integer> departmentIds) {
+        if (departmentIds == null || departmentIds.isEmpty()) {
+            return;
+        }
+        String sql = "INSERT INTO NBP08.CUSTOM_USER_DEPARTMENTS (custom_user_id, department_id) VALUES (?, ?)";
+        jdbcTemplate.batchUpdate(sql, departmentIds, departmentIds.size(),
+                (ps, departmentId) -> {
+                    ps.setInt(1, userId);
+                    ps.setInt(2, departmentId);
+                });
     }
 
     @Transactional

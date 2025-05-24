@@ -7,7 +7,6 @@ public class CustomUser {
     private int id;
     private int userId;
     private int year;
-    private int departmentId;
 
     public CustomUser() {
     }
@@ -15,14 +14,12 @@ public class CustomUser {
     public CustomUser(int userId, UserType userType, int year, int departmentId) {
         this.userId = userId;
         this.year = year;
-        this.departmentId = departmentId;
     }
 
     public CustomUser(int id, int userId, UserType userType, int year, int departmentId) {
         this.id = id;
         this.userId = userId;
         this.year = year;
-        this.departmentId = departmentId;
     }
 
     public int getId() {
@@ -47,13 +44,5 @@ public class CustomUser {
 
     public void setYear(int year) {
         this.year = year;
-    }
-
-    public int getDepartmentId() {
-        return departmentId;
-    }
-
-    public void setDepartmentId(int departmentId) {
-        this.departmentId = departmentId;
     }
 }

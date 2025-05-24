@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Repository
 public class DepartmentRepository {
@@ -52,6 +53,18 @@ public class DepartmentRepository {
         String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, id);
         return count != null && count > 0;
+    }
+
+    public boolean departmentIdsExist(List<Integer> departmentIds) {
+        if (departmentIds == null || departmentIds.isEmpty()) {
+            return false;
+        }
+        String placeholders = departmentIds.stream()
+                .map(id -> "?")
+                .collect(Collectors.joining(","));
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE id IN (" + placeholders + ")";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, departmentIds.toArray());
+        return count != null && count == departmentIds.size();
     }
 
     public Optional<Department> findByName(String name) {
