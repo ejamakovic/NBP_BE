@@ -2,6 +2,7 @@ package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
 import com.NBP.NBP.repositories.CustomUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -37,7 +38,7 @@ public class CustomUserService {
         customUserRepository.update(customUser);
     }
 
-    public void deleteUser(int id) {
+    public void deleteUser(Integer id) {
         customUserRepository.delete(id);
     }
 
@@ -49,11 +50,15 @@ public class CustomUserService {
         return customUserRepository.findAll();
     }
 
-    public Optional<CustomUser> getById(int id) {
+    public Optional<CustomUser> getById(Integer id) {
         return customUserRepository.findById(id);
     }
 
-    public Optional<CustomUser> getByUserId(int id) {
+    public Optional<CustomUserWithDepartments> getByUserIdWithDepartments(Integer userId) {
+        return customUserRepository.findByUserIdWithDepartments(userId);
+    }
+
+    public Optional<CustomUser> getByUserId(Integer id) {
         return Optional.ofNullable(customUserRepository.findByUserId(id));
     }
 }

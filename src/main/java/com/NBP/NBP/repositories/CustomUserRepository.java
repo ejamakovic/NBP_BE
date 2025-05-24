@@ -1,7 +1,9 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.CustomUser;
+import com.NBP.NBP.models.Department;
 import com.NBP.NBP.models.User;
+import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
 import com.NBP.NBP.models.enums.UserType;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,6 +72,56 @@ public class CustomUserRepository {
             CustomUser user = jdbcTemplate.queryForObject(sql, customUserRowMapper, id);
             return Optional.ofNullable(user);
         } catch (EmptyResultDataAccessException e) {
+            return Optional.empty();
+        }
+    }
+
+    public Optional<CustomUserWithDepartments> findByUserIdWithDepartments(Integer userId) {
+        String sql = """
+                SELECT
+                    cu.id AS id,
+                    cu.user_id,
+                    cu.year,
+                    d.id AS department_id,
+                    d.name AS department_name
+                FROM
+                    NBP08.CUSTOM_USER cu
+                JOIN
+                    NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
+                JOIN
+                    NBP08.DEPARTMENT d ON cud.department_id = d.id
+                WHERE
+                    cu.user_id = ?
+                """;
+
+        try {
+            CustomUserWithDepartments user = jdbcTemplate.query(sql, rs -> {
+                CustomUserWithDepartments cuwd = null;
+                List<Department> departments = new ArrayList<>();
+
+                while (rs.next()) {
+                    if (cuwd == null) {
+                        cuwd = new CustomUserWithDepartments();
+                        cuwd.setId(rs.getInt("id"));
+                        cuwd.setUserId(rs.getInt("user_id"));
+                        cuwd.setYear(rs.getInt("year"));
+                    }
+
+                    Department department = new Department();
+                    department.setId(rs.getInt("department_id"));
+                    department.setName(rs.getString("department_name"));
+                    departments.add(department);
+                }
+
+                if (cuwd != null) {
+                    cuwd.setDepartments(departments);
+                }
+
+                return cuwd;
+            }, userId);
+
+            return Optional.ofNullable(user);
+        } catch (Exception e) {
             return Optional.empty();
         }
     }

@@ -1,11 +1,15 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.CustomUser;
+import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
 import com.NBP.NBP.services.CustomUserService;
+import com.NBP.NBP.utils.SecurityUtils;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.util.List;
 import java.util.Optional;
@@ -21,17 +25,23 @@ public class CustomUserController {
         this.customUserService = customUserService;
     }
 
-    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
+    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<CustomUser> getAllUsers() {
         return customUserService.getAllUsers();
     }
 
-    @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
+    @PreAuthorize("isAuthenticated()")
     @GetMapping("/{id}")
-    public ResponseEntity<CustomUser> getById(@PathVariable int id) {
-        Optional<CustomUser> user = customUserService.getById(id);
-        return user.isPresent() ? ResponseEntity.ok(user.get()) : ResponseEntity.notFound().build();
+    public ResponseEntity<CustomUserWithDepartments> getByUserId(@PathVariable Integer id) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        boolean isAdmin = SecurityUtils.hasAuthority("NBP08_ADMIN");
+        if (userId.equals(id) || isAdmin) {
+            Optional<CustomUserWithDepartments> user = customUserService.getByUserIdWithDepartments(id);
+            return user.isPresent() ? ResponseEntity.ok(user.get()) : ResponseEntity.notFound().build();
+        } else {
+            throw new AccessDeniedException("You are not authorized to access this resource.");
+        }
     }
 
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
@@ -49,7 +59,7 @@ public class CustomUserController {
     @PutMapping("/{id}")
     public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody CustomUser user) {
         try {
-            user.setId(id);  // Ensure the ID in the path matches the ID in the body
+            user.setId(id);
             customUserService.updateUser(user);
             return ResponseEntity.ok("User updated successfully");
         } catch (IllegalArgumentException e) {
