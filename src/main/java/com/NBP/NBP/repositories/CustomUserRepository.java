@@ -66,6 +66,54 @@ public class CustomUserRepository {
         return jdbcTemplate.query(getSelectQuery(), customUserRowMapper);
     }
 
+    public List<CustomUserWithDepartments> findAllWithDepartments() {
+        String sql = """
+                SELECT
+                    cu.id AS id,
+                    cu.user_id,
+                    cu.year,
+                    d.id AS department_id,
+                    d.name AS department_name
+                FROM
+                    NBP08.CUSTOM_USER cu
+                LEFT JOIN
+                    NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
+                LEFT JOIN
+                    NBP08.DEPARTMENT d ON cud.department_id = d.id
+                ORDER BY cu.id
+                """;
+
+        return jdbcTemplate.query(sql, rs -> {
+            List<CustomUserWithDepartments> users = new ArrayList<>();
+            CustomUserWithDepartments current = null;
+            int lastId = -1;
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+
+                if (current == null || id != lastId) {
+                    current = new CustomUserWithDepartments();
+                    current.setId(id);
+                    current.setUserId(rs.getInt("user_id"));
+                    current.setYear(rs.getInt("year"));
+                    current.setDepartments(new ArrayList<>());
+                    users.add(current);
+                    lastId = id;
+                }
+
+                int departmentId = rs.getInt("department_id");
+                if (!rs.wasNull()) {
+                    Department department = new Department();
+                    department.setId(departmentId);
+                    department.setName(rs.getString("department_name"));
+                    current.getDepartments().add(department);
+                }
+            }
+
+            return users;
+        });
+    }
+
     public Optional<CustomUser> findById(int id) {
         try {
             String sql = getSelectQuery() + " WHERE id = ?";

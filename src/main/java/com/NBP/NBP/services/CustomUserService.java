@@ -46,8 +46,8 @@ public class CustomUserService {
         return Optional.ofNullable(userService.findById(userId));
     }
 
-    public List<CustomUser> getAllUsers() {
-        return customUserRepository.findAll();
+    public List<CustomUserWithDepartments> getAllUsers() {
+        return customUserRepository.findAllWithDepartments();
     }
 
     public Optional<CustomUser> getById(Integer id) {

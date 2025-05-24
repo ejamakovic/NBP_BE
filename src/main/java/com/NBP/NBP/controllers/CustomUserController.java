@@ -27,7 +27,7 @@ public class CustomUserController {
 
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @GetMapping
-    public List<CustomUser> getAllUsers() {
+    public List<CustomUserWithDepartments> getAllUsers() {
         return customUserService.getAllUsers();
     }
 
