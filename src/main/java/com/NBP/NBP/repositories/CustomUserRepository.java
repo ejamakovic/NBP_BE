@@ -322,4 +322,13 @@ public class CustomUserRepository {
     public int delete(int id) {
         return jdbcTemplate.update(getDeleteQuery(), id);
     }
+
+    @Transactional
+    public void deleteUser(Integer id) {
+        String deleteDepartmentsSql = "DELETE FROM NBP08.CUSTOM_USER_DEPARTMENTS WHERE custom_user_id = ?";
+        jdbcTemplate.update(deleteDepartmentsSql, id);
+
+        jdbcTemplate.update(getDeleteQuery(), id);
+    }
+
 }

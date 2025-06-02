@@ -40,7 +40,7 @@ public class CustomUserService {
     }
 
     public void deleteUser(Integer id) {
-        customUserRepository.delete(id);
+        customUserRepository.deleteUser(id);
     }
 
     public Optional<User> getUserFromUserTable(int userId) {
