@@ -114,6 +114,71 @@ public class CustomUserRepository {
         });
     }
 
+    public List<CustomUserWithDepartments> findAllWithDepartmentsPaginated(int page, int size, String sortKey, String sortDirection) {
+        String validSortKey = switch (sortKey) {
+            case "userId", "year", "id" -> sortKey;
+            default -> "id";
+        };
+        String orderBy = "ORDER BY cu." + validSortKey + " " + sortDirection + " ";
+
+        String sql = """
+            SELECT
+                cu.id AS id,
+                cu.user_id,
+                cu.year,
+                d.id AS department_id,
+                d.name AS department_name
+            FROM
+                NBP08.CUSTOM_USER cu
+            LEFT JOIN
+                NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
+            LEFT JOIN
+                NBP08.DEPARTMENT d ON cud.department_id = d.id
+            """ + orderBy + """
+            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+            """;
+
+        return jdbcTemplate.query(sql, ps -> {
+            ps.setInt(1, page * size);
+            ps.setInt(2, size);
+        }, rs -> {
+            List<CustomUserWithDepartments> users = new ArrayList<>();
+            CustomUserWithDepartments current = null;
+            int lastId = -1;
+
+            while (rs.next()) {
+                int id = rs.getInt("id");
+
+                if (current == null || id != lastId) {
+                    current = new CustomUserWithDepartments();
+                    current.setId(id);
+                    current.setUserId(rs.getInt("user_id"));
+                    current.setYear(rs.getInt("year"));
+                    current.setDepartments(new ArrayList<>());
+                    users.add(current);
+                    lastId = id;
+                }
+
+                int departmentId = rs.getInt("department_id");
+                if (!rs.wasNull()) {
+                    Department department = new Department();
+                    department.setId(departmentId);
+                    department.setName(rs.getString("department_name"));
+                    current.getDepartments().add(department);
+                }
+            }
+
+            System.out.println(users);
+            return users;
+        });
+    }
+
+    public long countAllUsers() {
+        String sql = "SELECT COUNT(*) FROM NBP08.CUSTOM_USER";
+        Long count = jdbcTemplate.queryForObject(sql, Long.class);
+        return (count != null) ? count : 0L;
+    }
+
     public Optional<CustomUser> findById(int id) {
         try {
             String sql = getSelectQuery() + " WHERE id = ?";

@@ -2,6 +2,7 @@ package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
+import com.NBP.NBP.models.dtos.PaginatedCustomUserResponseDTO;
 import com.NBP.NBP.services.CustomUserService;
 import com.NBP.NBP.utils.SecurityUtils;
 
@@ -25,10 +26,23 @@ public class CustomUserController {
         this.customUserService = customUserService;
     }
 
+    // @PreAuthorize("hasAuthority('NBP08_ADMIN')")
+    // @GetMapping
+    // public List<CustomUserWithDepartments> getAllUsers() {
+    //     return customUserService.getAllUsers();
+    // }
+
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     @GetMapping
-    public List<CustomUserWithDepartments> getAllUsers() {
-        return customUserService.getAllUsers();
+    public ResponseEntity<PaginatedCustomUserResponseDTO> getAllUsers(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortKey", defaultValue = "id") String sortKey,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
+
+        PaginatedCustomUserResponseDTO response = customUserService.getAllUsersPaginated(page, size, sortKey, sortDirection);
+        System.out.println(response);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("isAuthenticated()")

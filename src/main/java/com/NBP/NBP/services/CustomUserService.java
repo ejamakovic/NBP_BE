@@ -3,6 +3,7 @@ package com.NBP.NBP.services;
 import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.User;
 import com.NBP.NBP.models.dtos.CustomUserWithDepartments;
+import com.NBP.NBP.models.dtos.PaginatedCustomUserResponseDTO;
 import com.NBP.NBP.repositories.CustomUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -48,6 +49,25 @@ public class CustomUserService {
 
     public List<CustomUserWithDepartments> getAllUsers() {
         return customUserRepository.findAllWithDepartments();
+    }
+
+    public PaginatedCustomUserResponseDTO getAllUsersPaginated(Integer page, Integer size, String sortKey, String sortDirection) {
+        int p = (page != null && page >= 0) ? page : 0;
+        int s = (size != null && size > 0) ? size : 10;
+        String direction = sortDirection.equalsIgnoreCase("desc") ? "DESC" : "ASC";
+
+        List<CustomUserWithDepartments> users = customUserRepository.findAllWithDepartmentsPaginated(p, s, sortKey, direction);
+        long total = customUserRepository.countAllUsers();
+
+        PaginatedCustomUserResponseDTO dto = new PaginatedCustomUserResponseDTO();
+        dto.setContent(users);
+        dto.setPage(p);
+        dto.setSize(s);
+        dto.setTotalElements(total);
+        dto.setTotalPages((int) Math.ceil((double) total / s));
+
+        System.out.println(dto);
+        return dto;
     }
 
     public Optional<CustomUser> getById(Integer id) {
