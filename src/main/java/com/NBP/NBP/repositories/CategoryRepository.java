@@ -29,6 +29,32 @@ public class CategoryRepository {
         return jdbcTemplate.query("SELECT * FROM " + TABLE_NAME, categoryRowMapper);
     }
 
+    public List<Category> findPaginated(Integer offset, Integer limit, String sortKey, String sortDirection) {
+        if (!List.of("name", "description", "id").contains(sortKey.toLowerCase())) {
+            sortKey = "name";
+        }
+        if (!List.of("asc", "desc").contains(sortDirection.toLowerCase())) {
+            sortDirection = "asc";
+        }
+
+        String baseSql = "SELECT * FROM " + TABLE_NAME + " ORDER BY " + sortKey + " " + sortDirection;
+
+        if (offset == null || limit == null) {
+            return jdbcTemplate.query(baseSql, categoryRowMapper);
+        }
+
+        String paginatedSql = baseSql + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(paginatedSql, ps -> {
+            ps.setInt(1, offset);
+            ps.setInt(2, limit);
+        }, categoryRowMapper);
+    }
+
+    public Integer countAll() {
+        return jdbcTemplate.queryForObject("SELECT COUNT(*) FROM " + TABLE_NAME, Integer.class);
+    }
+
+
     public Category findById(int id) {
         return jdbcTemplate.queryForObject("SELECT * FROM " + TABLE_NAME + " WHERE id = ?", categoryRowMapper, id);
     }

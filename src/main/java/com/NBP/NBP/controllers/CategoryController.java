@@ -1,6 +1,7 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.Category;
+import com.NBP.NBP.models.dtos.PaginatedCategoryResponseDTO;
 import com.NBP.NBP.services.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,22 @@ public class CategoryController {
         this.categoryService = categoryService;
     }
 
+    // @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
+    // @GetMapping
+    // public List<Category> getAllCategories() {
+    //     return categoryService.getAllCategories();
+    // }
+
     @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
-    public List<Category> getAllCategories() {
-        return categoryService.getAllCategories();
+    public ResponseEntity<PaginatedCategoryResponseDTO> getAllCategories(
+            @RequestParam(value = "page", required = false) Integer page,
+            @RequestParam(value = "size", required = false) Integer size,
+            @RequestParam(value = "sortKey", defaultValue = "name") String sortKey,
+            @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
+
+        PaginatedCategoryResponseDTO response = categoryService.getPaginatedCategories(page, size, sortKey, sortDirection);
+        return ResponseEntity.ok(response);
     }
 
     @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")

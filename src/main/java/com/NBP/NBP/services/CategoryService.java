@@ -1,6 +1,7 @@
 package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.Category;
+import com.NBP.NBP.models.dtos.PaginatedCategoryResponseDTO;
 import com.NBP.NBP.repositories.CategoryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,21 @@ public class CategoryService {
     public List<Category> getAllCategories() {
         return categoryRepository.findAll();
     }
+
+    public PaginatedCategoryResponseDTO getPaginatedCategories(Integer page, Integer size, String sortKey, String sortDirection) {
+        if (page == null || size == null) {
+            List<Category> allCategories = categoryRepository.findPaginated(null, null, sortKey, sortDirection);
+            return new PaginatedCategoryResponseDTO(allCategories, 1, allCategories.size(), 0);
+        }
+
+        int offset = page * size;
+        List<Category> categories = categoryRepository.findPaginated(offset, size, sortKey, sortDirection);
+        int totalItems = categoryRepository.countAll();
+        int totalPages = (int) Math.ceil((double) totalItems / size);
+
+        return new PaginatedCategoryResponseDTO(categories, totalPages, totalItems, page);
+    }
+
 
     public Category getCategoryById(int id) {
         return categoryRepository.findById(id);

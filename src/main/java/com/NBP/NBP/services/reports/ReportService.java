@@ -8,6 +8,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import java.io.ByteArrayOutputStream;
+import java.sql.PreparedStatement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -77,31 +78,35 @@ public class ReportService {
         }
 
         public byte[] generateServiceReport() throws JRException {
-                // SQL upit za čitanje podataka iz specijalno kreirane tabele
                 String sql = "SELECT equipment_id, equipment_name, service_count, report_generated_at " +
                                 "FROM NBP08.SERVICE_COUNT_PER_EQUIPMENT";
 
                 List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql);
 
-                // Mapiraj podatke u JRBeanCollectionDataSource
                 JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(rows);
 
-                // Kompajliraj JRXML template
                 JasperReport jasperReport = JasperCompileManager.compileReport(
                                 getClass().getResourceAsStream("/reports/service_per_equipment_report.jrxml"));
 
-                // Pripremi parametre za izveštaj (ako su potrebni, kao što je naziv izveštaja)
                 Map<String, Object> parameters = new HashMap<>();
                 parameters.put("REPORT_TITLE", "Service count per equipment");
 
-                // Popuni izveštaj sa podacima
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
-                // Izvezi izveštaj u PDF
                 ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
 
-                return outputStream.toByteArray();
+                byte[] generatedPDF = outputStream.toByteArray();
+
+                jdbcTemplate.update(connection -> {
+                        PreparedStatement ps = connection.prepareStatement(
+                        "INSERT INTO NBP08.GENERATED_REPORTS (report_name, report_file) VALUES (?, ?)");
+                        ps.setString(1, "service_per_equipment.pdf");
+                        ps.setBytes(2, generatedPDF);
+                        return ps;
+                });
+
+                return generatedPDF;
         }
 
         public byte[] generateServiceByEquipmentIdReportOLD(int equipmentId) throws JRException {
