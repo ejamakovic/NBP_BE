@@ -5,6 +5,9 @@ public class Category {
     private String description;
     private String name;
 
+    public Category() {
+    }
+
     public Category(String name, String description) {
         this.description = description;
         this.name = name;
