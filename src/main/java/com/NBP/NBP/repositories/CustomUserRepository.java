@@ -14,6 +14,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.PreparedStatement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -127,13 +128,23 @@ public class CustomUserRepository {
                 cu.user_id,
                 cu.year,
                 d.id AS department_id,
-                d.name AS department_name
+                d.name AS department_name,
+                u.first_name,
+                u.last_name,
+                u.email,
+                u.username,
+                u.phone_number,
+                u.birth_date,
+                r.id AS role_id,
+                r.name AS role_name
             FROM
                 NBP08.CUSTOM_USER cu
             LEFT JOIN
                 NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
             LEFT JOIN
                 NBP08.DEPARTMENT d ON cud.department_id = d.id
+            LEFT JOIN NBP.NBP_USER u ON cu.user_id = u.id
+            LEFT JOIN NBP.NBP_ROLE r ON u.role_id = r.id
             """ + orderBy + """
             OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
             """;
@@ -155,6 +166,14 @@ public class CustomUserRepository {
                     current.setUserId(rs.getInt("user_id"));
                     current.setYear(rs.getInt("year"));
                     current.setDepartments(new ArrayList<>());
+                    current.setFirstName(rs.getString("first_name"));
+                    current.setLastName(rs.getString("last_name"));
+                    current.setEmail(rs.getString("email"));
+                    current.setUsername(rs.getString("username"));
+                    current.setPhoneNumber(rs.getString("phone_number"));
+                    current.setBirthDate(rs.getObject("birth_date", LocalDate.class));
+                    current.setRoleId(rs.getInt("role_id"));
+                    current.setRoleName(rs.getString("role_name"));
                     users.add(current);
                     lastId = id;
                 }
