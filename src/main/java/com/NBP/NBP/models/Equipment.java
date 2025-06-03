@@ -10,6 +10,9 @@ public class Equipment {
     private Integer laboratoryId;
     private EquipmentStatus status;
 
+    public Equipment() {
+    };
+
     public Equipment(Integer id, String description, String name, Integer categoryId, Integer laboratoryId,
             EquipmentStatus status) {
         this.id = id;

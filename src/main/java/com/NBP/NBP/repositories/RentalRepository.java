@@ -1,6 +1,5 @@
 package com.NBP.NBP.repositories;
 
-import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.Rental;
 import com.NBP.NBP.models.enums.RentalStatus;
 
@@ -9,7 +8,6 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 @Repository
@@ -30,19 +28,65 @@ public class RentalRepository {
             rs.getDate("return_date"),
             RentalStatus.valueOf(rs.getString("status")));
 
-    public List<Rental> findAllPending() {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE status = 'PENDING'";
-        return jdbcTemplate.query(sql, rentalRowMapper);
+    public List<Rental> findAllPending(int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE status = 'PENDING' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, offset, limit);
     }
 
-    public List<Rental> findByUserId(Integer userId) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ?";
-        return jdbcTemplate.query(sql, rentalRowMapper, userId);
+    public List<Rental> findByUserId(Integer userId, int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
     }
 
-    public List<Rental> findPendingByUserId(Integer userId) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? AND status = 'PENDING'";
-        return jdbcTemplate.query(sql, rentalRowMapper, userId);
+    public List<Rental> findPendingByUserId(Integer userId, int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME
+                + " WHERE user_id = ? AND status = 'PENDING' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
+    }
+
+    public List<Rental> findAll(int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, offset, limit);
+    }
+
+    public List<Rental> findByEquipmentId(Integer equipmentId, int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, equipmentId, offset, limit);
+    }
+
+    public int countAll() {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME;
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
+    }
+
+    public int countAllPending() {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE status = 'PENDING'";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class);
+        return result != null ? result : 0;
+    }
+
+    public int countByUserId(Integer userId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE user_id = ?";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        return result != null ? result : 0;
+    }
+
+    public int countPendingByUserId(Integer userId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE user_id = ? AND status = 'PENDING'";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+        return result != null ? result : 0;
+    }
+
+    public int countByEquipmentId(Integer equipmentId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE equipment_id = ?";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, equipmentId);
+        return result != null ? result : 0;
+    }
+
+    public Rental findById(int id) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
+        return jdbcTemplate.queryForObject(sql, rentalRowMapper, id);
     }
 
     @Transactional
@@ -67,28 +111,9 @@ public class RentalRepository {
                 rental.getReturnDate(), rental.getStatus().name(), rental.getId());
     }
 
-    public List<Rental> findAll() {
-        String sql = "SELECT * FROM " + TABLE_NAME;
-        return jdbcTemplate.query(sql, rentalRowMapper);
-    }
-
-    public Rental findById(int id) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE id = ?";
-        return jdbcTemplate.queryForObject(sql, rentalRowMapper, id);
-    }
-
     @Transactional
     public int delete(int id) {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
         return jdbcTemplate.update(sql, id);
-    }
-
-    public List<Rental> findByEquipment(Equipment equipment) {
-        try {
-            String sql = "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?";
-            return jdbcTemplate.query(sql, rentalRowMapper, equipment.getId());
-        } catch (Exception e) {
-            return Collections.emptyList();
-        }
     }
 }

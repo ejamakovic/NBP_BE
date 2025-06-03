@@ -1,63 +1,98 @@
 package com.NBP.NBP.services;
 
-import com.NBP.NBP.models.Equipment;
-import com.NBP.NBP.models.Order;
 import com.NBP.NBP.models.Rental;
+import com.NBP.NBP.models.dtos.PaginatedRentalResponseDTO;
 import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.repositories.RentalRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collection;
 import java.util.List;
 
 @Service
 public class RentalService {
     private final RentalRepository rentalRepository;
 
-    @Autowired
     public RentalService(RentalRepository rentalRepository) {
         this.rentalRepository = rentalRepository;
     }
 
-    public List<Rental> getAllRentals() {
-        return rentalRepository.findAll();
+    private Integer calculateOffset(Integer page, Integer size) {
+        if (page == null || size == null || page < 0 || size <= 0)
+            return 0;
+        return page * size;
     }
 
-    public Rental getRentalById(int id) {
+    private Integer getLimit(Integer size) {
+        return (size == null || size <= 0) ? Integer.MAX_VALUE : size;
+    }
+
+    public PaginatedRentalResponseDTO findAllPending(Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<Rental> content = rentalRepository.findAllPending(offset, limit);
+        int totalItems = rentalRepository.countAllPending();
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public PaginatedRentalResponseDTO findByUserId(Integer userId, Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<Rental> content = rentalRepository.findByUserId(userId, offset, limit);
+        int totalItems = rentalRepository.countByUserId(userId);
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public PaginatedRentalResponseDTO findPendingByUserId(Integer userId, Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<Rental> content = rentalRepository.findPendingByUserId(userId, offset, limit);
+        int totalItems = rentalRepository.countPendingByUserId(userId);
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public PaginatedRentalResponseDTO findAll(Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<Rental> content = rentalRepository.findAll(offset, limit);
+        int totalItems = rentalRepository.countAll();
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public PaginatedRentalResponseDTO findByEquipmentId(Integer equipmentId, Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<Rental> content = rentalRepository.findByEquipmentId(equipmentId, offset, limit);
+        int totalItems = rentalRepository.countByEquipmentId(equipmentId);
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public Rental findById(Integer id) {
         return rentalRepository.findById(id);
     }
 
-    public int saveRental(Rental rental) {
+    public Integer updateStatus(Integer rentalId, RentalStatus newStatus) {
+        return rentalRepository.updateStatus(rentalId, newStatus);
+    }
+
+    public Integer save(Rental rental) {
         return rentalRepository.save(rental);
     }
 
-    public int updateRental(Rental rental) {
+    public Integer update(Rental rental) {
         return rentalRepository.update(rental);
     }
 
-    public int deleteRental(int id) {
+    public Integer delete(Integer id) {
         return rentalRepository.delete(id);
     }
-
-    public List<Rental> findByEquipment(Equipment equipment) {
-        return rentalRepository.findByEquipment(equipment);
-    }
-
-    public List<Rental> getAllPendingRentals() {
-        return rentalRepository.findAllPending();
-    }
-
-    public List<Rental> getRentalsByUserId(Integer userId) {
-        return rentalRepository.findByUserId(userId);
-    }
-
-    public List<Rental> getPendingRentalsByUserId(Integer userId) {
-        return rentalRepository.findPendingByUserId(userId);
-    }
-
-    public int updateRentalStatus(Integer rentalId, RentalStatus status) {
-        return rentalRepository.updateStatus(rentalId, status);
-    }
-
 }
