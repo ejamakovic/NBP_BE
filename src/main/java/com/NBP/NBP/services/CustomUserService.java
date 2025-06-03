@@ -49,6 +49,10 @@ public class CustomUserService {
             customUser.setUserId(userId);
         }
 
+    if (customUser.getYear() == null) {
+        customUser.setYear(2025);
+    }
+
         customUserRepository.updateFullCustomUser(customUser);
     }
 
