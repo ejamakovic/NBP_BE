@@ -138,6 +138,28 @@ public class ReportController {
         }
     }
 
+    @GetMapping("/equipment-by-category/{categoryName}")
+    public ResponseEntity<byte[]> getEquipmentByCategoryReport(
+            @PathVariable("categoryName") String categoryName) {
+        try {
+            byte[] reportData = reportService.generateEquipmentByCategoryReport(categoryName);
+
+            HttpHeaders headers = new HttpHeaders();
+            headers.add("Content-Disposition", "inline; filename=equipment_by_category_" + categoryName + ".pdf");
+
+            return ResponseEntity.ok()
+                    .headers(headers)
+                    .contentType(MediaType.APPLICATION_PDF)
+                    .body(reportData);
+
+        } catch (JRException e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to generate report".getBytes());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(("No data found for category: " + categoryName).getBytes());
+        }
+    }
+
     @GetMapping("/order-by-supplier")
     public ResponseEntity<byte[]> getOrderBySupplierReport() {
         try {
