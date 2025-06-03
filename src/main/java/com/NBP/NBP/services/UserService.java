@@ -46,6 +46,16 @@ public class UserService {
         }
     }
 
+    public Integer findUserIdById(int id) {
+        User user = userRepository.findById(id);
+        if (user != null) {
+            return user.getId();
+        } else {
+            throw new RuntimeException("User not found with id: " + id);
+        }
+    }
+
+
     public void saveUser(User user) throws IllegalArgumentException {
         if (userRepository.existsByUsername(user.getUsername())) {
             throw new IllegalArgumentException("Username already exists");

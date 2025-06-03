@@ -115,7 +115,8 @@ public class CustomUserRepository {
         });
     }
 
-    public List<CustomUserWithDepartments> findAllWithDepartmentsPaginated(int page, int size, String sortKey, String sortDirection) {
+    public List<CustomUserWithDepartments> findAllWithDepartmentsPaginated(int page, int size, String sortKey,
+            String sortDirection) {
         String validSortKey = switch (sortKey) {
             case "userId", "year", "id" -> sortKey;
             default -> "id";
@@ -123,31 +124,31 @@ public class CustomUserRepository {
         String orderBy = "ORDER BY cu." + validSortKey + " " + sortDirection + " ";
 
         String sql = """
-            SELECT
-                cu.id AS id,
-                cu.user_id,
-                cu.year,
-                d.id AS department_id,
-                d.name AS department_name,
-                u.first_name,
-                u.last_name,
-                u.email,
-                u.username,
-                u.phone_number,
-                u.birth_date,
-                r.id AS role_id,
-                r.name AS role_name
-            FROM
-                NBP08.CUSTOM_USER cu
-            LEFT JOIN
-                NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
-            LEFT JOIN
-                NBP08.DEPARTMENT d ON cud.department_id = d.id
-            LEFT JOIN NBP.NBP_USER u ON cu.user_id = u.id
-            LEFT JOIN NBP.NBP_ROLE r ON u.role_id = r.id
-            """ + orderBy + """
-            OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
-            """;
+                SELECT
+                    cu.id AS id,
+                    cu.user_id,
+                    cu.year,
+                    d.id AS department_id,
+                    d.name AS department_name,
+                    u.first_name,
+                    u.last_name,
+                    u.email,
+                    u.username,
+                    u.phone_number,
+                    u.birth_date,
+                    r.id AS role_id,
+                    r.name AS role_name
+                FROM
+                    NBP08.CUSTOM_USER cu
+                LEFT JOIN
+                    NBP08.CUSTOM_USER_DEPARTMENTS cud ON cu.id = cud.custom_user_id
+                LEFT JOIN
+                    NBP08.DEPARTMENT d ON cud.department_id = d.id
+                LEFT JOIN NBP.NBP_USER u ON cu.user_id = u.id
+                LEFT JOIN NBP.NBP_ROLE r ON u.role_id = r.id
+                """ + orderBy + """
+                OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
+                """;
 
         return jdbcTemplate.query(sql, ps -> {
             ps.setInt(1, page * size);
@@ -223,7 +224,7 @@ public class CustomUserRepository {
                 JOIN
                     NBP08.DEPARTMENT d ON cud.department_id = d.id
                 WHERE
-                    cu.user_id = ?
+                    cu.id = ?
                 """;
 
         try {
@@ -324,11 +325,71 @@ public class CustomUserRepository {
     }
 
     @Transactional
-    public void deleteUser(Integer id) {
-        String deleteDepartmentsSql = "DELETE FROM NBP08.CUSTOM_USER_DEPARTMENTS WHERE custom_user_id = ?";
-        jdbcTemplate.update(deleteDepartmentsSql, id);
+    public void deleteUser(Integer customUserId) {
+        // Step 1: Retrieve user_id from CUSTOM_USER
+        String getUserIdSql = "SELECT user_id FROM NBP08.CUSTOM_USER WHERE id = ?";
+        Integer userId = jdbcTemplate.queryForObject(getUserIdSql, Integer.class, customUserId);
 
-        jdbcTemplate.update(getDeleteQuery(), id);
+        // Step 2: Delete from CUSTOM_USER_DEPARTMENTS
+        String deleteDepartmentsSql = "DELETE FROM NBP08.CUSTOM_USER_DEPARTMENTS WHERE custom_user_id = ?";
+        jdbcTemplate.update(deleteDepartmentsSql, customUserId);
+
+        // Step 3: Delete from CUSTOM_USER
+        jdbcTemplate.update(getDeleteQuery(), customUserId);
+
+        // Step 4: Delete from NBP_USER
+        if (userId != null) {
+            String deleteUserSql = "DELETE FROM NBP.NBP_USER WHERE id = ?";
+            jdbcTemplate.update(deleteUserSql, userId);
+        }
+    }
+
+    @Transactional
+    public void updateFullCustomUser(CustomUserWithDepartments customUser) {
+        // 1. Update NBP_USER
+        String updateUserSql = """
+                    UPDATE NBP.NBP_USER
+                    SET first_name = ?, last_name = ?, email = ?, username = ?, phone_number = ?, birth_date = ?, role_id = ?
+                    WHERE id = ?
+                """;
+
+                System.out.println(customUser.getUserId());
+        jdbcTemplate.update(updateUserSql,
+                customUser.getFirstName(),
+                customUser.getLastName(),
+                customUser.getEmail(),
+                customUser.getUsername(),
+                customUser.getPhoneNumber(),
+                customUser.getBirthDate(),
+                customUser.getRoleId(),
+                customUser.getUserId());
+
+        // 2. Update CUSTOM_USER
+        String updateCustomUserSql = """
+                    UPDATE NBP08.CUSTOM_USER
+                    SET year = ?
+                    WHERE id = ?
+                """;
+
+        jdbcTemplate.update(updateCustomUserSql,
+                customUser.getYear(),
+                customUser.getId());
+
+        // 3. Update CUSTOM_USER_DEPARTMENTS
+        // Delete existing department mappings for this custom user
+        String deleteDepartmentsSql = "DELETE FROM NBP08.CUSTOM_USER_DEPARTMENTS WHERE custom_user_id = ?";
+        jdbcTemplate.update(deleteDepartmentsSql, customUser.getId());
+
+        // Insert new department mappings
+        if (customUser.getDepartments() != null && !customUser.getDepartments().isEmpty()) {
+            String insertDepartmentSql = "INSERT INTO NBP08.CUSTOM_USER_DEPARTMENTS (custom_user_id, department_id) VALUES (?, ?)";
+            jdbcTemplate.batchUpdate(insertDepartmentSql, customUser.getDepartments(),
+                    customUser.getDepartments().size(),
+                    (ps, department) -> {
+                        ps.setInt(1, customUser.getId());
+                        ps.setInt(2, department.getId());
+                    });
+        }
     }
 
 }

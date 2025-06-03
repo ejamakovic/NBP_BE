@@ -7,6 +7,7 @@ import com.NBP.NBP.services.CustomUserService;
 import com.NBP.NBP.utils.SecurityUtils;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -29,7 +30,7 @@ public class CustomUserController {
     // @PreAuthorize("hasAuthority('NBP08_ADMIN')")
     // @GetMapping
     // public List<CustomUserWithDepartments> getAllUsers() {
-    //     return customUserService.getAllUsers();
+    // return customUserService.getAllUsers();
     // }
 
     @PreAuthorize("hasAuthority('NBP08_ADMIN')")
@@ -40,7 +41,8 @@ public class CustomUserController {
             @RequestParam(value = "sortKey", defaultValue = "id") String sortKey,
             @RequestParam(value = "sortDirection", defaultValue = "asc") String sortDirection) {
 
-        PaginatedCustomUserResponseDTO response = customUserService.getAllUsersPaginated(page, size, sortKey, sortDirection);
+        PaginatedCustomUserResponseDTO response = customUserService.getAllUsersPaginated(page, size, sortKey,
+                sortDirection);
         System.out.println(response);
         return ResponseEntity.ok(response);
     }
@@ -69,15 +71,55 @@ public class CustomUserController {
         }
     }
 
-    @PreAuthorize("hasAuthority('NBP08_ADMIN')")
+    // @PreAuthorize("hasAuthority('NBP08_ADMIN')")
+    // @PutMapping("/{id}")
+    // public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody
+    // CustomUser user) {
+    // try {
+    // user.setId(id);
+    // customUserService.updateUser(user);
+    // return ResponseEntity.ok("User updated successfully");
+    // } catch (IllegalArgumentException e) {
+    // return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+    // }
+    // }
+
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateUser(@PathVariable int id, @RequestBody CustomUser user) {
+    public ResponseEntity<?> updateCustomUser(
+            @PathVariable Integer id,
+            @RequestBody CustomUserWithDepartments customUser) {
+
+        if (!id.equals(customUser.getId())) {
+            return ResponseEntity.badRequest().body("Mismatched user ID in path and request body");
+        }
+
+        Integer currentUserId = SecurityUtils.getCurrentUserId();
+        boolean currentUserIsAdmin = SecurityUtils.hasAuthority("NBP08_ADMIN");
+
+        boolean targetIsAdmin = false;
+        if (customUser.getRoleName() != null) {
+            targetIsAdmin = customUser.getRoleName().toUpperCase().contains("ADMIN");
+        }
+
+        if (currentUserIsAdmin) {
+            if (targetIsAdmin && !currentUserId.equals(customUser.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("Admin users cannot modify other admin users.");
+            }
+        } else {
+            // Non-admin users can only update themselves
+            if (!currentUserId.equals(customUser.getId())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                        .body("You can only edit your own user information.");
+            }
+        }
+
         try {
-            user.setId(id);
-            customUserService.updateUser(user);
-            return ResponseEntity.ok("User updated successfully");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.badRequest().body("Error: " + e.getMessage());
+            customUserService.updateFullCustomUser(customUser);
+            return ResponseEntity.ok().build();
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to update user: " + e.getMessage());
         }
     }
 
