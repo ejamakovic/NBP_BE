@@ -18,6 +18,10 @@ public class RoleService {
     }
 
     public List<Role> getAllRoles() {
+        return roleRepository.findAllStartingWithNBP08();
+    }
+
+    public List<Role> getAllRolesOld() {
         return roleRepository.findAll();
     }
 

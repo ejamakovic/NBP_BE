@@ -47,6 +47,12 @@ public class RoleRepository {
         return jdbcTemplate.query(getSelectQuery(), roleRowMapper);
     }
 
+    public List<Role> findAllStartingWithNBP08() {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE name LIKE 'NBP08%'";
+        return jdbcTemplate.query(sql, roleRowMapper);
+    }
+
+
     public Role findById(int id) {
         String sql = getSelectQuery() + " WHERE id = ?";
         return jdbcTemplate.queryForObject(sql, roleRowMapper, id);
