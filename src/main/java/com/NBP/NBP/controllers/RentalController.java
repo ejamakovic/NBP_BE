@@ -8,7 +8,9 @@ import com.NBP.NBP.utils.SecurityUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -25,7 +27,16 @@ public class RentalController {
     @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")
     @GetMapping
     public List<Rental> getAllRentals() {
-        return rentalService.getAllRentals();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        boolean isUser = authentication.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("NBP08_USER"));
+
+        if (isUser) {
+            Integer userId = SecurityUtils.getCurrentUserId();
+            return rentalService.getRentalsByUserId(userId);
+        } else {
+            return rentalService.getAllRentals();
+        }
     }
 
     @PreAuthorize("hasAuthority('NBP08_USER') or hasAuthority('NBP08_ADMIN')")

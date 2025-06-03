@@ -35,6 +35,11 @@ public class RentalRepository {
         return jdbcTemplate.query(sql, rentalRowMapper);
     }
 
+    public List<Rental> findByUserId(Integer userId) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ?";
+        return jdbcTemplate.query(sql, rentalRowMapper, userId);
+    }
+
     public List<Rental> findPendingByUserId(Integer userId) {
         String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? AND status = 'PENDING'";
         return jdbcTemplate.query(sql, rentalRowMapper, userId);

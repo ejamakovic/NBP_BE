@@ -48,6 +48,10 @@ public class RentalService {
         return rentalRepository.findAllPending();
     }
 
+    public List<Rental> getRentalsByUserId(Integer userId) {
+        return rentalRepository.findByUserId(userId);
+    }
+
     public List<Rental> getPendingRentalsByUserId(Integer userId) {
         return rentalRepository.findPendingByUserId(userId);
     }
