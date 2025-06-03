@@ -254,6 +254,39 @@ public class ReportService {
                 return outputStream.toByteArray();
         }
 
+        public byte[] generateEquipmentByLaboratoryReport(String laboratoryName) throws JRException {
+                String sql = "SELECT e.id AS EQUIPMENT_ID, e.name AS EQUIPMENT_NAME, e.description AS DESCRIPTION, c.name AS CATEGORY_NAME "
+                                + "FROM equipment e "
+                                + "JOIN category c ON e.category_id = c.id "
+                                + "JOIN laboratory l ON e.laboratory_id = l.id "
+                                + "WHERE l.name = ? "
+                                + "ORDER BY e.name";
+
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, laboratoryName);
+
+                if (rows.isEmpty()) {
+                        throw new IllegalArgumentException("No equipment found for laboratory: " + laboratoryName);
+                }
+
+                Collection<Map<String, ?>> dataCollection = new ArrayList<>(rows);
+
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Equipment Report by Laboratory");
+                parameters.put("LABORATORY_NAME", laboratoryName);
+
+                JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataCollection);
+
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/equipment_by_laboratory_report.jrxml"));
+
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+
+                return outputStream.toByteArray();
+        }
+
         public byte[] generateOrderReport() throws JRException {
                 // SQL upit za čitanje podataka iz specijalno kreirane tabele
                 String sql = "SELECT supplier_id, supplier_name, order_count, report_generated_at " +
