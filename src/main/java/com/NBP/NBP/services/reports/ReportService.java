@@ -100,7 +100,7 @@ public class ReportService {
 
                 jdbcTemplate.update(connection -> {
                         PreparedStatement ps = connection.prepareStatement(
-                        "INSERT INTO NBP08.GENERATED_REPORTS (report_name, report_file) VALUES (?, ?)");
+                                        "INSERT INTO NBP08.GENERATED_REPORTS (report_name, report_file) VALUES (?, ?)");
                         ps.setString(1, "service_per_equipment.pdf");
                         ps.setBytes(2, generatedPDF);
                         return ps;
@@ -206,6 +206,45 @@ public class ReportService {
 
                 JasperReport jasperReport = JasperCompileManager.compileReport(
                                 getClass().getResourceAsStream("/reports/service_by_equipmentId_report.jrxml"));
+
+                JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
+
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+
+                return outputStream.toByteArray();
+        }
+
+        public byte[] generateEquipmentByDepartmentReport(String departmentName) throws JRException {
+                String sql = "SELECT e.id AS EQUIPMENT_ID, e.name AS EQUIPMENT_NAME, e.description AS DESCRIPTION, c.name AS CATEGORY_NAME "
+                                +
+                                "FROM equipment e " +
+                                "JOIN category c ON e.category_id = c.id " +
+                                "JOIN laboratory l ON e.laboratory_id = l.id " +
+                                "JOIN department d ON l.department_id = d.id " +
+                                "WHERE d.name = ? " +
+                                "ORDER BY e.name";
+
+                List<Map<String, Object>> rows = jdbcTemplate.queryForList(sql, departmentName);
+
+                if (rows.isEmpty()) {
+                        throw new IllegalArgumentException("No equipment found for department: " + departmentName);
+                }
+
+                // No need to remove parameters here, all fields are equipment-specific
+                Collection<Map<String, ?>> dataCollection = new ArrayList<>();
+                for (Map<String, Object> row : rows) {
+                        dataCollection.add(row);
+                }
+
+                Map<String, Object> parameters = new HashMap<>();
+                parameters.put("REPORT_TITLE", "Equipment Report by Department");
+                parameters.put("DEPARTMENT_NAME", departmentName);
+
+                JRMapCollectionDataSource dataSource = new JRMapCollectionDataSource(dataCollection);
+
+                JasperReport jasperReport = JasperCompileManager.compileReport(
+                                getClass().getResourceAsStream("/reports/equipment_by_department_report.jrxml"));
 
                 JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, dataSource);
 
