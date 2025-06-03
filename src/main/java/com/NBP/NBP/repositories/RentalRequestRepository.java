@@ -1,7 +1,7 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.RentalRequest;
-import com.NBP.NBP.models.enums.RequestStatus;
+import com.NBP.NBP.models.enums.RentalStatus;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
@@ -26,7 +26,7 @@ public class RentalRequestRepository {
             rs.getInt("equipment_id"),
             rs.getInt("custom_user_id"),
             rs.getDate("request_date").toLocalDate(),
-            RequestStatus.valueOf(rs.getString("status").trim().toUpperCase()));
+            RentalStatus.valueOf(rs.getString("status").trim().toUpperCase()));
 
     public List<RentalRequest> findAll() {
         String sql = "SELECT * FROM " + TABLE_NAME;

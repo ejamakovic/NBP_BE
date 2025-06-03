@@ -3,6 +3,7 @@ package com.NBP.NBP.services;
 import com.NBP.NBP.models.Equipment;
 import com.NBP.NBP.models.Order;
 import com.NBP.NBP.models.Rental;
+import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.repositories.RentalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -42,4 +43,17 @@ public class RentalService {
     public List<Rental> findByEquipment(Equipment equipment) {
         return rentalRepository.findByEquipment(equipment);
     }
+
+    public List<Rental> getAllPendingRentals() {
+        return rentalRepository.findAllPending();
+    }
+
+    public List<Rental> getPendingRentalsByUserId(Integer userId) {
+        return rentalRepository.findPendingByUserId(userId);
+    }
+
+    public int updateRentalStatus(Integer rentalId, RentalStatus status) {
+        return rentalRepository.updateStatus(rentalId, status);
+    }
+
 }

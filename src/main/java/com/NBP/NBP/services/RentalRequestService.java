@@ -1,7 +1,7 @@
 package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.RentalRequest;
-import com.NBP.NBP.models.enums.RequestStatus;
+import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.repositories.RentalRequestRepository;
 import com.NBP.NBP.services.UserService;
 import com.NBP.NBP.services.CustomUserService;
@@ -63,7 +63,7 @@ public class RentalRequestService {
         request.setCustomUserId(customUserOpt.get().getId());
 
         request.setRequestDate(LocalDate.now());
-        request.setStatus(RequestStatus.PENDING);
+        request.setStatus(RentalStatus.PENDING);
 
         return save(request);
     }

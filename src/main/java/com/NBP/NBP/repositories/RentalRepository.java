@@ -1,14 +1,14 @@
 package com.NBP.NBP.repositories;
 
 import com.NBP.NBP.models.Equipment;
-import com.NBP.NBP.models.Order;
 import com.NBP.NBP.models.Rental;
+import com.NBP.NBP.models.enums.RentalStatus;
+
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
@@ -25,9 +25,42 @@ public class RentalRepository {
     private final RowMapper<Rental> rentalRowMapper = (rs, rowNum) -> new Rental(
             rs.getInt("id"),
             rs.getInt("equipment_id"),
+            rs.getInt("user_id"),
             rs.getDate("rent_date"),
-            rs.getDate("return_date")
-    );
+            rs.getDate("return_date"),
+            RentalStatus.valueOf(rs.getString("status")));
+
+    public List<Rental> findAllPending() {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE status = 'PENDING'";
+        return jdbcTemplate.query(sql, rentalRowMapper);
+    }
+
+    public List<Rental> findPendingByUserId(Integer userId) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? AND status = 'PENDING'";
+        return jdbcTemplate.query(sql, rentalRowMapper, userId);
+    }
+
+    @Transactional
+    public int updateStatus(Integer rentalId, RentalStatus newStatus) {
+        String sql = "UPDATE " + TABLE_NAME + " SET status = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, newStatus.name(), rentalId);
+    }
+
+    @Transactional
+    public int save(Rental rental) {
+        String sql = "INSERT INTO " + TABLE_NAME
+                + " (equipment_id, user_id, rent_date, return_date, status) VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getUserId(), rental.getRentDate(),
+                rental.getReturnDate(), rental.getStatus().name());
+    }
+
+    @Transactional
+    public int update(Rental rental) {
+        String sql = "UPDATE " + TABLE_NAME
+                + " SET equipment_id = ?, user_id = ?, rent_date = ?, return_date = ?, status = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getUserId(), rental.getRentDate(),
+                rental.getReturnDate(), rental.getStatus().name(), rental.getId());
+    }
 
     public List<Rental> findAll() {
         String sql = "SELECT * FROM " + TABLE_NAME;
@@ -40,18 +73,6 @@ public class RentalRepository {
     }
 
     @Transactional
-    public int save(Rental rental) {
-        String sql = "INSERT INTO " + TABLE_NAME + " (equipment_id, rent_date, return_date) VALUES (?, ?, ?)";
-        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate());
-    }
-
-    @Transactional
-    public int update(Rental rental) {
-        String sql = "UPDATE " + TABLE_NAME + " SET equipment_id = ?, rent_date = ?, return_date = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getRentDate(), rental.getReturnDate(), rental.getId());
-    }
-
-    @Transactional
     public int delete(int id) {
         String sql = "DELETE FROM " + TABLE_NAME + " WHERE id = ?";
         return jdbcTemplate.update(sql, id);
@@ -59,11 +80,8 @@ public class RentalRepository {
 
     public List<Rental> findByEquipment(Equipment equipment) {
         try {
-            return jdbcTemplate.query(
-                    "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?",
-                    rentalRowMapper,
-                    equipment.getId()
-            );
+            String sql = "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ?";
+            return jdbcTemplate.query(sql, rentalRowMapper, equipment.getId());
         } catch (Exception e) {
             return Collections.emptyList();
         }

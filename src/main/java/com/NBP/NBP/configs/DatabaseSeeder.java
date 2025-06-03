@@ -3,7 +3,7 @@ package com.NBP.NBP.configs;
 import com.NBP.NBP.models.*;
 import com.NBP.NBP.models.enums.EquipmentStatus;
 import com.NBP.NBP.models.enums.OrderStatus;
-import com.NBP.NBP.models.enums.RequestStatus;
+import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.models.enums.UserType;
 import com.NBP.NBP.services.*;
 import com.opencsv.CSVReader;
