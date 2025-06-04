@@ -56,6 +56,36 @@ public class RentalRepository {
         return jdbcTemplate.query(sql, rentalRowMapper, offset, limit);
     }
 
+    public List<RentalDetailsDTO> findAllPendingDetails(int offset, int limit) {
+        if (offset < 0)
+            offset = 0;
+        if (limit <= 0)
+            limit = 10;
+
+        String sql = "SELECT " +
+                "r.id AS rental_id, " +
+                "r.status AS rental_status, " +
+                "r.rent_date, " +
+                "r.return_date, " +
+                "e.id AS equipment_id, " +
+                "e.name AS equipment_name, " +
+                "e.description AS equipment_description, " +
+                "e.status AS equipment_status, " +
+                "c.name AS category_name, " +
+                "c.description AS category_description, " +
+                "l.name AS laboratory_name, " +
+                "d.name AS department_name " +
+                "FROM " + TABLE_NAME + " r " +
+                "JOIN NBP08.EQUIPMENT e ON r.equipment_id = e.id " +
+                "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
+                "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
+                "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
+                "WHERE r.status = 'PENDING' " +
+                "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
+
+        return jdbcTemplate.query(sql, rentalDetailsRowMapper);
+    }
+
     public List<Rental> findByUserId(Integer userId, int offset, int limit) {
         String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
@@ -94,6 +124,36 @@ public class RentalRepository {
         return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
     }
 
+    public List<RentalDetailsDTO> findPendingRentalDetailsByUserId(Integer userId, int offset, int limit) {
+        if (offset < 0)
+            offset = 0;
+        if (limit <= 0)
+            limit = 10;
+
+        String sql = "SELECT " +
+                "r.id AS rental_id, " +
+                "r.status AS rental_status, " +
+                "r.rent_date, " +
+                "r.return_date, " +
+                "e.id AS equipment_id, " +
+                "e.name AS equipment_name, " +
+                "e.description AS equipment_description, " +
+                "e.status AS equipment_status, " +
+                "c.name AS category_name, " +
+                "c.description AS category_description, " +
+                "l.name AS laboratory_name, " +
+                "d.name AS department_name " +
+                "FROM " + TABLE_NAME + " r " +
+                "JOIN NBP08.EQUIPMENT e ON r.equipment_id = e.id " +
+                "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
+                "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
+                "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
+                "WHERE r.user_id = ? AND r.status = 'PENDING' " +
+                "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
+
+        return jdbcTemplate.query(sql, rentalDetailsRowMapper, userId);
+    }
+
     public List<Rental> findAll(int offset, int limit) {
         String sql = "SELECT * FROM " + TABLE_NAME + " OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         return jdbcTemplate.query(sql, rentalRowMapper, offset, limit);
@@ -118,6 +178,24 @@ public class RentalRepository {
     public List<Rental> findByEquipmentId(Integer equipmentId, int offset, int limit) {
         String sql = "SELECT * FROM " + TABLE_NAME + " WHERE equipment_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
         return jdbcTemplate.query(sql, rentalRowMapper, equipmentId, offset, limit);
+    }
+
+    public List<RentalDetailsDTO> findRentalDetailsByEquipmentId(Integer equipmentId, int offset, int limit) {
+        String sql = "SELECT r.id AS rentalId, r.status AS rentalStatus, r.rent_date AS rentDate, r.return_date AS returnDate, "
+                +
+                "e.id AS equipmentId, e.name AS equipmentName, e.description AS equipmentDescription, e.status AS equipmentStatus, "
+                +
+                "c.name AS categoryName, c.description AS categoryDescription, " +
+                "l.name AS laboratoryName, d.name AS departmentName " +
+                "FROM " + TABLE_NAME + " r " +
+                "JOIN NBP08.EQUIPMENT e ON r.equipment_id = e.id " +
+                "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
+                "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
+                "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
+                "WHERE r.equipment_id = ? " +
+                "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+
+        return jdbcTemplate.query(sql, rentalDetailsRowMapper, equipmentId, offset, limit);
     }
 
     public int countAll() {

@@ -24,7 +24,7 @@ public class RentalController {
     }
 
     @GetMapping("/pending")
-    public PaginatedRentalResponseDTO getAllPending(
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> getAllPending(
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
             @AuthenticationPrincipal CustomUserDetails user) {
@@ -35,7 +35,7 @@ public class RentalController {
         if (isAdmin) {
             return rentalService.findAllPending(page, size);
         } else {
-            return rentalService.findPendingByUserId(user.getUserId(), page, size);
+            return rentalService.findPendingRentalDetailsByUserId(user.getUserId(), page, size);
         }
     }
 

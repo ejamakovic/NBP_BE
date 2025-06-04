@@ -28,14 +28,14 @@ public class RentalService {
         return (size == null || size <= 0) ? Integer.MAX_VALUE : size;
     }
 
-    public PaginatedRentalResponseDTO findAllPending(Integer page, Integer size) {
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findAllPending(Integer page, Integer size) {
         int limit = getLimit(size);
         int offset = calculateOffset(page, limit);
-        List<Rental> content = rentalRepository.findAllPending(offset, limit);
+        List<RentalDetailsDTO> content = rentalRepository.findAllPendingDetails(offset, limit);
         int totalItems = rentalRepository.countAllPending();
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int currentPage = (page == null) ? 0 : page;
-        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+        return new PaginatedRentalDetailResponseDTO<RentalDetailsDTO>(content, totalPages, totalItems, currentPage);
     }
 
     public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findByUserId(Integer userId, Integer page, Integer size) {
@@ -58,6 +58,17 @@ public class RentalService {
         return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
     }
 
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findPendingRentalDetailsByUserId(Integer userId,
+            Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<RentalDetailsDTO> content = rentalRepository.findPendingRentalDetailsByUserId(userId, offset, limit);
+        int totalItems = rentalRepository.countPendingByUserId(userId);
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalDetailResponseDTO<RentalDetailsDTO>(content, totalPages, totalItems, currentPage);
+    }
+
     public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findAll(Integer page, Integer size) {
         int limit = getLimit(size);
         int offset = calculateOffset(page, limit);
@@ -76,6 +87,17 @@ public class RentalService {
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int currentPage = (page == null) ? 0 : page;
         return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+    }
+
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findRentalDetailsByEquipmentId(Integer equipmentId,
+            Integer page, Integer size) {
+        int limit = getLimit(size);
+        int offset = calculateOffset(page, limit);
+        List<RentalDetailsDTO> content = rentalRepository.findRentalDetailsByEquipmentId(equipmentId, offset, limit);
+        int totalItems = rentalRepository.countByEquipmentId(equipmentId);
+        int totalPages = (int) Math.ceil((double) totalItems / limit);
+        int currentPage = (page == null) ? 0 : page;
+        return new PaginatedRentalDetailResponseDTO<RentalDetailsDTO>(content, totalPages, totalItems, currentPage);
     }
 
     public Rental findById(Integer id) {
