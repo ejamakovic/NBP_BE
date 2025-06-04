@@ -2,19 +2,14 @@ package com.NBP.NBP.configs;
 
 import com.NBP.NBP.models.*;
 import com.NBP.NBP.models.enums.EquipmentStatus;
-import com.NBP.NBP.models.enums.OrderStatus;
-import com.NBP.NBP.models.enums.RentalStatus;
-import com.NBP.NBP.models.enums.UserType;
 import com.NBP.NBP.services.*;
 import com.opencsv.CSVReader;
 import org.springframework.boot.CommandLineRunner;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 
 import java.io.InputStreamReader;
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.Optional;
@@ -34,8 +29,7 @@ public class DatabaseSeeder {
             SupplierService supplierService,
             UserService userService,
             RoleService roleService,
-            CustomUserService customUserService,
-            RentalRequestService rentalRequestService) {
+            CustomUserService customUserService) {
         return args -> {
 
             // Seed departments
@@ -276,49 +270,6 @@ public class DatabaseSeeder {
                 }
             });
             System.out.println("Services have been added.");
-
-            // // Seed rental requests
-            // seedFromCSV("seedData/request.csv", line -> {
-            // try {
-            // String equipmentName = line[0];
-            // String username = line[1];
-            // Date requestDate = Date.valueOf(line[2]);
-            // String status = line[3];
-
-            // Optional<Equipment> equipment = equipmentService.findByName(equipmentName);
-            // if (!equipment.isPresent()) {
-            // System.err.println("Equipment not found: " + equipmentName);
-            // return;
-            // }
-
-            // Optional<User> user = userService.findByUsername(username);
-            // if (!user.isPresent()) {
-            // System.err.println("User not found: " + username);
-            // return;
-            // }
-
-            // Optional<CustomUser> customUser =
-            // customUserService.getByUserId(user.get().getId());
-            // if (!customUser.isPresent()) {
-            // System.err.println("CustomUser not found for username: " + username);
-            // return;
-            // }
-
-            // RentalRequest request = new RentalRequest(
-            // equipment.get().getId(),
-            // customUser.get().getId(),
-            // requestDate.toLocalDate(),
-            // RequestStatus.valueOf(status.trim().toUpperCase()));
-
-            // rentalRequestService.save(request);
-            // } catch (Exception e) {
-            // System.err.println("Skipping rental request due to error: " +
-            // Arrays.toString(line));
-            // System.err.println("Reason: " + e.getMessage());
-            // }
-            // });
-            // System.out.println("Rental requests have been added.");
-
         };
     }
 
