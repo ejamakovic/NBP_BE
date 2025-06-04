@@ -1,7 +1,9 @@
 package com.NBP.NBP.services;
 
 import com.NBP.NBP.models.Rental;
+import com.NBP.NBP.models.dtos.PaginatedRentalDetailResponseDTO;
 import com.NBP.NBP.models.dtos.PaginatedRentalResponseDTO;
+import com.NBP.NBP.models.dtos.RentalDetailsDTO;
 import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.repositories.RentalRepository;
 import org.springframework.stereotype.Service;
@@ -36,14 +38,14 @@ public class RentalService {
         return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
     }
 
-    public PaginatedRentalResponseDTO findByUserId(Integer userId, Integer page, Integer size) {
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findByUserId(Integer userId, Integer page, Integer size) {
         int limit = getLimit(size);
         int offset = calculateOffset(page, limit);
-        List<Rental> content = rentalRepository.findByUserId(userId, offset, limit);
+        List<RentalDetailsDTO> content = rentalRepository.findRentalDetailsByUserId(userId, offset, limit);
         int totalItems = rentalRepository.countByUserId(userId);
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int currentPage = (page == null) ? 0 : page;
-        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+        return new PaginatedRentalDetailResponseDTO<RentalDetailsDTO>(content, totalPages, totalItems, currentPage);
     }
 
     public PaginatedRentalResponseDTO findPendingByUserId(Integer userId, Integer page, Integer size) {
@@ -56,14 +58,14 @@ public class RentalService {
         return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
     }
 
-    public PaginatedRentalResponseDTO findAll(Integer page, Integer size) {
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findAll(Integer page, Integer size) {
         int limit = getLimit(size);
         int offset = calculateOffset(page, limit);
-        List<Rental> content = rentalRepository.findAll(offset, limit);
+        List<RentalDetailsDTO> content = rentalRepository.findAllDetailed(offset, limit);
         int totalItems = rentalRepository.countAll();
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int currentPage = (page == null) ? 0 : page;
-        return new PaginatedRentalResponseDTO(content, totalPages, totalItems, currentPage);
+        return new PaginatedRentalDetailResponseDTO<RentalDetailsDTO>(content, totalPages, totalItems, currentPage);
     }
 
     public PaginatedRentalResponseDTO findByEquipmentId(Integer equipmentId, Integer page, Integer size) {

@@ -1,7 +1,9 @@
 package com.NBP.NBP.controllers;
 
 import com.NBP.NBP.models.Rental;
+import com.NBP.NBP.models.dtos.PaginatedRentalDetailResponseDTO;
 import com.NBP.NBP.models.dtos.PaginatedRentalResponseDTO;
+import com.NBP.NBP.models.dtos.RentalDetailsDTO;
 import com.NBP.NBP.models.enums.RentalStatus;
 import com.NBP.NBP.security.CustomUserDetails;
 import com.NBP.NBP.services.RentalService;
@@ -28,7 +30,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin) {
             return rentalService.findAllPending(page, size);
@@ -38,14 +40,14 @@ public class RentalController {
     }
 
     @GetMapping("/user/{userId}")
-    public PaginatedRentalResponseDTO getByUserId(
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> getByUserId(
             @PathVariable Integer userId,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (!isAdmin && !user.getUserId().equals(userId)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only view your own rentals.");
@@ -62,7 +64,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin || user.getUserId().equals(userId)) {
             return rentalService.findPendingByUserId(userId, page, size);
@@ -72,15 +74,16 @@ public class RentalController {
     }
 
     @GetMapping
-    public PaginatedRentalResponseDTO getAll(
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> getAll(
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin) {
+            System.out.println(isAdmin);
             return rentalService.findAll(page, size);
         } else {
             return rentalService.findByUserId(user.getUserId(), page, size);
@@ -92,7 +95,7 @@ public class RentalController {
         Rental rental = rentalService.findById(id);
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (!isAdmin && !rental.getUserId().equals(user.getUserId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this rental.");
@@ -109,7 +112,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin) {
             return rentalService.findByEquipmentId(equipmentId, page, size);
@@ -134,7 +137,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can update rental status.");
@@ -164,7 +167,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
 
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (!isAdmin) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Only admins can update rentals.");
@@ -183,7 +186,7 @@ public class RentalController {
             @AuthenticationPrincipal CustomUserDetails user) {
         Rental rental = rentalService.findById(id);
         boolean isAdmin = user.getAuthorities().stream()
-                .anyMatch(auth -> auth.getAuthority().equals("ROLE_ADMIN"));
+                .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (!isAdmin && !rental.getUserId().equals(user.getUserId())) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You cannot delete this rental.");
