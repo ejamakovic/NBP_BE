@@ -22,6 +22,7 @@ public class RentalDetailsDTO {
     private String departmentName;
 
     private Integer userId;
+    private Integer customUserId;
     private String username;
     private String firstName;
     private String lastName;
@@ -131,6 +132,14 @@ public class RentalDetailsDTO {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
+    }
+
+    public Integer getCustomUserId() {
+        return customUserId;
+    }
+
+    public void setCustomUserId(Integer customUserId) {
+        this.customUserId = customUserId;
     }
 
     public String getUsername() {

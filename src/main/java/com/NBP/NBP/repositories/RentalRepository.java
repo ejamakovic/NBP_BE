@@ -25,7 +25,7 @@ public class RentalRepository {
     private final RowMapper<Rental> rentalRowMapper = (rs, rowNum) -> new Rental(
             rs.getInt("id"),
             rs.getInt("equipment_id"),
-            rs.getInt("user_id"),
+            rs.getInt("custom_user_id"),
             rs.getDate("rent_date"),
             rs.getDate("return_date"),
             RentalStatus.valueOf(rs.getString("status")));
@@ -48,6 +48,7 @@ public class RentalRepository {
         dto.setLaboratoryName(rs.getString("laboratory_name"));
         dto.setDepartmentName(rs.getString("department_name"));
 
+        dto.setCustomUserId(rs.getInt("custom_user_id"));
         dto.setUserId(rs.getInt("user_id"));
         dto.setUsername(rs.getString("username"));
         dto.setFirstName(rs.getString("first_name"));
@@ -80,6 +81,7 @@ public class RentalRepository {
                 "l.name AS laboratory_name, " +
                 "d.name AS department_name, " +
                 "u.id AS user_id, " +
+                "cu.id AS custom_user_id, " +
                 "u.username AS username, " +
                 "u.first_name AS first_name, " +
                 "u.last_name AS last_name " +
@@ -88,19 +90,20 @@ public class RentalRepository {
                 "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
                 "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
                 "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
-                "JOIN NBP.NBP_USER u ON r.user_id = u.id " +
+                "JOIN NBP08.CUSTOM_USER cu ON r.custom_user_id = cu.id " +
+                "JOIN NBP.NBP_USER u ON cu.user_id = u.id " +
                 "WHERE r.status = 'PENDING' " +
                 "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
 
         return jdbcTemplate.query(sql, rentalDetailsRowMapper);
     }
 
-    public List<Rental> findByUserId(Integer userId, int offset, int limit) {
-        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE user_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
+    public List<Rental> findByUserId(Integer customUserId, int offset, int limit) {
+        String sql = "SELECT * FROM " + TABLE_NAME + " WHERE custom_user_id = ? OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, customUserId, offset, limit);
     }
 
-    public List<RentalDetailsDTO> findRentalDetailsByUserId(Integer userId, int offset, int limit) {
+    public List<RentalDetailsDTO> findRentalDetailsByUserId(Integer customUserId, int offset, int limit) {
         String sql = """
                 SELECT
                     r.id AS rental_id,
@@ -116,6 +119,7 @@ public class RentalRepository {
                     l.name AS laboratory_name,
                     d.name AS department_name,
                     u.id AS user_id,
+                    cu.id AS custom_user_id,
                     u.username AS username,
                     u.first_name AS first_name,
                     u.last_name AS last_name
@@ -124,21 +128,21 @@ public class RentalRepository {
                 JOIN NBP08.CATEGORY c ON e.category_id = c.id
                 JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id
                 JOIN NBP08.DEPARTMENT d ON l.department_id = d.id
-                JOIN NBP.NBP_USER u ON r.user_id = u.id
-                WHERE r.user_id = ?
+                JOIN NBP08.CUSTOM_USER cu ON r.custom_user_id = cu.id
+                JOIN NBP.NBP_USER u ON cu.user_id = u.id
+                WHERE r.custom_user_id = ?
                 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                 """;
-
-        return jdbcTemplate.query(sql, rentalDetailsRowMapper, userId, offset, limit);
+        return jdbcTemplate.query(sql, rentalDetailsRowMapper, customUserId, offset, limit);
     }
 
-    public List<Rental> findPendingByUserId(Integer userId, int offset, int limit) {
+    public List<Rental> findPendingByUserId(Integer customUserId, int offset, int limit) {
         String sql = "SELECT * FROM " + TABLE_NAME
-                + " WHERE user_id = ? AND status = 'PENDING' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
-        return jdbcTemplate.query(sql, rentalRowMapper, userId, offset, limit);
+                + " WHERE custom_user_id = ? AND status = 'PENDING' OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        return jdbcTemplate.query(sql, rentalRowMapper, customUserId, offset, limit);
     }
 
-    public List<RentalDetailsDTO> findPendingRentalDetailsByUserId(Integer userId, int offset, int limit) {
+    public List<RentalDetailsDTO> findPendingRentalDetailsByUserId(Integer customUserId, int offset, int limit) {
         if (offset < 0)
             offset = 0;
         if (limit <= 0)
@@ -158,6 +162,7 @@ public class RentalRepository {
                 "l.name AS laboratory_name, " +
                 "d.name AS department_name, " +
                 "u.id AS user_id, " +
+                "cu.id AS custom_user_id, " +
                 "u.username AS username, " +
                 "u.first_name AS first_name, " +
                 "u.last_name AS last_name " +
@@ -166,11 +171,12 @@ public class RentalRepository {
                 "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
                 "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
                 "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
-                "JOIN NBP.NBP_USER u ON r.user_id = u.id " +
-                "WHERE r.user_id = ? AND r.status = 'PENDING' " +
+                "JOIN NBP08.CUSTOM_USER cu ON r.custom_user_id = cu.id " +
+                "JOIN NBP.NBP_USER u ON cu.user_id = u.id " +
+                "WHERE r.custom_user_id = ? AND r.status = 'PENDING' " +
                 "OFFSET " + offset + " ROWS FETCH NEXT " + limit + " ROWS ONLY";
 
-        return jdbcTemplate.query(sql, rentalDetailsRowMapper, userId);
+        return jdbcTemplate.query(sql, rentalDetailsRowMapper, customUserId);
     }
 
     public List<Rental> findAll(int offset, int limit) {
@@ -194,6 +200,7 @@ public class RentalRepository {
                     l.name AS laboratory_name,
                     d.name AS department_name,
                     u.id AS user_id,
+                    cu.id AS custom_user_id,
                     u.username AS username,
                     u.first_name AS first_name,
                     u.last_name AS last_name
@@ -202,7 +209,8 @@ public class RentalRepository {
                 JOIN NBP08.CATEGORY c ON e.category_id = c.id
                 JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id
                 JOIN NBP08.DEPARTMENT d ON l.department_id = d.id
-                JOIN NBP.NBP_USER u ON r.user_id = u.id
+                JOIN NBP08.CUSTOM_USER cu ON r.custom_user_id = cu.id
+                JOIN NBP.NBP_USER u ON cu.user_id = u.id
                 OFFSET ? ROWS FETCH NEXT ? ROWS ONLY
                 """;
 
@@ -222,6 +230,7 @@ public class RentalRepository {
                 "c.name AS category_name, c.description AS category_description, " +
                 "l.name AS laboratory_name, d.name AS department_name, " +
                 "u.id AS user_id, " +
+                "cu.id AS custom_user_id, " +
                 "u.username AS username, " +
                 "u.first_name AS first_name, " +
                 "u.last_name AS last_name " +
@@ -230,7 +239,8 @@ public class RentalRepository {
                 "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
                 "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
                 "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
-                "JOIN NBP.NBP_USER u ON r.user_id = u.id " +
+                "JOIN NBP08.CUSTOM_USER cu ON r.custom_user_id = cu.id " +
+                "JOIN NBP.NBP_USER u ON cu.user_id = u.id " +
                 "WHERE r.equipment_id = ? " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
@@ -249,15 +259,15 @@ public class RentalRepository {
         return result != null ? result : 0;
     }
 
-    public int countByUserId(Integer userId) {
-        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE user_id = ?";
-        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+    public int countByUserId(Integer customUserId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE custom_user_id = ?";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, customUserId);
         return result != null ? result : 0;
     }
 
-    public int countPendingByUserId(Integer userId) {
-        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE user_id = ? AND status = 'PENDING'";
-        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, userId);
+    public int countPendingByUserId(Integer customUserId) {
+        String sql = "SELECT COUNT(*) FROM " + TABLE_NAME + " WHERE custom_user_id = ? AND status = 'PENDING'";
+        Integer result = jdbcTemplate.queryForObject(sql, Integer.class, customUserId);
         return result != null ? result : 0;
     }
 
@@ -290,8 +300,8 @@ public class RentalRepository {
             throw new IllegalArgumentException("Invalid equipment_id: " + rental.getEquipmentId());
         }
         String sql = "UPDATE " + TABLE_NAME
-                + " SET equipment_id = ?, user_id = ?, rent_date = ?, return_date = ?, status = ? WHERE id = ?";
-        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getUserId(), rental.getRentDate(),
+                + " SET equipment_id = ?, custom_user_id = ?, rent_date = ?, return_date = ?, status = ? WHERE id = ?";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getCustomUserId(), rental.getRentDate(),
                 rental.getReturnDate(), rental.getStatus().name(), rental.getId());
     }
 
@@ -301,8 +311,8 @@ public class RentalRepository {
             throw new IllegalArgumentException("Invalid equipment_id: " + rental.getEquipmentId());
         }
         String sql = "INSERT INTO " + TABLE_NAME
-                + " (equipment_id, user_id, rent_date, return_date, status) VALUES (?, ?, ?, ?, ?)";
-        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getUserId(), rental.getRentDate(),
+                + " (equipment_id, custom_user_id, rent_date, return_date, status) VALUES (?, ?, ?, ?, ?)";
+        return jdbcTemplate.update(sql, rental.getEquipmentId(), rental.getCustomUserId(), rental.getRentDate(),
                 rental.getReturnDate(), rental.getStatus().name());
     }
 

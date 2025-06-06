@@ -8,7 +8,7 @@ import com.NBP.NBP.models.enums.RentalStatus;
 public class Rental {
     private Integer id;
     private Integer equipmentId;
-    private Integer userId;
+    private Integer customUserId;
     private Date rentDate;
     private Date returnDate;
     private RentalStatus status;
@@ -16,19 +16,19 @@ public class Rental {
     public Rental() {
     };
 
-    public Rental(Integer id, Integer equipmentId, Integer userId, Date rentDate, Date returnDate,
+    public Rental(Integer id, Integer equipmentId, Integer customUserId, Date rentDate, Date returnDate,
             RentalStatus status) {
         this.id = id;
         this.equipmentId = equipmentId;
-        this.userId = userId;
+        this.customUserId = customUserId;
         this.rentDate = rentDate;
         this.returnDate = returnDate;
         this.status = status;
     }
 
-    public Rental(Integer equipmentId, Integer userId, LocalDate rentDate, LocalDate returnDate, RentalStatus status) {
+    public Rental(Integer equipmentId, Integer customUserId, LocalDate rentDate, LocalDate returnDate, RentalStatus status) {
         this.equipmentId = equipmentId;
-        this.userId = userId;
+        this.customUserId = customUserId;
         this.rentDate = Date.valueOf(rentDate);
         this.returnDate = Date.valueOf(returnDate);
         this.status = status;
@@ -51,12 +51,12 @@ public class Rental {
         this.equipmentId = equipmentId;
     }
 
-    public Integer getUserId() {
-        return userId;
+    public Integer getCustomUserId() {
+        return customUserId;
     }
 
-    public void setUserId(Integer userId) {
-        this.userId = userId;
+    public void setCustomUserId(Integer customUserId) {
+        this.customUserId = customUserId;
     }
 
     public Date getRentDate() {
