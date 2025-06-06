@@ -4,45 +4,45 @@ import com.NBP.NBP.models.enums.UserType;
 
 public class CustomUser {
 
-    private int id;
-    private int userId;
-    private int year;
+    private Integer id;
+    private Integer userId;
+    private Integer year;
 
     public CustomUser() {
     }
 
-    public CustomUser(int userId, UserType userType, int year, int departmentId) {
+    public CustomUser(Integer userId, UserType userType, Integer year, Integer departmentId) {
         this.userId = userId;
         this.year = year;
     }
 
-    public CustomUser(int id, int userId, UserType userType, int year, int departmentId) {
+    public CustomUser(Integer id, Integer userId, UserType userType, Integer year, Integer departmentId) {
         this.id = id;
         this.userId = userId;
         this.year = year;
     }
 
-    public int getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public int getUserId() {
+    public Integer getUserId() {
         return userId;
     }
 
-    public void setUserId(int userId) {
+    public void setUserId(Integer userId) {
         this.userId = userId;
     }
 
-    public int getYear() {
+    public Integer getYear() {
         return year;
     }
 
-    public void setYear(int year) {
+    public void setYear(Integer year) {
         this.year = year;
     }
 }

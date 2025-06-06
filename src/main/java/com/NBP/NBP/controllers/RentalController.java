@@ -1,5 +1,6 @@
 package com.NBP.NBP.controllers;
 
+import com.NBP.NBP.models.CustomUser;
 import com.NBP.NBP.models.Rental;
 import com.NBP.NBP.models.dtos.PaginatedRentalDetailResponseDTO;
 import com.NBP.NBP.models.dtos.PaginatedRentalResponseDTO;
@@ -11,11 +12,11 @@ import com.NBP.NBP.services.RentalService;
 import com.NBP.NBP.services.UserService;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.http.HttpStatus;
-
 
 import java.util.Optional;
 
@@ -96,7 +97,6 @@ public class RentalController {
         boolean isAdmin = user.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
-
         System.out.println(user.getUserId());
         if (isAdmin) {
             System.out.println(isAdmin);
@@ -116,7 +116,7 @@ public class RentalController {
         Optional<Integer> actualUserIdOpt = customUserService.findUserIdByCustomUserId(rental.getCustomUserId());
 
         if (!isAdmin && (!actualUserIdOpt.isPresent() || !actualUserIdOpt.get().equals(user.getUserId()))) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view this rental.");
+            throw new AccessDeniedException("You are not allowed to view this rental.");
         }
 
         return rental;
@@ -176,7 +176,19 @@ public class RentalController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createRental(@RequestBody Rental rental) {
+    public ResponseEntity<Void> createRental(
+            @RequestBody Rental rental,
+            @AuthenticationPrincipal CustomUserDetails user) {
+
+        Integer userId = user.getUserId();
+
+        CustomUser customUser = customUserService.getByUserId(userId)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.FORBIDDEN, "Custom user not found"));
+
+        if (!customUser.getId().equals(rental.getCustomUserId())) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+
         rental.setStatus(RentalStatus.PENDING);
         int saved = rentalService.save(rental);
         if (saved > 0) {
