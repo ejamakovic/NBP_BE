@@ -215,17 +215,22 @@ public class RentalRepository {
     }
 
     public List<RentalDetailsDTO> findRentalDetailsByEquipmentId(Integer equipmentId, int offset, int limit) {
-        String sql = "SELECT r.id AS rentalId, r.status AS rentalStatus, r.rent_date AS rentDate, r.return_date AS returnDate, "
+        String sql = "SELECT r.id AS rental_id, r.status AS rental_status, r.rent_date AS rent_date, r.return_date AS return_date, "
                 +
-                "e.id AS equipmentId, e.name AS equipmentName, e.description AS equipmentDescription, e.status AS equipmentStatus, "
+                "e.id AS equipment_id, e.name AS equipment_name, e.description AS equipment_description, e.status AS equipment_status, "
                 +
-                "c.name AS categoryName, c.description AS categoryDescription, " +
-                "l.name AS laboratoryName, d.name AS departmentName " +
+                "c.name AS category_name, c.description AS category_description, " +
+                "l.name AS laboratory_name, d.name AS department_name, " +
+                "u.id AS user_id, " +
+                "u.username AS username, " +
+                "u.first_name AS first_name, " +
+                "u.last_name AS last_name " +
                 "FROM " + TABLE_NAME + " r " +
                 "JOIN NBP08.EQUIPMENT e ON r.equipment_id = e.id " +
                 "JOIN NBP08.CATEGORY c ON e.category_id = c.id " +
                 "JOIN NBP08.LABORATORY l ON e.laboratory_id = l.id " +
                 "JOIN NBP08.DEPARTMENT d ON l.department_id = d.id " +
+                "JOIN NBP.NBP_USER u ON r.user_id = u.id " +
                 "WHERE r.equipment_id = ? " +
                 "OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 

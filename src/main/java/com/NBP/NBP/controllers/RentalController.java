@@ -105,7 +105,7 @@ public class RentalController {
     }
 
     @GetMapping("/equipment/{equipmentId}")
-    public PaginatedRentalResponseDTO getByEquipmentId(
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> getByEquipmentId(
             @PathVariable int equipmentId,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
@@ -115,9 +115,9 @@ public class RentalController {
                 .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin) {
-            return rentalService.findByEquipmentId(equipmentId, page, size);
+            return rentalService.findRentalDetailsByEquipmentId(equipmentId, page, size);
         } else {
-            PaginatedRentalResponseDTO rentals = rentalService.findByEquipmentId(equipmentId, page, size);
+            PaginatedRentalDetailResponseDTO<RentalDetailsDTO> rentals = rentalService.findRentalDetailsByEquipmentId(equipmentId, page, size);
 
             boolean ownsRental = rentals.getContent().stream()
                     .anyMatch(rental -> rental.getUserId().equals(user.getUserId()));
