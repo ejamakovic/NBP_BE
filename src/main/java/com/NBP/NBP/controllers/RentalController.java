@@ -57,7 +57,7 @@ public class RentalController {
     }
 
     @GetMapping("/pending/user/{userId}")
-    public PaginatedRentalResponseDTO getPendingByUserId(
+    public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> getPendingByUserId(
             @PathVariable Integer userId,
             @RequestParam(name = "page", required = false) Integer page,
             @RequestParam(name = "size", required = false) Integer size,
@@ -67,7 +67,7 @@ public class RentalController {
                 .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
         if (isAdmin || user.getUserId().equals(userId)) {
-            return rentalService.findPendingByUserId(userId, page, size);
+            return rentalService.findPendingRentalDetailsByUserId(userId, page, size);
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view these rentals.");
         }
