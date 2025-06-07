@@ -84,6 +84,16 @@ public class UserRepository {
         }
     }
 
+    public List<String> findEmailsByUserRole(String roleName) {
+        String sql = """
+                SELECT u.email
+                FROM nbp.nbp_user u
+                JOIN nbp.nbp_role r ON u.role_id = r.id
+                WHERE r.name = ?
+                """;
+        return jdbcTemplate.query(sql, (rs, rowNum) -> rs.getString("email"), roleName);
+    }
+
     @Transactional
     public User save(User user) {
         String sql = getInsertQuery();

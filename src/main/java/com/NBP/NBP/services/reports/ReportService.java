@@ -1,14 +1,25 @@
 package com.NBP.NBP.services.reports;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import com.NBP.NBP.models.dtos.GeneratedReportDTO;
+import com.NBP.NBP.repositories.ReportRepository;
+import com.NBP.NBP.repositories.UserRepository;
+
+import jakarta.mail.internet.MimeMessage;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.data.JRMapCollectionDataSource;
 
 import java.io.ByteArrayOutputStream;
 import java.sql.PreparedStatement;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -20,6 +31,71 @@ public class ReportService {
 
         @Autowired
         private JdbcTemplate jdbcTemplate;
+        private final ReportRepository reportRepository;
+        private final JavaMailSender mailSender;
+        private final UserRepository userRepository;
+
+        public ReportService(ReportRepository reportRepository, UserRepository userRepository,
+                        JavaMailSender mailSender) {
+                this.reportRepository = reportRepository;
+                this.userRepository = userRepository;
+                this.mailSender = mailSender;
+        }
+
+        public boolean generateAndSendReportToAdmins() {
+                try {
+                        GeneratedReportDTO todaysReport = reportRepository.findTodaysReport();
+
+                        byte[] pdfReport;
+
+                        if (todaysReport != null &&
+                                        todaysReport.getGeneratedAt().toLocalDate().equals(LocalDate.now())) {
+                                pdfReport = todaysReport.getReportFile();
+                        } else {
+                                pdfReport = generateServiceReport();
+                        }
+
+                        List<String> adminEmails = userRepository.findEmailsByUserRole("NBP08_ADMIN");
+
+                        for (String email : adminEmails) {
+                                sendReportEmail(email, pdfReport);
+                        }
+                        return true;
+                } catch (Exception e) {
+                        System.err.println("Error in generating or sending report: " + e.getMessage());
+                        e.printStackTrace();
+                        return false;
+                }
+        }
+
+        private void sendReportEmail(String recipientEmail, byte[] pdfContent) {
+                try {
+                        MimeMessage message = mailSender.createMimeMessage();
+                        MimeMessageHelper helper = new MimeMessageHelper(message, true);
+
+                        helper.setTo(recipientEmail);
+                        helper.setSubject("Daily Laboratory Equipment Report");
+                        helper.setText("Dear Admin,\n\nPlease find attached the latest laboratory equipment report.\n\nBest regards,\nNBP Team");
+
+                        helper.addAttachment("laboratory_report.pdf", new ByteArrayResource(pdfContent));
+
+                        mailSender.send(message);
+                } catch (Exception e) {
+                        System.err.println("Failed to send report email to " + recipientEmail + ": " + e.getMessage());
+                }
+        }
+
+        // public void generateOrSendTodayReport() {
+        // GeneratedReportDTO report = reportRepository.findTodaysReport();
+
+        // // Check if report is missing or outdated
+        // if (report == null || !LocalDate.now().equals(report.getGeneratedAt())) {
+        // report = generateNewReport();
+        // reportRepository.save(report);
+        // }
+
+        // sendReportToAdmins(report);
+        // }
 
         public byte[] generateLaboratoryReport() throws JRException {
                 // SQL upit za čitanje podataka iz specijalno kreirane tabele
