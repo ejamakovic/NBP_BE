@@ -75,9 +75,9 @@ public class ReportService {
 
                         helper.setTo(recipientEmail);
                         helper.setSubject("Daily Laboratory Equipment Report");
-                        helper.setText("Dear Admin,\n\nPlease find attached the latest laboratory equipment report.\n\nBest regards,\nNBP Team");
+                        helper.setText("Dear Admin,\n\nPlease find attached the latest service count per equipment report.\n\nBest regards,\nNBP Team");
 
-                        helper.addAttachment("laboratory_report.pdf", new ByteArrayResource(pdfContent));
+                        helper.addAttachment("service_per_equipment.pdf", new ByteArrayResource(pdfContent));
 
                         mailSender.send(message);
                 } catch (Exception e) {
