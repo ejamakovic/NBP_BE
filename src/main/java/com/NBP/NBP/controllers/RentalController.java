@@ -60,13 +60,13 @@ public class RentalController {
         boolean isAdmin = user.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("NBP08_ADMIN"));
 
-        Optional<Integer> userId = customUserService.findUserIdByCustomUserId(customUserId);
+        Optional<Integer> actualUserIdOpt = customUserService.findUserIdByCustomUserId(customUserId);
 
-        if (!isAdmin || userId.isEmpty() || !userId.get().equals(user.getUserId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You can only view your own rentals.");
+        if (isAdmin || (actualUserIdOpt.isPresent() && actualUserIdOpt.get().equals(user.getUserId()))) {
+            return rentalService.findByUserId(customUserId, page, size);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to view these rentals.");
         }
-
-        return rentalService.findByUserId(userId.get(), page, size);
     }
 
     @GetMapping("/pending/user/{customUserId}")

@@ -45,18 +45,11 @@ public class RentalService {
     }
 
     public PaginatedRentalDetailResponseDTO<RentalDetailsDTO> findByUserId(Integer userId, Integer page, Integer size) {
-        CustomUser customUser = customUserRepository.findByUserId(userId);
-        if (customUser == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Custom user not found for user ID: " + userId);
-        }
-
-        Integer customUserId = customUser.getId();
-
         int limit = getLimit(size);
         int offset = calculateOffset(page, limit);
 
-        List<RentalDetailsDTO> content = rentalRepository.findRentalDetailsByUserId(customUserId, offset, limit);
-        int totalItems = rentalRepository.countByUserId(customUserId);
+        List<RentalDetailsDTO> content = rentalRepository.findRentalDetailsByUserId(userId, offset, limit);
+        int totalItems = rentalRepository.countByUserId(userId);
         int totalPages = (int) Math.ceil((double) totalItems / limit);
         int currentPage = (page == null) ? 0 : page;
 
