@@ -101,14 +101,22 @@ public class JwtService {
         return claims.get("customUserId", Long.class);
     }
 
-    // Extract all claims from the token
     private Claims extractAllClaims(String token) {
         try {
-            return Jwts.parserBuilder()
+            System.out.println("Validating token: " + token);
+            logger.info("Validating token: {}", token);
+            System.out.println("Current server time: " + new Date());
+
+            Claims claims = Jwts.parserBuilder()
                     .setSigningKey(getSignInKey())
                     .build()
                     .parseClaimsJws(token)
                     .getBody();
+
+            Date expiration = claims.getExpiration();
+            System.out.println("Token expiration date: " + expiration);
+
+            return claims;
         } catch (Exception e) {
             logger.error("Error while extracting claims from token", e);
             throw e;

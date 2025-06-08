@@ -19,10 +19,10 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import static org.springframework.security.config.Customizer.withDefaults;
 
 import com.NBP.NBP.repositories.CustomUserRepository;
-import com.NBP.NBP.repositories.UserRepository;
 import com.NBP.NBP.security.CustomAccessDeniedHandler;
 import com.NBP.NBP.security.CustomAuthenticationEntryPoint;
 import com.NBP.NBP.services.CustomUserDetailsService;
+import com.NBP.NBP.services.UserService;
 
 @Configuration
 @EnableWebSecurity
@@ -38,9 +38,9 @@ public class SecurityConfiguration {
     }
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository,
+    public UserDetailsService userDetailsService(UserService userService,
             CustomUserRepository customUserRepository) {
-        return new CustomUserDetailsService(userRepository, customUserRepository);
+        return new CustomUserDetailsService(userService, customUserRepository);
     }
 
     @Bean
