@@ -1,4 +1,5 @@
 package com.NBP.NBP.models;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +19,7 @@ public class User implements UserDetails {
     private LocalDate birthDate;
     private Integer addressId;
     private Integer roleId;
+    private Integer customUserId;
 
     public User() {
     }
@@ -31,7 +33,8 @@ public class User implements UserDetails {
         this.roleId = roleId;
     }
 
-    public User(Integer id, String firstName, String lastName, String email, String password, String username, LocalDate birthDate, String phoneNumber, Integer addressId, Integer roleId) {
+    public User(Integer id, String firstName, String lastName, String email, String password, String username,
+            LocalDate birthDate, String phoneNumber, Integer addressId, Integer roleId) {
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -112,7 +115,6 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -143,6 +145,14 @@ public class User implements UserDetails {
 
     public void setAddressId(Integer addressId) {
         this.addressId = addressId;
+    }
+
+    public Integer getCustomUserId() {
+        return customUserId;
+    }
+
+    public void setCustomUserId(Integer customUserId) {
+        this.customUserId = customUserId;
     }
 
     @Override

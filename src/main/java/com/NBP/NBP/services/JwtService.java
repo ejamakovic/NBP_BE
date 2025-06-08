@@ -42,10 +42,12 @@ public class JwtService {
         Map<String, Object> claims = new HashMap<>();
 
         if (userDetails instanceof User user) {
+            claims.put("customUserId", user.getCustomUserId());
             claims.put("userId", user.getId());
             claims.put("email", user.getEmail());
             claims.put("firstName", user.getFirstName());
             claims.put("lastName", user.getLastName());
+            claims.put("customUserId", user.getCustomUserId());
 
             Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
             if (authorities != null && !authorities.isEmpty()) {
@@ -57,7 +59,7 @@ public class JwtService {
         }
 
         String token = buildToken(claims, userDetails);
-        logger.debug("Generated token in jwtService: {}", token); 
+        logger.debug("Generated token in jwtService: {}", token);
         return token;
     }
 
@@ -92,6 +94,11 @@ public class JwtService {
     // Extract expiration date from the token
     private Date extractExpiration(String token) {
         return extractClaim(token, Claims::getExpiration);
+    }
+
+    public Long extractCustomUserId(String token) {
+        Claims claims = extractAllClaims(token);
+        return claims.get("customUserId", Long.class);
     }
 
     // Extract all claims from the token

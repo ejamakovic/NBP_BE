@@ -23,6 +23,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,6 +62,13 @@ public class AuthenticationService {
             logger.warn("Invalid credentials for email: {}", loginDto.getEmail());
             throw new BadCredentialsException("Invalid credentials");
         }
+
+        var customUser = customUserRepository.findByUserId(user.getId());
+        if (customUser == null) {
+            throw new UsernameNotFoundException("Custom user not found");
+        }
+
+        user.setCustomUserId(customUser.getId());
 
         logger.info("Password verification succeeded for email: {}", loginDto.getEmail());
 
