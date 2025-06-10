@@ -52,6 +52,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/reset-password").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**").permitAll()
+                        .requestMatchers("/v3/api-docs/**").permitAll()
 
                         .requestMatchers("/auth/send").hasAuthority("NBP08_ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("NBP08_ADMIN")
